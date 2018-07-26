@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="jbiz-demo" default="build" basedir=".">
+<property name="project_name" value="jbiz-demo"/>
+<property name="deploy_name" value="jbizdemo"/>
+<property name="debug" value="on"/>
+<property name="war_base" value="bin" />
+
+<!-- 以下不要修改 -->
+<property name="war_file" value="${war_base}/${deploy_name}.war"/>
+
+<property name="src" value="src"/>
+<property name="dest" value="WebRoot/WEB-INF/classes"/>
+<property name="weblib" value="WebRoot/WEB-INF/lib" />
+<property name="webxml" value="WebRoot/WEB-INF/web.xml" />
+	
+<target name="init">
+	<mkdir dir="${dest}"/>
+</target>
+<target name="compile" depends="init">
+	<javac srcdir="${src}" destdir="${dest}" debug="${debug}" >
+		<compilerarg line="-encoding UTF-8 "/>  
+	   	<classpath>
+	    	<fileset dir="${weblib}" includes="*.jar"/>
+	   	</classpath> 
+   </javac>
+</target>
+	
+<target name="build" depends="compile">
+	<copy todir="${dest}">
+		<fileset dir="${src}" includes="*.properties, *.xml"/>
+	</copy>
+	<copy todir="${dest}/META-INF">
+		<fileset dir="${src}/META-INF" includes="*.*"/>
+	</copy>
+    <!-- 删除原有war包。 -->  
+    <delete dir="${war_file}" />  
+    <!-- 建立新war包。 -->  
+    <war destfile="${war_file}" webxml="${webxml}">  
+        <!-- 将非jar和非class文件拷贝到war包的对应路径下。 -->  
+        <fileset dir="WebRoot">  
+            <include name="**/**.*" />  
+            <exclude name="**/*.jar"/>  
+            <exclude name="**/*.class"/>  
+        </fileset>  
+        <!-- 将jar和class文件拷贝到war包的对应路径下。 -->  
+        <lib dir="WebRoot/WEB-INF/lib" />  
+        <classes dir="${dest}" />  
+    </war>
+	
+</target>
+	
+<target name="clean">
+   <delete dir="${dest}" />
+</target>
+<target name="rebuild" depends="clean,build">
+</target>
+	
+	
+</project>

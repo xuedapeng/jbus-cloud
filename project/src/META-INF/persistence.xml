@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="jbuscloud" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://xxx:3306/jbuscloud?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true" />
+			<property name="hibernate.connection.username" value="xxx" />
+			<property name="hibernate.connection.password" value="xxx" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+
+			<!-- c3p0 连接池配置 -->
+			<property name="hibernate.connection.provider_class"
+				value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
+			<property name="hibernate.c3p0.min_size" value="10" />
+			<property name="hibernate.c3p0.max_size" value="100" />
+			<property name="hibernate.c3p0.maxIdleTime" value="1800" />
+			<property name="hibernate.c3p0.max_statements" value="1000" />
+			<property name="hibernate.c3p0.timeout" value="3600" />
+			<property name="hibernate.c3p0.idle_test_period" value="600" />
+			<property name="hibernate.c3p0.acquire_increment" value="5" />
+			<property name="hibernate.c3p0.validate" value="true" />
+
+		</properties>
+
+	</persistence-unit>
+</persistence>
