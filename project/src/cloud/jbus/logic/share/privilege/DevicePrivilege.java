@@ -37,7 +37,7 @@ public class DevicePrivilege {
 		
 	}
 	
-	private static boolean isOwner(Integer deviceId, Integer userId, EntityManager em) {
+	public static boolean isOwner(Integer deviceId, Integer userId, EntityManager em) {
 
 		DeviceDao dao = new DeviceDao(em);
 		DeviceEntity device = dao.findById(deviceId);

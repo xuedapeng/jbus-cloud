@@ -23,6 +23,7 @@ public class DeviceEntity extends BaseZEntity {
 	private Integer crcMode = CrcConst.CRC_MODE_16_MODBUS;
 	private Integer ownerId;
 	private String memo;
+	private Integer status;
 	
 	
 	
@@ -150,6 +151,20 @@ public class DeviceEntity extends BaseZEntity {
 
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
+	}
+
+
+
+
+	public Integer getStatus() {
+		return status;
+	}
+
+
+
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	

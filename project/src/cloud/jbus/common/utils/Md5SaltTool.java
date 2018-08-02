@@ -61,13 +61,14 @@ public class Md5SaltTool {
         //声明盐变量   
         byte[] salt = new byte[SALT_LENGTH];   
         //将盐从数据库中保存的口令字节数组中提取出来   
-        System.arraycopy(pwdInDb, 0, salt, 0, SALT_LENGTH);   
+        System.arraycopy(pwdInDb, 0, salt, 0, SALT_LENGTH); 
+        System.out.println("v.salt="+byteToHexString(salt));
         //创建消息摘要对象   
         MessageDigest md;
         byte[] pwd;
         
         try {
-			md = MessageDigest.getInstance("MD5");
+			md = MessageDigest.getInstance("SHA-256");
 	        pwd = password.getBytes("UTF-8");
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -108,15 +109,17 @@ public class Md5SaltTool {
         //声明盐数组变量   12
         byte[] salt = new byte[SALT_LENGTH];   
         //将随机数放入盐变量中   
-        random.nextBytes(salt);   
+        random.nextBytes(salt);
 
+        System.out.println("e.salt="+byteToHexString(salt));
+        
         //声明消息摘要对象   
         MessageDigest md = null;   
         
         //创建消息摘要  
         byte[] pwd;
         try {
-			md = MessageDigest.getInstance("MD5");
+			md = MessageDigest.getInstance("SHA-256");
 			pwd = password.getBytes("UTF-8");
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			

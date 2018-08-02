@@ -2,6 +2,7 @@ package cloud.jbus.logic.device;
 
 import javax.persistence.EntityManager;
 
+import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.GuidHelper;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.dao.DeviceDao;
@@ -30,14 +31,15 @@ public class DeviceAddLogic extends BaseZLogic {
 		device.setLongitude(myParam.getLongitude());
 		device.setLatitude(myParam.getLatitude());
 		device.setMemo(myParam.getMemo());
+		device.setStatus(StatusConst.STATUS_NORMAL);
 		
 		DeviceDao dao = new DeviceDao(em);
 		dao.save(device);
 		
 		res.add("status", 1)
 			.add("msg", "device.add ok.")
-			.add("id", device.getId())
-			.add("deviceId", device.getDeviceSn())
+			.add("deviceId", device.getId())
+			.add("deviceSn", device.getDeviceSn())
 			.add("secretKey", device.getSecretKey());
 		return true;
 	}

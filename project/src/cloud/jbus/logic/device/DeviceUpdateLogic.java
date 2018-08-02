@@ -52,7 +52,7 @@ public class DeviceUpdateLogic extends BaseZLogic {
 		
 		res.add("status", 1)
 			.add("msg", "device.update ok.")
-			.add("id", device.getId());
+			.add("deviceId", device.getId());
 		return true;
 	}
 
@@ -80,27 +80,4 @@ public class DeviceUpdateLogic extends BaseZLogic {
 		return true;
 	}
 	
-	@Override
-	protected boolean auth(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) {
-		if (!super.auth(logicParam, res, em)) {
-			return false;
-		}
-
-		DeviceUpdateLogicParam myParam = (DeviceUpdateLogicParam)logicParam;
-
-		if (!DevicePrivilege.canConfig(
-				Integer.valueOf(myParam.getDeviceId()), 
-				getLoginUserId(myParam.getSecretId()), 
-				em)) {
-
-			res.add("status", -2)
-				.add("msg", "privilege not enough.");
-			
-			return false;
-		}
-		
-		return true;
-	}
-
-
 }

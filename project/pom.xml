@@ -19,8 +19,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -49,6 +49,13 @@
 	    <version>2.2.3</version>
 	</dependency>
   <!-- local repos end-->
+<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+
+	<dependency>
+	    <groupId>org.javassist</groupId>
+	    <artifactId>javassist</artifactId>
+	    <version>3.23.1-GA</version>
+	</dependency>
 
   <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-core -->
 	<dependency>

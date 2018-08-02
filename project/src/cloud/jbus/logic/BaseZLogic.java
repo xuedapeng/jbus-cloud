@@ -20,14 +20,15 @@ public abstract class BaseZLogic extends ZLogic {
 
 	protected static ICache cacheUserSecretKey = ZCacheManager.getInstance("user.secretKey");
 	protected static ICache cacheUserId = ZCacheManager.getInstance("user.id");
+
 	
 	public BaseZLogic() {
 		// 增加访问统计过滤器
-//		addFilter(new ZStatsFilter());
+		//		addFilter(new ZStatsFilter());
 	}
 	
 	protected String getPersistenceUnitName() {
-		return ZSystemConfig.getProperty("PersistenceUnitName");
+		return ZSystemConfig.getProperty("persistence_unit_name");
 	}
 	
 
@@ -98,6 +99,10 @@ public abstract class BaseZLogic extends ZLogic {
 		
 		Integer userId =  getLoginUserId(priParam.getSecretId());
 		Integer deviceId = Integer.valueOf(priParam.getDeviceId());
+
+		if ("owner".equals(priAnnotation.value())) {
+			return DevicePrivilege.isOwner(deviceId, userId, em);
+		}
 		
 		if ("config".equals(priAnnotation.value())) {
 			return DevicePrivilege.canConfig(deviceId, userId, em);

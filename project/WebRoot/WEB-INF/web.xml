@@ -19,7 +19,7 @@
   </servlet-mapping>
   <filter>
     <filter-name>crossDomainFilter</filter-name>
-    <filter-class>fw.jbiz.ext.filter.CrossDomainFilter</filter-class>
+    <filter-class>cloud.jbus.action.MyCrossDomainFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>crossDomainFilter</filter-name>
