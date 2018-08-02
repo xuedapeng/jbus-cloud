@@ -18,7 +18,8 @@ var app = new Vue({
     selectedSensorInfo:{},  // {"sensorId":"", "cmdEncodeList":[{...}]}
     selectedCmdEncodeInfo:{},  // {"cmdNo":"", ", "cmdName":"",...}
     messageList:[],
-    viewsource:false
+    viewsource:false,
+    hexSend:false
 
   },
   methods:{
@@ -162,9 +163,32 @@ function onMessageArrived(message) {
   }
 }
 
+// hex发送
+function sendMessageHex() {
+  var cmdHexStr = app.cmdParam;
+  if (app.selectedCmdEncodeInfo.includeCrc==0) {
+    cmdHexStr = cmdHexStr + " " + CRC.ToModbusCRC16(app.cmdParam);
+  }
+  var msgByte = hexStringToBytes(cmdHexStr);
+  var source = byteArray2hexStr(msgByte);
+  var parsed = source;
+
+  message = new Paho.MQTT.Message(msgByte);
+  message.destinationName = "TC/CMD/" + app.selectedDeviceInfo.deviceSn;
+  app.mqttClient.send(message);
+  console.log("send:"+ message.destinationName + "->" + source);
+
+  addMessage(parsed, source, "sent");
+}
+
+
 //发送消息
 function sendMessage() {
 
+      if (app.hexSend) {
+        sendMessageHex();
+        return;
+      }
       if (!app.selectedCmdEncodeInfo || !app.selectedCmdEncodeInfo.scriptText){
         layer.msg("传感器未设置指令！", {icon:1,time:1000});
         return;
@@ -175,7 +199,11 @@ function sendMessage() {
       var cmdScript = app.selectedCmdEncodeInfo.scriptText;
 
       eval(cmdScript);
-      var msgByte = encodeCmd(cmdParam);
+      var msgHexStr = encodeCmd(cmdParam);
+      if (app.selectedCmdEncodeInfo.includeCrc==0) {
+        msgHexStr = msgHexStr + " " + CRC.ToModbusCRC16(msgHexStr);
+      }
+      msgByte = hexStringToBytes(msgHexStr);
       var parsed = cmdName + "(" + cmdParam + ")";
       var source = byteArray2hexStr(msgByte);
       // [0x01,0x03,0x00,0x00,0x00,0x02,0xc4,0x0b];

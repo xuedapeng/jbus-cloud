@@ -100,8 +100,8 @@
             <button id="btnSend" :class="'btn btn-success-outline radius size-L ' + (mqttClient?'':'disabled')" v-on:click="send">发送</button>
           </span>
           <div class="check-box bottom" style="margin-left:-30px;margin-bottom:-3px" >
-            <input type="checkbox" id="checkbox" class="size-L">
-            <label for="checkbox">hex</label>
+            <input type="checkbox" id="ck-hexSend" class="size-L" v-model="hexSend">
+            <label for="ck-hexSend">hex</label>
           </div>
           </td>
           <td align="right">
@@ -167,6 +167,7 @@
 
 <script type="text/javascript" src="common/constant.js?v=1"></script>
 <script type="text/javascript" src="common/common.js?v=6"></script>
-<script type="text/javascript" src="realtime.js?v=219"></script>
+<script type="text/javascript" src="common/crc.js?v=6"></script>
+<script type="text/javascript" src="realtime.js?v=227"></script>
 </body>
 </html>

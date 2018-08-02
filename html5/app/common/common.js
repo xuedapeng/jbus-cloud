@@ -109,3 +109,28 @@ function byteArray2hexStr(byteArray)
   str += byte2hexStr(byteArray[i]);
   return str;
 }
+
+
+function hexStringToBytes(hexString) {
+    	if (hexString.length==0) {
+            return [];
+        }
+        hexString = hexString.toUpperCase().replaceAll(" ", "");
+        var length = hexString.length / 2;
+        hexChars = hexString.split('');
+        var d = new Uint8Array(length);
+        for (var i = 0; i < length; i++) {
+            var pos = i * 2;
+            d[i] =  (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
+
+        }
+        return d;
+}
+
+function charToByte(c) {
+    return "0123456789ABCDEF".indexOf(c);
+}
+
+String.prototype.replaceAll = function(s1,s2){
+  return this.replace(new RegExp(s1,"gm"),s2);
+}
