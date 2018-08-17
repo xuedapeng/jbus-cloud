@@ -29,7 +29,8 @@
   .selbtn-label{background-color: #fff; color:#000;}
   .bottom{vertical-align:bottom}
   .middle{vertical-align:middle}
-  .lime{color:lime}
+  .online{color:#00FF00}
+  .offline{color:#FF0000}
   .left-space{margin-left:5px}
 </style>
 
@@ -47,7 +48,7 @@
 
             <span :class="'label radius left-space ' + (item.deviceId==selectedDeviceInfo.deviceId?'selbtn-selected': 'selbtn-unselected')" :id="'dev_'+item.deviceId" v-on:click="selectDevice(item.deviceId)">
             {{item.deviceName}}（{{item.deviceSn}}）
-            <label  style="font-size:1.5em" class="lime">● </label>
+            <label  style="font-size:1.5em" :class="item.status + 'line'">● </label>
         </template>
       </div>
     </td>
@@ -168,6 +169,6 @@
 <script type="text/javascript" src="common/constant.js?v=1"></script>
 <script type="text/javascript" src="common/common.js?v=6"></script>
 <script type="text/javascript" src="common/crc.js?v=6"></script>
-<script type="text/javascript" src="realtime.js?v=227"></script>
+<script type="text/javascript" src="realtime.js?v=248"></script>
 </body>
 </html>

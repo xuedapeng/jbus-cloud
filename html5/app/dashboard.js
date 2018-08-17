@@ -10,57 +10,15 @@ var app = new Vue({
   }
 });
 
+var mapsource=1;// 1:chinaProvider;2:mapbox
+var g_center=[31.34725,118.405515];
+var myMap;
 
-loadData();
-function loadData() {
-
-  if (!checkAuth()) {
-    return;
-  }
-
-  var param = {"method":"getDashboard", "data":{},
-              "auth":{"appId":localStorage.appId, "appToken":localStorage.appToken}};
-
-  ajaxPost(G_RPC_URL, param,
-    function(response){
-
-      if (response.status < 0) {
-        layer.msg(response.msg,{icon:2,time:2000});
-        return;
-      }
-
-      var rowsStr = "";
-      var result = response.result;
-      var seq = 0;
-      var keys = ['tcp_port','rpc_port','mqtt_broker', 'sessionCount', 'deviceCount', 'mqttClientCount', 'mqttClientCountLocal'];
-      for(key in keys) {
-        seq++;
-        if (typeof(result[keys[key]])=='undefined') {
-          continue;
-        }
-        rowsStr += createRow(keys[key], result[keys[key]]);
-      }
-
-      $('#table_rows').append(rowsStr);
-
-      layer.msg("查询成功！", {icon:1,time:1000});
-
-    });
+var mapParam = {"center":g_center,"divId":"mapId"};
+if (mapsource==1) {
+  loadChinaProvider(mapParam);
+} else {
+  loadMapbox(mapParam);
 }
 
-
-function createRow(key, value) {
-
-  var template = '';
-  template +=  '<tr class="text-c">';
-  template +=  '<td>#prop# </td>';
-  template +=  '<td>#value#</td>';
-  template +=  '</tr>';
-
-  var rowStr = template;
-  rowStr = rowStr.replace("#prop#", key);
-  rowStr = rowStr.replace("#value#", value);
-
-
-  return rowStr;
-}
+var marker = L.marker(g_center).addTo(myMap).bindPopup("I am a green leaf2.");

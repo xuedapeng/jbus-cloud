@@ -9,6 +9,8 @@ var app = new Vue({
     sensorCount:"",
     cmdCount:"",
     mqttClient:null,
+    mqttClientStatus:null,
+    mqttStatusTopics:[],
     mqttTopic:"",
     myDeviceInfo:[],// result
     mySensorInfo:[],
@@ -53,6 +55,7 @@ var app = new Vue({
       }
       deviceSelected(deviceId);
       reSubscribe();
+      getDeviceStatus(); // 选择设备时，更新所有设备的状态
       app.messageList.length = 0;
     },
     selectSensor:function(sensorId){
@@ -71,6 +74,63 @@ init();
 function init() {
   searchDevice();
 }
+
+function subscribeDeviceStatus() {
+    if (app.mqttClientStatus) {
+      app.mqttClientStatus.disconnect();
+    }
+
+    var clientId = guid();
+    console.log("guid_status="+clientId);
+     var client= new Paho.MQTT.Client(G_MQTT_HOST, Number(G_MQTT_PORT), clientId);//建立客户端实例
+
+     client.onConnectionLost = function() {
+       console.log("mqttClientStatus connection lost.");
+     };//注册连接断开处理事件
+
+     client.onMessageArrived = function(message){
+       var deviceInfo = app.myDeviceInfo;
+       console.log("receive topic:"+ message.destinationName);
+       console.log("receive data:"+ message.payloadString);
+       data = JSON.parse(message.payloadString);
+       for(i in deviceInfo) {
+         if (data.deviceSn == deviceInfo[i].deviceSn) {
+           if (data.onlineCount > 0) {
+             deviceInfo[i].status = "on";
+           } else {
+             deviceInfo[i].status = "off";
+           }
+         }
+       }
+
+       app.myDeviceInfo = deviceInfo;
+
+     };//注册消息接收处理事件
+
+     client.connect({
+       onSuccess:function(){
+         console.log("mqttClientStatus connected.");
+         // subscribe
+         app.mqttStatusTopics.length = 0;
+         if (app.myDeviceInfo.length > 0) {
+           for(i in app.myDeviceInfo) {
+             app.mqttStatusTopics[i] = "TC/STS/" + app.myDeviceInfo[i].deviceSn;
+           }
+         }
+         if (app.mqttStatusTopics.length > 0) {
+           for (i in app.mqttStatusTopics) {
+             client.subscribe(app.mqttStatusTopics[i]);
+             console.log("subscribe:" + app.mqttStatusTopics[i]);
+           }
+         }
+       },
+       userName:G_MQTT_USER,
+       password:G_MQTT_USER
+     });//连接服务器并注册连接成功处理事件
+
+     app.mqttClientStatus = client;
+}
+
 function connectMqtt() {
 
   if (!checkAuth()) {
@@ -106,6 +166,8 @@ function onConnect() {
   reSubscribe();
   // layer.msg("已连接！", {icon:1,time:1000});
 }
+
+
 
 function reSubscribe() {
 
@@ -227,6 +289,9 @@ function addMessage(parsed, source, type) {
   item.parsedData =  parsed;
   item.sourceData = source;
   app.messageList.push(item);
+  if (app.messageList.length > 500) {
+    app.messageList.splice(0, app.messageList.length-100);
+  }
 
 }
 
@@ -248,10 +313,54 @@ function searchDevice() {
         }
 
         var result = response.result;
+        for(i in result) {
+          result[i].status = "";
+        }
+
         fillSelectCondition(result);
         layer.msg("查询成功！", {icon:1,time:1000});
 
+        // 设置在线状态
+        getDeviceStatus();
+
+        // 订阅设备连线事件
+        subscribeDeviceStatus();
       });
+  }
+
+  function getDeviceStatus() {
+
+        if (!checkAuth()) {
+          return;
+        }
+
+        var deviceInfo = app.myDeviceInfo;
+        var deviceSns = [];
+        for (i in deviceInfo) {
+          deviceSns[i] = deviceInfo[i].deviceSn;
+        }
+        var param = {"method":"realtime.device.online.query",
+                    "auth":[localStorage.appId, localStorage.appToken],
+                    "data":{"deviceIds":deviceSns}};
+
+        ajaxPost(G_RPC_URL, param,
+          function(response){
+
+            if (response.status < 0) {
+              layer.msg(response.msg,{icon:2,time:2000});
+              return;
+            }
+
+            var result = response.result;
+
+            for(i in deviceInfo) {
+              deviceInfo[i].status = result[deviceInfo[i].deviceSn];
+              console.log(deviceInfo[i].deviceSn + ":" + deviceInfo[i].status);
+            }
+            app.myDeviceInfo = deviceInfo;
+            // layer.msg("在线状态查询成功！", {icon:1,time:1000});
+
+          });
   }
 
   function fillSelectCondition(deviceInfo) {

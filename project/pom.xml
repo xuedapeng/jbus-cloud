@@ -34,6 +34,13 @@
     </plugins>
   </build>
   <dependencies>
+  <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+	<dependency>
+	    <groupId>com.google.guava</groupId>
+	    <artifactId>guava</artifactId>
+	    <version>26.0-jre</version>
+	</dependency>
+  
   <!-- local repos -->
 
   <!-- https://github.com/xuedapeng/jbiz-core/releases/tag/1.1.1 -->

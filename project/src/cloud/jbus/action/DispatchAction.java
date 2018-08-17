@@ -37,7 +37,6 @@ public class DispatchAction extends BaseZAction {
 			@Context HttpServletRequest request) {
 		
 		// params schema: {"method":"login", "auth":[secretId, secretKey],"data":{}}
-		
 		IResponseObject res = new  ZGsonObject();
 		
 		// 参数有效性
@@ -54,7 +53,6 @@ public class DispatchAction extends BaseZAction {
 		}
 		
 		// 调用logic
-		
 		ZLogic logic = this.makeLogic(mapParams, res);
 		if (logic == null) {
 			return res.toString();
