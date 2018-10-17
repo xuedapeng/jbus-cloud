@@ -19,7 +19,7 @@ function loadData() {
   }
 
   var param = {"method":"device.list",
-              "auth":[localStorage.appId, localStorage.appToken]};
+              "auth":[getStorage("appId"), getStorage("appToken")]};
 
   ajaxPost(G_RPC_URL, param,
     function(response){

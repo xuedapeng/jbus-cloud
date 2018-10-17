@@ -20,6 +20,7 @@ public abstract class BaseZLogic extends ZLogic {
 
 	protected static ICache cacheUserSecretKey = ZCacheManager.getInstance("user.secretKey");
 	protected static ICache cacheUserId = ZCacheManager.getInstance("user.id");
+	protected UserEntity _loginUser;
 
 	
 	public BaseZLogic() {
@@ -51,18 +52,29 @@ public abstract class BaseZLogic extends ZLogic {
 			return false;
 		}
 		
-		if (!cacheUserSecretKey.hit(secretId, secretKey)) {
-			return false;
-		}
+//		if (!cacheUserSecretKey.hit(secretId, secretKey)) {
+//			// cache没有，则查看数据库
+//			UserEntity user = new UserDao(em).findBySecretId(secretId);
+//			if (user != null) {
+//				cacheUserSecretKey.add(secretId, user.getSecretKey());
+//				cacheUserId.add(secretId, user.getId());
+//			}
+//		}
+//		
+//		if (!cacheUserSecretKey.hit(secretId, secretKey)) {
+//			return false;
+//		}
 		
-		// cache没有，则查看数据库
-		UserEntity user = new UserDao(em).findBySecretId(secretId);
-		if (user != null) {
-			cacheUserSecretKey.add(secretId, user.getSecretKey());
-			cacheUserId.add(secretId, user.getId());
-			if (!cacheUserSecretKey.hit(secretId, secretKey)) {
-				return false;
-			}
+
+		_loginUser = new UserDao(em).findBySecretId(baseParam.getSecretId());
+		if (_loginUser == null 
+				|| !baseParam.getSecretKey().equals(_loginUser.getSecretKey())) {
+			
+			res.add("status", -2)
+				.add("msg", "auth failed.");
+		
+			return false;
+			
 		}
 		
 		// 权限

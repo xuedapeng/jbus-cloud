@@ -5,7 +5,9 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 
 import cloud.jbus.common.utils.Md5SaltTool;
+import cloud.jbus.db.bean.EmqUserEntity;
 import cloud.jbus.db.bean.UserEntity;
+import cloud.jbus.db.dao.EmqUserDao;
 import cloud.jbus.db.dao.UserDao;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.BaseZLogic;
@@ -43,13 +45,18 @@ public class LoginLogic extends BaseZLogic {
 			
 		}
 		
+		EmqUserEntity emqUser = new EmqUserDao(em).findById(user.getId());
 		
 		
 		res.add("status", 1)
 			.add("msg", "ok")
+			.add("userId", user.getId())
+			.add("account", user.getAccount())
 			.add("secretId", user.getSecretId())
 			.add("secretKey", user.getSecretKey())
-			.add("nickName", user.getNickName());
+			.add("nickName", user.getNickName())
+			.add("emqUser", emqUser.getUsername())
+			.add("emqPwd", emqUser.getPassword());
 
 		return true;
 	}

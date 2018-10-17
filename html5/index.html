@@ -27,7 +27,7 @@
 
 			<a href="index.html" class="logo navbar-logo f-l mr-10 hidden-xs" >
 				<img src="static/img/logo_white.svg" />
-				Jbus Cloud </a>
+				{{title}}</a>
 			<a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
 
 		<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
@@ -60,19 +60,19 @@
 				<a data-href="app/realtime.html" data-title="实时控制" href="javascript:void(0)">实时控制</a>
 			</dt>
 	</dl>
-	<dl id="menu-article">
+	<dl id="menu-plan" style="display:none">
 		<dt>
 			<i class="Hui-iconfont">&#xe690;</i>
 			<a data-href="app/realtime.html" data-title="计划任务" href="javascript:void(0)">计划任务</a>
 		</dt>
 	</dl>
-	<dl id="menu-article">
+	<dl id="menu-history" style="display:none">
 		<dt>
 			<i class="Hui-iconfont">&#xe61c;</i>
 			<a data-href="app/history.html" data-title="历史数据" href="javascript:void(0)">历史数据</a>
 		</dt>
 	</dl>
-	<dl id="menu-article">
+	<dl id="menu-debug" style="display:none">
 		<dt>
 			<i class="Hui-iconfont">&#xe63c;</i>
 			调试工具
@@ -88,12 +88,17 @@
 			</ul>
 		</dd>
 	</dl>
-	<dl id="menu-article">
+	<dl id="menu-monitor" style="display:none">
 		<dt>
 			<i class="Hui-iconfont">&#xe725;</i>
 			<a data-href="app/history.html" data-title="状态监控" href="javascript:void(0)">状态监控</a>
 		</dt>
 	</dl>
+</div>
+<div style="display:none">
+	<p style="margin-top:30px;margin-left:20px;font-size:0.1em">
+		<a href="http://www.ip33.com/crc.html" target="_crc">CRC校验</a>
+	</p>
 </div>
 </aside>
 <div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
@@ -104,7 +109,7 @@
 				<li class="active">
 					<span title="Dashboard" data-href="app/dashboard.html">
 						首页
-						<a href=""><img style="width:14px;height:14px;margin-bottom:2px" src="static/img/reload_48.ico"</a>
+						<!-- a href=""><img style="width:14px;height:14px;margin-bottom:2px" src="static/img/reload_48.ico"</a -->
 					</span>
 					<em></em></li>
 		</ul>
@@ -132,12 +137,12 @@
 <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
 <script type="text/javascript" src="lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
 
-<script type="text/javascript" src="app/common/constant.js"></script>
-<script type="text/javascript" src="app/common/common.js"></script>
+<script type="text/javascript" src="app/common/constant.js?v=4"></script>
+<script type="text/javascript" src="app/common/common.js?v=2"></script>
 <script type="text/javascript">
 $(function(){
-		var appId = localStorage.appId;
-		var appToken = localStorage.appToken;
+		var appId = getStorage("appId");
+		var appToken = getStorage("appToken");
 
 		if (!appId || !appToken) {
 			//if (confirm("登录信息已失效，是否转到登录页面？")) {
@@ -150,12 +155,13 @@ $(function(){
 var app = new Vue({
   el: '#app',
   data: {
-		account:localStorage.account,
-		nickName:localStorage.nickName
+		account:getStorage("account"),
+		nickName:getStorage("nickName"),
+		title:G_LABEL_APP_TITLE + " " + G_LABEL_APP_VER,
 	},
 	methods:{
 		logout:function(){
-			localStorage.clear();
+			clearStorage();
 			moveToLogin();
 		}
 	}

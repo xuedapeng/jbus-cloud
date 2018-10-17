@@ -8,9 +8,21 @@ function moveToLogin() {
   moveTo("app/login.html");
 }
 
+function getStorage(key) {
+  return localStorage[G_APP_UUID + "-" + key];
+}
+
+function setStorage(key, value) {
+  localStorage[G_APP_UUID + "-" + key] = value;
+}
+
+function clearStorage() {
+  localStorage.clear();
+}
+
 function checkAuth() {
 
-  		if (!localStorage.appId || !localStorage.appToken) {
+  		if (!getStorage("appId") || !getStorage("appToken")) {
 
           layer.msg("登录信息已失效，请重新登录！",{icon:0,time:2000});
           return false;
@@ -131,6 +143,28 @@ function charToByte(c) {
     return "0123456789ABCDEF".indexOf(c);
 }
 
+
+function bytesToBase64( bytes ) {
+    var binary = '';
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
 String.prototype.replaceAll = function(s1,s2){
   return this.replace(new RegExp(s1,"gm"),s2);
+}
+
+
+function getQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  decodeURI(r[2]); return null;
+}
+
+function isNumber(obj) {
+    return !isNaN(obj);
 }

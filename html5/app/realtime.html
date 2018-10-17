@@ -127,7 +127,13 @@
                       &nbsp;
                       <input type="checkbox" id="ck-viewsource" v-model="viewsource">
                       <label for="ck-viewsource">view source</label>
-
+                      &nbsp;
+                      <input type="checkbox" id="ck-showimg" v-model="showimg" v-on:change="showImg()">
+                      <label for="ck-showimg">show image</label>
+                      &nbsp;
+                      <span>
+                        <a @click="clearList()" href="#" >clear</a>
+                      </span>
                       </th>
                     </tr>
                     <tr id="filling" style="z-index:1;"></tr>
@@ -144,6 +150,12 @@
                                   <template v-if="viewsource">
                                     <br/>
                                     {{messageList[messageList.length-index-1].sourceData}}
+                                  </template>
+                                  <template v-if="showimg">
+                                    <template v-if="messageList[messageList.length-index-1].image.length>0">
+                                      <br/>
+                                      <img v-bind:src="messageList[messageList.length-index-1].imgSrc" :id="'img_'+(messageList.length-index-1)" />
+                                    </template>
                                   </template>
 
                                 </td>
@@ -166,9 +178,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
 
-<script type="text/javascript" src="common/constant.js?v=1"></script>
-<script type="text/javascript" src="common/common.js?v=6"></script>
+<script type="text/javascript" src="common/constant.js?v=5"></script>
+<script type="text/javascript" src="common/common.js?v=13"></script>
 <script type="text/javascript" src="common/crc.js?v=6"></script>
-<script type="text/javascript" src="realtime.js?v=248"></script>
+<script type="text/javascript" src="realtime.js?v=4 "></script>
 </body>
 </html>

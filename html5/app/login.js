@@ -2,17 +2,22 @@
 var app = new Vue({
   el: '#app',
   data: {
-    account: '',
+    account: getQueryString('account'),
     password: '',
-    account_hint:'账号',
-    password_hint:'密码',
-    message:''
+    message:'',
+    title: G_LABEL_APP_TITLE,
   },
   methods:{
     login:function() {
       app.message = '';
       return  _login(app.account, app.password);
-    }
+    },
+    goReg(){
+      moveTo("reg.html");
+    },
+    resetPwd(){
+      moveTo("resetPwd.html?account="+app.account)
+    },
   }
 });
 
@@ -35,10 +40,12 @@ function _login(account, password) {
         app.message = response.msg;
         return;
       }
-      localStorage.appId=response.secretId;
-      localStorage.appToken = response.secretKey;
-      localStorage.account = app.account;
-      localStorage.nickName = response.nickName;
+      setStorage("appId", response.secretId);
+      setStorage("appToken",response.secretKey);
+      setStorage("account", app.account);
+      setStorage("nickName", response.nickName);
+      setStorage("emqUser", response.emqUser);
+      setStorage("emqPwd", response.emqPwd);
 
       window.location.href = "../index.html";
   });

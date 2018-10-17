@@ -21,6 +21,7 @@ var app = new Vue({
     selectedCmdEncodeInfo:{},  // {"cmdNo":"", ", "cmdName":"",...}
     messageList:[],
     viewsource:false,
+    showimg:false,
     hexSend:false
 
   },
@@ -53,10 +54,14 @@ var app = new Vue({
       if (deviceId == app.selectedDeviceInfo.deviceId ) {
         return;
       }
+      app.mySensorInfo = [];
+      app.myCmdEncodeInfo = [];
+      app.myParamSchema = "";
+
       deviceSelected(deviceId);
       reSubscribe();
       getDeviceStatus(); // 选择设备时，更新所有设备的状态
-      app.messageList.length = 0;
+      app.clearList();
     },
     selectSensor:function(sensorId){
       sensorSelected(sensorId);
@@ -65,8 +70,16 @@ var app = new Vue({
     selectCmdEncode:function(cmdNo){
       cmdEncodeSelected(cmdNo);
 
+    },
+    showImg:function() {
+      if (app.showimg) {
+        settingImgData();
+      }
+    },
+    clearList:function() {
+      app.messageList = [];
+      g_seq = 1;
     }
-
   }
 });
 
@@ -124,8 +137,8 @@ function subscribeDeviceStatus() {
            }
          }
        },
-       userName:G_MQTT_USER,
-       password:G_MQTT_USER
+       userName:getStorage("emqUser"),
+       password:getStorage("emqPwd")
      });//连接服务器并注册连接成功处理事件
 
      app.mqttClientStatus = client;
@@ -154,8 +167,8 @@ function connectMqtt() {
 
    client.connect({
      onSuccess:onConnect,
-     userName:G_MQTT_USER,
-     password:G_MQTT_USER
+     userName:getStorage("emqUser"),
+     password:getStorage("emqPwd")
    });//连接服务器并注册连接成功处理事件
 
    app.mqttClient = client;
@@ -217,17 +230,24 @@ function onMessageArrived(message) {
     }
   }
   // var parsed = eval(script);
-  var rowsStr = addMessage(parsed, source,"received");
-  if (g_seq==1) {
-    $('#table_rows').append(rowsStr);
-  } else {
-    $('#table_rows').prepend(rowsStr);
-  }
+  addMessage(parsed, source,"received");
+  // if (g_seq==1) {
+  //   $('#table_rows').append(rowsStr);
+  // } else {
+  //   $('#table_rows').prepend(rowsStr);
+  // }
+
 }
 
 // hex发送
 function sendMessageHex() {
   var cmdHexStr = app.cmdParam;
+  if (cmdHexStr == "") {
+
+    layer.msg("不能发送空命令！", {icon:1,time:1000});
+    return;
+  }
+
   if (app.selectedCmdEncodeInfo.includeCrc==0) {
     cmdHexStr = cmdHexStr + " " + CRC.ToModbusCRC16(app.cmdParam);
   }
@@ -262,6 +282,13 @@ function sendMessage() {
 
       eval(cmdScript);
       var msgHexStr = encodeCmd(cmdParam);
+
+      if (msgHexStr == "") {
+
+        layer.msg("不能发送空命令！", {icon:1,time:1000});
+        return;
+      }
+
       if (app.selectedCmdEncodeInfo.includeCrc==0) {
         msgHexStr = msgHexStr + " " + CRC.ToModbusCRC16(msgHexStr);
       }
@@ -280,6 +307,7 @@ function sendMessage() {
 
 
 var g_seq = 1;
+var g_list_size = 500;
 function addMessage(parsed, source, type) {
 
   var item = {};
@@ -288,11 +316,14 @@ function addMessage(parsed, source, type) {
   item.type = type;
   item.parsedData =  parsed;
   item.sourceData = source;
+  item.image = [];
   app.messageList.push(item);
-  if (app.messageList.length > 500) {
-    app.messageList.splice(0, app.messageList.length-100);
+  if (app.messageList.length > g_list_size) {
+    app.messageList.splice(0, app.messageList.length-g_list_size);
   }
 
+  var currentIdx = app.messageList.length-1;
+  setTimeout("refreshImgData(" + currentIdx + ")", 1000);
 }
 
 function searchDevice() {
@@ -302,7 +333,7 @@ function searchDevice() {
     }
 
     var param = {"method":"realtime.device.search",
-                "auth":[localStorage.appId, localStorage.appToken]};
+                "auth":[getStorage("appId"), getStorage("appToken")]};
 
     ajaxPost(G_RPC_URL, param,
       function(response){
@@ -340,7 +371,7 @@ function searchDevice() {
           deviceSns[i] = deviceInfo[i].deviceSn;
         }
         var param = {"method":"realtime.device.online.query",
-                    "auth":[localStorage.appId, localStorage.appToken],
+                    "auth":[getStorage("appId"), getStorage("appToken")],
                     "data":{"deviceIds":deviceSns}};
 
         ajaxPost(G_RPC_URL, param,
@@ -444,4 +475,76 @@ function searchDevice() {
           return;
         }
       }
+  }
+
+  function isReveivedImg(msgItem) {
+
+    if (!msgItem) {
+      return false;
+    }
+
+    if (msgItem.type == "received" && msgItem.parsedData.indexOf("{")==0 ) {
+      var jsonObj = JSON.parse(msgItem.parsedData);
+      if (jsonObj.data.type == "img/jpg") {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function refreshImgData(currentIdx) {
+
+    console.log("currentIdx=" + currentIdx);
+    console.log("app.messageList.length=" + app.messageList.length);
+
+    if (currentIdx == app.messageList.length -1) {
+      settingImgData();
+      return;
+    }
+
+    if (currentIdx < app.messageList.length -1) {
+      var nextIdx = currentIdx + 1;
+      if (!isReveivedImg(app.messageList[nextIdx])) {
+        settingImgData();
+        return;
+      }
+    }
+
+  }
+
+  // show image
+  function settingImgData() {
+
+    var imgHexStr = "";
+    var messageList = app.messageList;
+    for(i in messageList) {
+      messageList[i].image = [];
+      var item = messageList[i];
+      if (isReveivedImg(item)) {
+          var sourceData = item.sourceData;
+          imgHexStr += sourceData;
+          if (i < messageList.length-1) {
+            continue;
+          }
+      }
+      if (imgHexStr.length > 0) {
+
+        var soi = imgHexStr.indexOf("FF D8");
+        var eoi = imgHexStr.lastIndexOf("FF D9");
+        if (soi >= 0 && eoi > 0 && eoi > soi) {
+          imgHexStr = imgHexStr.substring(soi, eoi + 5);
+          var objIdx = (i == messageList.length-1)?i:i-1;
+          messageList[objIdx].image = hexStringToBytes(imgHexStr);
+          messageList[objIdx].imgSrc = "data:image/jpeg;base64," + bytesToBase64(messageList[objIdx].image);
+        }
+
+      }
+
+      imgHexStr = "";
+
+    }
+
+     app.messageList = messageList;
+
   }

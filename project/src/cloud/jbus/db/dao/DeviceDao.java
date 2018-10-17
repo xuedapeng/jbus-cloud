@@ -58,6 +58,7 @@ public class DeviceDao extends BaseZDao {
 		if (StringUtils.isNotEmpty(filter)) {
 			queryString.append(" and (deviceSn like :filter or deviceName like :filter)");
 		}
+		queryString.append(" order by deviceName asc");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("userId", userId);

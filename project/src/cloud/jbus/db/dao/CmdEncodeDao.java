@@ -30,6 +30,7 @@ public class CmdEncodeDao extends BaseZDao {
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from CmdEncodeEntity");
 		queryString.append(" where sensorId=:sensorId");
+		queryString.append(" order by cmdNo asc");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("sensorId", sensorId);

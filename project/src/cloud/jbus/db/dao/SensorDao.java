@@ -31,6 +31,7 @@ public class SensorDao extends BaseZDao {
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from SensorEntity");
 		queryString.append(" where deviceId=:deviceId");
+		queryString.append(" order by sensorNo asc ");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("deviceId", deviceId);
