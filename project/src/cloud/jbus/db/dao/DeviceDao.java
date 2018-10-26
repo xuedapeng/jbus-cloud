@@ -32,6 +32,7 @@ public class DeviceDao extends BaseZDao {
 		queryString.append("from DeviceEntity");
 		queryString.append(" where ownerId=:userId");
 		queryString.append(" and status=1");
+		queryString.append(" order by id desc");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("userId", userId);

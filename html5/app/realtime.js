@@ -1,5 +1,9 @@
 
 
+window.onload = function() {
+
+}
+
 var app = new Vue({
   el: '#app',
   data: {
@@ -22,7 +26,7 @@ var app = new Vue({
     messageList:[],
     viewsource:false,
     showimg:false,
-    hexSend:false
+    hexSend:true,
 
   },
   methods:{
@@ -344,6 +348,17 @@ function searchDevice() {
         }
 
         var result = response.result;
+
+          var queryDeviceId = getQueryString("deviceId");
+          if (queryDeviceId) {
+            for(var i in result) {
+              if (result[i].deviceId == queryDeviceId) {
+                result = [result[i]];
+                break;
+              }
+            }
+          }
+
         for(i in result) {
           result[i].status = "";
         }
@@ -400,6 +415,7 @@ function searchDevice() {
         return;
       }
       app.myDeviceInfo = deviceInfo;
+
       for(i in app.myDeviceInfo) {
         // app.myDeviceInfo[i].dev_deviceId = "dev_" + app.myDeviceInfo[i].deviceId;
         if (i==0) {

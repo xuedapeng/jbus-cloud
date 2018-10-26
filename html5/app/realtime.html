@@ -53,7 +53,7 @@
       </div>
     </td>
   </tr>
-  <tr>
+  <tr style="display:none">
     <td colspan="2">
       <div id="mySensor" >
         <span class="label label-default radius">传感器({{mySensorInfo.length}})</span>
@@ -66,7 +66,7 @@
       </div>
     </td>
   </tr>
-  <tr>
+  <tr style="display:none">
     <td colspan="2">
       <div id="myCommand" >
         <span class="label label-default radius">控制指令({{myCmdEncodeInfo.length}})</span>
@@ -81,7 +81,7 @@
       </div>
     </td>
   </tr>
-  <tr>
+  <tr style="display:none">
     <td colspan="2">
       <div id="paramPtn" >
         <span class="label label-default radius">参数信息</span>
@@ -128,8 +128,8 @@
                       <input type="checkbox" id="ck-viewsource" v-model="viewsource">
                       <label for="ck-viewsource">view source</label>
                       &nbsp;
-                      <input type="checkbox" id="ck-showimg" v-model="showimg" v-on:change="showImg()">
-                      <label for="ck-showimg">show image</label>
+                      <!--input type="checkbox" id="ck-showimg" v-model="showimg" v-on:change="showImg()">
+                      <label for="ck-showimg">show image</label -->
                       &nbsp;
                       <span>
                         <a @click="clearList()" href="#" >clear</a>
@@ -181,6 +181,6 @@
 <script type="text/javascript" src="common/constant.js?v=5"></script>
 <script type="text/javascript" src="common/common.js?v=13"></script>
 <script type="text/javascript" src="common/crc.js?v=6"></script>
-<script type="text/javascript" src="realtime.js?v=4 "></script>
+<script type="text/javascript" src="realtime.js?v=14 "></script>
 </body>
 </html>

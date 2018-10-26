@@ -3,7 +3,7 @@ package cloud.jbus.logic.device.param;
 import cloud.jbus.logic.BaseZLogicParam;
 import cloud.jbus.logic.share.annotation.Privilege;
 
-@Privilege("config")
+@Privilege("owner")
 public class DeviceUpdateLogicParam extends BaseZLogicParam implements IPrivilegedParam {
 
 	public DeviceUpdateLogicParam() {
@@ -16,6 +16,7 @@ public class DeviceUpdateLogicParam extends BaseZLogicParam implements IPrivileg
 	private String latitude;
 	private Integer crcMode;
 	private String memo;
+	private String deviceSecretKey;
 
 	public String getDeviceId() {
 		return deviceId;
@@ -53,7 +54,10 @@ public class DeviceUpdateLogicParam extends BaseZLogicParam implements IPrivileg
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
-	
-	
-	
+	public String getDeviceSecretKey() {
+		return deviceSecretKey;
+	}
+	public void setDeviceSecretKey(String deviceSecretKey) {
+		this.deviceSecretKey = deviceSecretKey;
+	}
 }

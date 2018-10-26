@@ -16,13 +16,20 @@
 <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
 <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
 
+<style>
+  td {
+    padding:5px 5px 5px 0px
+  }
+</style>
+
 <title>Jbus cloud console</title>
 <meta name="keywords" content="Jbus 云透传">
 <meta name="description" content="Jbus 云透传">
 </head>
 <body>
+<div id="app">
 <header class="navbar-wrapper">
-	<div id="app" class="navbar navbar-fixed-top">
+	<div class="navbar navbar-fixed-top">
 		<div class="container-fluid cl">
 
 			<a href="index.html" class="logo navbar-logo f-l mr-10 hidden-xs" >
@@ -36,8 +43,8 @@
 				<li class="dropDown dropDown_hover">
 						<a href="#" class="dropDown_A">{{account}} <i class="Hui-iconfont">&#xe6d5;</i></a>
 						<ul class="dropDown-menu menu radius box-shadow">
-							<li><a @click="logout">注销</a></li>
-							<li><a @click="">账户</a></li>
+							<li><a @click="logout">退出</a></li>
+							<li><a @click="updatePwd">帐号</a></li>
 					</ul>
 				</li>
 
@@ -107,8 +114,8 @@
 		<div class="Hui-tabNav-wp">
 			<ul id="min_title_list" class="acrossTab cl">
 				<li class="active">
-					<span title="Dashboard" data-href="app/dashboard.html">
-						首页
+					<span title="Dashboard" data-href="app/deviceList.html">
+						设备管理
 						<!-- a href=""><img style="width:14px;height:14px;margin-bottom:2px" src="static/img/reload_48.ico"</a -->
 					</span>
 					<em></em></li>
@@ -119,7 +126,7 @@
 	<div id="iframe_box" class="Hui-article">
 		<div class="show_iframe">
 			<div style="display:none" class="loading"></div>
-			<iframe scrolling="yes" frameborder="0" src="app/dashboard.html"></iframe>
+			<iframe scrolling="yes" frameborder="0" src="app/deviceList.html"></iframe>
 	</div>
 </div>
 </section>
@@ -131,43 +138,90 @@
 </ul>
 </div>
 
+<div id="modal-updatePwd" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header" style="height:20px;margin-top:-15px;">
+				<h3 class="modal-title">帐号信息</h3>
+				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				◾️ 安全令牌
+
+				<table style="border-top:0px solid #ccc">
+					<tr>
+						<td width="80px">
+							secretId：
+						</td>
+						<td>
+			        {{secretId}}
+						</td>
+						<td>
+						</td>
+					</tr>
+					<tr>
+						<td width="80px">
+							secretKey：
+						</td>
+						<td width="250px">
+				      {{secretKey}}
+						</td>
+						<td style="align:left">
+							<a v-on:click="showSecretKey">{{secretKeyShow}}</a>
+							<a v-on:click="updateSecretKey">{{secretKeyUpdate}}</a>
+						</td>
+					</tr>
+				</table>
+
+				<br/>
+				◾️ 修改密码:
+				<table style="border-top:0px solid #ccc">
+					<tr>
+						<td width="50px">
+							旧密码：
+						</td>
+						<td>
+			        <input v-model="oldPassword"  name="" type="password" placeholder="" class="input-text  size-M" style="width:150px" />
+						</td>
+						<td width="50px">
+							新密码：
+						</td>
+						<td>
+							<input v-model="newPassword" name="" type="password" placeholder="" class="input-text  size-M" style="width:150px" />
+						</td>
+						<td>
+							<button v-on:click="doUpdatePwd" class="btn btn-primary size-M right" >
+								确定
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="5">
+                <div style="color:red;font-size:1.2em">
+                  {{errorInfo}}
+                </div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+</div> <!-- vue app end-->
+
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
 <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
 <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
 <script type="text/javascript" src="lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
 
-<script type="text/javascript" src="app/common/constant.js?v=4"></script>
-<script type="text/javascript" src="app/common/common.js?v=2"></script>
-<script type="text/javascript">
-$(function(){
-		var appId = getStorage("appId");
-		var appToken = getStorage("appToken");
 
-		if (!appId || !appToken) {
-			//if (confirm("登录信息已失效，是否转到登录页面？")) {
-				moveToLogin();
-			//}
-		}
-});
-
-
-var app = new Vue({
-  el: '#app',
-  data: {
-		account:getStorage("account"),
-		nickName:getStorage("nickName"),
-		title:G_LABEL_APP_TITLE + " " + G_LABEL_APP_VER,
-	},
-	methods:{
-		logout:function(){
-			clearStorage();
-			moveToLogin();
-		}
-	}
-});
-
-</script>
+<script type="text/javascript" src="./app/common/constant.js?v=8"></script>
+<script type="text/javascript" src="./app/common/common.js?v=6"></script>
+<script type="text/javascript" src="./index.js?v=13"></script>
 
 </body>
 </html>

@@ -3,11 +3,15 @@ package cloud.jbus.logic.device;
 import javax.persistence.EntityManager;
 
 import cloud.jbus.common.helper.NumericHelper;
+import cloud.jbus.common.utils.Md5SaltTool;
 import cloud.jbus.db.bean.DeviceEntity;
+import cloud.jbus.db.bean.UserEntity;
 import cloud.jbus.db.dao.DeviceDao;
+import cloud.jbus.db.dao.UserDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.share.privilege.DevicePrivilege;
+import cloud.jbus.logic.device.param.DeviceStopLogicParam;
 import cloud.jbus.logic.device.param.DeviceUpdateLogicParam;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
@@ -47,6 +51,11 @@ public class DeviceUpdateLogic extends BaseZLogic {
 		if(myParam.getMemo() != null) {
 			device.setMemo(myParam.getMemo());
 		}
+
+		if(myParam.getDeviceSecretKey() != null) {
+			device.setSecretKey(myParam.getDeviceSecretKey());
+		}
+		
 		
 		dao.save(device);
 		
@@ -77,7 +86,9 @@ public class DeviceUpdateLogic extends BaseZLogic {
 			return false;
 		}
 		
+		
 		return true;
 	}
+
 	
 }

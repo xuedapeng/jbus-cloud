@@ -16,6 +16,12 @@
 <link rel="stylesheet" type="text/css" href="../static/h-ui.admin/skin/default/skin.css" id="skin" />
 <link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/style.css" />
 
+<style>
+  td {
+    padding:5px 5px 5px 0px
+  }
+</style>
+
 <title>会话</title>
 </head>
 <body>
@@ -23,15 +29,16 @@
 <div id="app" class="page-container">
 
     <div class="mt-20">
+
       <table class="table table-border  table-bg table-hover table-sort table-responsive">
         <thead>
           <tr class="text-c">
             <th width="30px">No.</th>
-            <th>设备编号</th>
-            <th>设备名称</th>
-            <th>校验模式</th>
+            <th width="100px">设备编号</th>
+            <th width="150px">设备名称</th>
             <th>备注</th>
-            <th>操作</th>
+            <th width="50px">操作
+            </th>
           </tr>
         </thead>
         <tbody id="table_rows">
@@ -40,29 +47,164 @@
 
             <tr class="text-c">
             <td>{{item.seq}}</td>
-            <td>{{item.deviceSn}} </td>
+            <td><a v-on:click="showSecretKey(item.deviceSn, item.secretKey)" title="查看通讯密码">{{item.deviceSn}} </a></td>
             <td>{{item.deviceName}}</td>
-            <td>{{item.crcMode}}</td>
             <td>{{item.memo}}</td>
-            <td></td>
+            <td>
+              <a v-on:click="openEditDevice(item.deviceId)" title="修改"><i class="Hui-iconfont" style="font-size:1.5em">&#xe60c;</i></a>
+							<a :id="item.deviceId" :data-href="'app/realtime.html?deviceId='+item.deviceId" :data-title="'实时控制（' + item.deviceSn + '）'" :href="'javascript:Hui_admin_tab(document.getElementById(' + item.deviceId + '))'" title="控制">
+								<i class="Hui-iconfont" style="font-size:1.5em">&#xe603;</i>
+							</a>
+              <!-- <a :id="item.deviceId" :data-href="'app/realtime.html?deviceId='+item.deviceId" data-title="实时控制" :href="'javascript:alert(' + item.deviceId + ');'">
+                <i class="Hui-iconfont" style="font-size:1.5em">&#xe603;</i>
+              </a> -->
+            </td>
             </tr>
 
           </template>
         </tbody>
       </table>
+      <table>
+        <tr>
+          <td align="right" >
+            <input class="btn btn-link radius" type="button" onclick="app_add_device.openAddDevice()" value="新增">
+          </td>
+        </tr>
+      </table>
     </div>
 
+    <!-- modal-showSecretKey start -->
+    <div id="modal-showSecretKey" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    	<div class="modal-dialog">
+    		<div class="modal-content radius">
+    			<div class="modal-body">
+    				<table style="border-top:0px solid #ccc">
+    					<tr>
+    						<td width="80px">
+    							设备编号：
+    						</td>
+    						<td>
+    			        {{deviceSnView}}
+    						</td>
+    					</tr>
+    					<tr>
+    						<td >
+    							通讯密码：
+    						</td>
+    						<td>
+    				      {{secretKeyView}}
+    						</td>
+    					</tr>
+    				</table>
 
+    			</div>
+    			<div class="modal-footer">
+    				<button class="btn" data-dismiss="modal" aria-hidden="true" v-on:click="closeSecretKey">关闭</button>
+    			</div>
+    		</div>
+    	</div>
+    </div><!-- modal-showSecretKey end -->
+</div> <!-- app end -->
 
-</div>
+<!-- modal-addDevice start -->
+<div id="modal-addDevice" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header" style="height:20px;margin-top:-15px;">
+  				<h3 class="modal-title">新增设备</h3>
+  				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				<table style="border-top:0px solid #ccc">
+					<tr>
+						<td width="50px" valign="top">
+							名称：
+						</td>
+						<td>
+							<input v-model="deviceName" name="" type="text" placeholder="" class="input-text  size-M" style="width:250px" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							备注：
+						</td>
+						<td>
+							<textarea v-model="memo" name="" type="text" placeholder="" class="input-text  size-M" style="width:450px;height:50px;" ></textarea>
+						</td>
+					</tr>
+				</table>
+
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="doAddDevice()" >确定</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true" >取消</button>
+			</div>
+		</div>
+	</div>
+</div><!-- modal-addDevice end -->
+
+<!-- modal-editDevice start -->
+<div id="modal-editDevice" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content radius">
+			<div class="modal-header" style="height:20px;margin-top:-15px;">
+  				<h3 class="modal-title">修改设备</h3>
+  				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+			</div>
+			<div class="modal-body">
+				<table style="border-top:0px solid #ccc">
+					<tr>
+						<td width="100px" valign="top">
+							设备名称：
+						</td>
+						<td>
+							<input v-model="deviceName" name="" type="text" placeholder="" class="input-text  size-M" style="width:250px" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							备注：
+						</td>
+						<td>
+							<textarea v-model="memo" name="" type="text" placeholder="" class="input-text  size-M" style="width:450px;height:50px;" ></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							设备编号：
+						</td>
+						<td>
+							{{deviceSn}}
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							通讯密码：
+						</td>
+						<td>
+							<input v-model="secretKey" name="" type="password" placeholder="" class="input-text  size-M" style="width:250px" />
+						</td>
+					</tr>
+				</table>
+
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="doUpdateDevice()" >确定</button>
+  			<button class="btn btn-primary" onclick="doDeleteDevice()" >删除</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true" >取消</button>
+			</div>
+		</div>
+	</div>
+</div><!-- modal-editDevice end -->
 
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
 <script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
 
 
 <script type="text/javascript" src="common/constant.js?v=5"></script>
-<script type="text/javascript" src="common/common.js?v=6"></script>
-<script type="text/javascript" src="deviceList.js?v=8"></script>
+<script type="text/javascript" src="common/common.js?v=8"></script>
+<script type="text/javascript" src="deviceList.js?v=26"></script>
 </body>
 </html>

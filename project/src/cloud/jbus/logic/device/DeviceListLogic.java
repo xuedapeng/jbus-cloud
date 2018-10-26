@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
-
+import cloud.jbus.common.helper.HexHelper;
 import cloud.jbus.common.helper.NumericHelper;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.dao.DeviceDao;
@@ -45,6 +45,7 @@ public class DeviceListLogic extends BaseZLogic {
 			map.put("latitude", E.getLatitude());
 			map.put("crcMode", E.getCrcMode());
 			map.put("memo", E.getMemo());
+			map.put("secretKey", HexHelper.bytesToHexStringNoBlank(E.getSecretKey().getBytes()));
 			resultList.add(map);
 		});
 		
@@ -65,7 +66,7 @@ public class DeviceListLogic extends BaseZLogic {
 			myParam.setPage("1");
 		}
 		if (myParam.getPageSize() == null) {
-			myParam.setPageSize("10");
+			myParam.setPageSize("20");
 		}
 		
 		if (!NumericHelper.isInteger(myParam.getPage())

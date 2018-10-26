@@ -24,7 +24,7 @@ public class DeviceAddLogic extends BaseZLogic {
 		device.setDeviceSn(GuidHelper.genSeq8());
 		device.setSecretKey(GuidHelper.genUUID().substring(0, 10));
 		device.setDeviceName(myParam.getDeviceName());
-		device.setOwnerId(getLoginUserId(myParam.getUserId()));
+		device.setOwnerId(getLoginUserId(myParam.getSecretId()));
 		if(myParam.getCrcMode() != null) {
 			device.setCrcMode(myParam.getCrcMode());
 		}
@@ -39,8 +39,7 @@ public class DeviceAddLogic extends BaseZLogic {
 		res.add("status", 1)
 			.add("msg", "device.add ok.")
 			.add("deviceId", device.getId())
-			.add("deviceSn", device.getDeviceSn())
-			.add("secretKey", device.getSecretKey());
+			.add("deviceSn", device.getDeviceSn());
 		return true;
 	}
 
@@ -55,6 +54,15 @@ public class DeviceAddLogic extends BaseZLogic {
 			
 			res.add("status", -3)
 				.add("msg", "必须字段未设置.");
+			
+			return false;
+		}
+		
+		Long total = new DeviceDao(em).findTotal(this.getLoginUserId(myParam.getSecretId()));
+		if (total >= StatusConst.MAX_DEVICE_COUNT) {
+
+			res.add("status", -11)
+				.add("msg", "已达设备数上限。");
 			
 			return false;
 		}
