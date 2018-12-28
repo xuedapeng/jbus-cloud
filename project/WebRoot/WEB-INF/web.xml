@@ -17,6 +17,12 @@
     <servlet-name>JAX-RS Servlet</servlet-name>
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
+  
+	<servlet>
+		<servlet-name>initStart</servlet-name>
+		<servlet-class>cloud.jbus.service.ServiceServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
   <filter>
     <filter-name>crossDomainFilter</filter-name>
     <filter-class>cloud.jbus.action.MyCrossDomainFilter</filter-class>

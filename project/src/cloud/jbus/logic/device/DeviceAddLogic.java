@@ -8,6 +8,7 @@ import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.dao.DeviceDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
+import cloud.jbus.service.EventService;
 import cloud.jbus.logic.device.param.DeviceAddLogicParam;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
@@ -35,6 +36,9 @@ public class DeviceAddLogic extends BaseZLogic {
 		
 		DeviceDao dao = new DeviceDao(em);
 		dao.save(device);
+		
+		// 订阅在线状态
+		EventService.subscribeEvent(device.getDeviceSn());
 		
 		res.add("status", 1)
 			.add("msg", "device.add ok.")

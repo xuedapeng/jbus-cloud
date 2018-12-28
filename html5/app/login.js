@@ -2,7 +2,7 @@
 var app = new Vue({
   el: '#app',
   data: {
-    account: getQueryString('account'),
+    account: '',
     password: '',
     message:'',
     title: G_LABEL_APP_TITLE,
@@ -23,11 +23,11 @@ var app = new Vue({
 
 function _login(account, password) {
   if (account == "") {
-    app.account_hint = "请输入账号";
+    app.message = "请输入账号";
     return;
   }
   if (password == "") {
-    app.password_hint = "请输入密码";
+    app.message = "请输入密码";
     return;
   }
 

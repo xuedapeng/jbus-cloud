@@ -10,6 +10,9 @@ public class GuidHelper {
 		return java.util.UUID.randomUUID().toString().toUpperCase().replaceAll("-", "");
 	}
 	
+	public static String genConfirmCode() {
+		return String.valueOf((int)((Math.random()*9+1)*100000));
+	}
 	
 	// 每秒产生一个,8位guid
 	public synchronized static String genSeq8() {

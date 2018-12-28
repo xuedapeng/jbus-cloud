@@ -30,12 +30,16 @@ public class DeviceDao extends BaseZDao {
 
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from DeviceEntity");
-		queryString.append(" where ownerId=:userId");
-		queryString.append(" and status=1");
+		queryString.append(" where status=1");
+		if (userId != null) {
+			queryString.append(" and ownerId=:userId");
+		}
 		queryString.append(" order by id desc");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
-		query.setParameter("userId", userId);
+		if (userId != null) {
+			query.setParameter("userId", userId);
+		}
 		query.setFirstResult((page-1)*pageSize);
 		query.setMaxResults(pageSize);
 		
@@ -99,5 +103,27 @@ public class DeviceDao extends BaseZDao {
 		return Long.valueOf(0);
 
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public DeviceEntity findByDeviceSn(String deviceSn) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("from DeviceEntity");
+		queryString.append(" where deviceSn =:deviceSn");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("deviceSn", deviceSn);
+		
+		List<DeviceEntity> list = (List<DeviceEntity>)query.getResultList();
+		
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		
+		return null;
+
+	}
+	
 	
 }

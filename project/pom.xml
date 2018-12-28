@@ -56,6 +56,14 @@
 	    <version>2.2.3</version>
 	</dependency>
   <!-- local repos end-->
+  
+  
+  <dependency>
+  	<groupId>org.eclipse.paho</groupId>
+  	<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+  	<version>1.1.1</version>
+  </dependency>
+  
 <!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
 
 	<dependency>

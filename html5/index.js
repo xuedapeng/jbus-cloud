@@ -17,6 +17,7 @@ var app = new Vue({
 		account:getStorage("account"),
 		nickName:getStorage("nickName"),
     secretId:getStorage("appId"),
+    mqttUser:getStorage("emqUser"),
     secretKey:'******',
     secretKeyShow:'显示',
     secretKeyUpdate:'',

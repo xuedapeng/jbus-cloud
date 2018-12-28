@@ -39,7 +39,7 @@
 
 		<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
 			<ul class="cl">
-				<li>{{nickName}}</li>
+				<!-- <li>{{nickName}}</li> -->
 				<li class="dropDown dropDown_hover">
 						<a href="#" class="dropDown_A">{{account}} <i class="Hui-iconfont">&#xe6d5;</i></a>
 						<ul class="dropDown-menu menu radius box-shadow">
@@ -95,10 +95,10 @@
 			</ul>
 		</dd>
 	</dl>
-	<dl id="menu-monitor" style="display:none">
+	<dl id="menu-monitor" style="display:block">
 		<dt>
 			<i class="Hui-iconfont">&#xe725;</i>
-			<a data-href="app/history.html" data-title="状态监控" href="javascript:void(0)">状态监控</a>
+			<a data-href="app/event.html" data-title="状态监控" href="javascript:void(0)">状态监控</a>
 		</dt>
 	</dl>
 </div>
@@ -147,10 +147,9 @@
 			</div>
 			<div class="modal-body">
 				◾️ 安全令牌
-
 				<table style="border-top:0px solid #ccc">
 					<tr>
-						<td width="80px">
+						<td width="100px">
 							secretId：
 						</td>
 						<td>
@@ -160,7 +159,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td width="80px">
+						<td>
 							secretKey：
 						</td>
 						<td width="250px">
@@ -171,9 +170,30 @@
 							<a v-on:click="updateSecretKey">{{secretKeyUpdate}}</a>
 						</td>
 					</tr>
+					<tr>
+						<td>
+							mqttUser：
+						</td>
+						<td>
+			        {{mqttUser}}
+						</td>
+						<td>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							mqttPassword：
+						</td>
+						<td>
+			        (与secretKey相同)
+						</td>
+						<td>
+						</td>
+					</tr>
 				</table>
 
-				<br/>
+
+					<br/>
 				◾️ 修改密码:
 				<table style="border-top:0px solid #ccc">
 					<tr>
@@ -221,7 +241,17 @@
 
 <script type="text/javascript" src="./app/common/constant.js?v=8"></script>
 <script type="text/javascript" src="./app/common/common.js?v=6"></script>
-<script type="text/javascript" src="./index.js?v=13"></script>
+<script type="text/javascript" src="./index.js?v=14"></script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ff652719dab345e4c2e07d237aee33e3";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 
 </body>
 </html>

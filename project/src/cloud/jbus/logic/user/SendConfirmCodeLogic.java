@@ -48,7 +48,7 @@ public class SendConfirmCodeLogic extends BaseZLogic {
 		}
 
 		Date now = new Date();
-		userReg.setConfirmCode(GuidHelper.genUUID().substring(0, 6));
+		userReg.setConfirmCode(GuidHelper.genConfirmCode());
 		userReg.setCodeCreateTime(now);	
 		userReg.setExpireTime(new Date(now.getTime()+_validPeriod));
 		userReg.setRetryTimes(0);

@@ -1,0 +1,466 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>Moqbus 开发文档</title>
+
+</head>
+<body>
+<h1>Moqbus 开发文档</h1>
+
+<h2>一、快速体验</h2>
+
+<ol>
+<li><p>注册帐号</p>
+
+<ul>
+<li><p>访问moqbus cloud平台，<a href="http://cloud.moqbus.com/app/reg.html">注册moqbus帐号</a>。</p></li>
+<li><p>注册成功后，使用用户名／密码 <a href="http://cloud.moqbus.com/app/login.html">登录moqbus平台</a></p></li>
+</ul>
+</li>
+<li><p>添加设备</p>
+
+<ul>
+<li>在“设备管理”中，点击“新增”，添加设备；</li>
+<li>设备添加成功后，在设备列表页面，可以看到刚才添加的设备；</li>
+<li>在列表中，点击“设备编号”链接，可以查看改设备的通讯密码。</li>
+</ul>
+</li>
+<li><p>使用模拟器</p>
+
+<ul>
+<li><p>下载设备模拟器 <a href="http://moqbus.com/download/devmock.zip">devmock.zip</a>；</p></li>
+<li><p>解压缩zip, 打开命令行，进入解压后的目录。</p>
+
+<pre><code>  cd [下载目录]/devmock
+</code></pre></li>
+<li><p>运行模拟器</p>
+
+<pre><code>  java -jar devmock.jar console d tc.moqbus.com 2883 [设备编号] [通讯密码]
+
+  INPUT DATA TO SERVER&gt;
+</code></pre></li>
+</ul>
+</li>
+<li><p>实时控制</p>
+
+<ul>
+<li><p>在moqbus cloud平台中打开“实时控制”页面，可以看到刚才添加的设备已经是在线状态（绿点表示在线）， 点击“连接”按钮，与设备建立连接；</p></li>
+<li><p>在“命令参数”输入框中输入以下命令，并按下“发送”按钮：</p>
+
+<pre><code>  01 03 00 00 00 02 C4 0B
+</code></pre></li>
+<li><p>查看模拟器窗口，可以看到设备已经收到了指令：</p>
+
+<pre><code>  [2018-11-01 10:18:51.051] recieve: F4****6E, 01 03 00 00 00 02 c4 0b 
+
+  INPUT DATA TO SERVER&gt;
+</code></pre></li>
+<li><p>在模拟器窗口中，设备应答数据（模拟）：</p>
+
+<pre><code>  INPUT DATA TO SERVER&gt;01 03 04 02 92 ff 9b 5a 3d
+  [2018-11-01 10:46:31.031] send data:01 03 04 02 92 ff 9b 5a 3d 
+</code></pre></li>
+<li><p>查看“实时控制”页面，可以看到设备的应答数据（No2）：</p>
+
+<pre><code>  No. Time                Type        Command/Data     
+  2   11-01 10:46:31.309  received    01 03 04 02 92 FF 9B 5A 3D
+  1   11-01 10:18:51.373  sent        01 03 00 00 00 02 C4 0B
+</code></pre></li>
+</ul>
+</li>
+</ol>
+
+
+<h2>二、设备接入</h2>
+
+<ol>
+<li><p>选择网关设备</p>
+
+<p> 支持GPRS和注册包的DTU设备，都可以接入moqbus。</p>
+
+<p> 推荐：</p>
+
+<ul>
+<li> “有人” <a href="https://detail.tmall.com/item.htm?id=525239600301">USR-GPRS232-730</a></li>
+<li> “塔石” <a href="https://item.taobao.com/item.htm?id=577204480991">TAS-GPRS-350</a></li>
+</ul>
+</li>
+<li><p>配置网关</p>
+
+<ul>
+<li><p>TCP服务器设置：</p>
+
+<pre><code>  host: tc.moqbus.com
+  port: 2883
+</code></pre></li>
+<li><p>注册包设置：</p>
+
+<p>  发送方式：连接时发送注册包；</p>
+
+<p>  格式：</p>
+
+<pre><code>      REG:[设备编号],[通讯密码];
+</code></pre>
+
+<p>  例：</p>
+
+<pre><code>      REG:F4D5B96E,56F6D85F52;
+</code></pre></li>
+</ul>
+</li>
+<li><p>收发测试</p>
+
+<ul>
+<li><p>网关设备通电连网后，moqbus平台的“实时控制”页面，如果看到设备名称后面显示绿点，说明网关已成功接入moqbus平台。</p></li>
+<li><p>点击“连接”按钮，在“命令参数”输入框中输入指令，就可以向网关发送数据。</p></li>
+<li><p>将网关的RS232/485端口连接到PC的串口，可以通过串口调试助手等工具，查看指令数据并向平台发送应答数据。</p></li>
+<li><p>调试完成后，就可以将RS232/485端口连接到传感器，参考传感器的指令说明向传感器发送指令，并接收传感器的应答。</p></li>
+</ul>
+</li>
+</ol>
+
+
+<h2>三、应用开发</h2>
+
+<ol>
+<li><p>查看开发密钥</p>
+
+<p> 登录moqbus平台后，点击右上角下拉菜单的“帐号”，查看令牌信息：</p>
+
+<ul>
+<li>secretId， secretKey： 用于JSON-RPC调用</li>
+<li>mqttUser， mqttPassword：用于mqtt服务器连接</li>
+</ul>
+</li>
+<li><p>获取设备列表</p>
+
+<p> url：</p>
+
+<pre><code>     http://cloud.moqbus.com/open/api/
+</code></pre>
+
+<p> param：</p>
+
+<pre><code>     {
+         "method":"device.list",
+         "auth":["#secretId#", "#secretKey#"]
+     }
+</code></pre>
+
+<p> 以上#secretId#替换为你自己的secretId, 其它同样。</p></li>
+<li><p>获取设备在线状态</p>
+
+<p> url：</p>
+
+<pre><code>     http://cloud.moqbus.com/open/api/
+</code></pre>
+
+<p> param：</p>
+
+<pre><code>     {
+         "method":"realtime.device.online.query",
+         "auth":[#secretId#, #secretKey#],
+         "data":{
+                 "deviceIds":["#设备编号1#", "#设备编号2#"]
+                }
+     }
+</code></pre></li>
+<li><p>连接mqtt</p>
+
+<ul>
+<li><p>js：</p>
+
+<p>  首先导入paho-mqtt js客户端：</p>
+
+<pre><code>  &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"&gt;&lt;script&gt;
+</code></pre>
+
+<p>  js代码：</p>
+
+<pre><code>     // 创建对象
+     var mqttClient = new Paho.MQTT.Client("mqtt.moqbus.com", 8083);
+
+     // 收到消息时的回调函数
+     mqttClient.onMessageArrived = function(message){
+         console.log(message);
+     };
+
+     // 连接到服务器
+     mqttClient.connect({
+       onSuccess:function(){
+           console.log("连接成功");
+       },
+       userName:#mqttUser#,
+       password:#mqttPassword#
+     });
+</code></pre></li>
+<li><p>java：</p>
+
+<p>  在maven工程中导入paho mqtt项目：</p>
+
+<pre><code>   &lt;dependency&gt;
+     &lt;groupId&gt;org.eclipse.paho&lt;/groupId&gt;
+     &lt;artifactId&gt;org.eclipse.paho.client.mqttv3&lt;/artifactId&gt;
+     &lt;version&gt;1.1.1&lt;/version&gt;
+   &lt;/dependency&gt;           
+</code></pre>
+
+<p> java代码：</p>
+
+<pre><code> MemoryPersistence persistence = new MemoryPersistence(); 
+ MqttClient mqttClient = new MqttClient(_mqttBroker, GuidHelper.genUUID(), persistence);  
+ mqttClient.setCallback(new MqttCallback(){
+
+     @Override
+     public void connectionLost(Throwable cause) {                           
+     }
+
+     @Override
+     public void deliveryComplete(IMqttDeliveryToken token) {                
+     }
+
+     @Override
+     public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+         // 处理接收到的数据
+
+     }
+
+ });  
+
+ MqttConnectOptions options = new MqttConnectOptions(); 
+ options.setUserName(#mqttUser#);  
+ options.setPassword(#mqttPassword#.toCharArray());  
+
+ mqttClient.connect(options);  
+</code></pre></li>
+</ul>
+</li>
+<li><p>订阅设备状态</p>
+
+<ul>
+<li><p> js</p>
+
+<pre><code>var topic= "TC/STS/#设备编号#";
+mqttClient.subscribe(topic);
+</code></pre></li>
+<li><p> java</p>
+
+<p>   String topic = "TC/STS/#设备编号#";
+   mqttClient.subscribe(topic);</p></li>
+</ul>
+
+
+<p>   设备在线状态改变时，mqttClient会接受到如下消息：</p>
+
+<pre><code>   {
+       "onlineCount":"0",
+       "tcpClient":"60.***.19.***:58524",
+       "time":"2018-11-01 14:34:50",                                    
+       "sessionId":"3df087****394ecf900e7ac4fcf0511e",
+       "event":"off",
+       "deviceSn":"F4****6E"
+   }
+</code></pre></li>
+<li><p>接收设备上报数据</p>
+
+<ul>
+<li><p> js</p>
+
+<pre><code>// 收到消息时的回调函数
+mqttClient.onMessageArrived = function(message){
+   // 在此处理设备上报的数据，如更新画面图表的数据源等
+};
+</code></pre></li>
+<li><p> java</p>
+
+<pre><code> @Override
+ public void messageArrived(String topic, MqttMessage message) throws Exception {
+      // 在此处理设备上报的数据，如保存到数据库等
+  } 
+</code></pre></li>
+</ul>
+</li>
+<li><p>向设备发送指令</p>
+
+<ul>
+<li><p>js</p>
+
+<pre><code>  var message = new Paho.MQTT.Message([0x01,0x03,0x00,0x00,0x00,0x02,0xc4,0x0b]);
+  message.destinationName = "TC/CMD/#设备编号#";
+  mqttClient.send(message);
+</code></pre></li>
+<li><p>java</p>
+
+<pre><code>  String topic = "TC/CMD/#设备编号#";
+  byte[] data = [0x01,0x03,0x00,0x00,0x00,0x02,0xc4,0x0b];
+
+  MqttMessage mm = new MqttMessage(data);
+  mqttClient.publish(topic, mm);
+</code></pre></li>
+</ul>
+</li>
+</ol>
+
+
+<h2>And more?</h2>
+
+<ul>
+<li>开发相关问题，可加入QQ群交流：941036927</li>
+</ul>
+
+
+<p> <script src="qs.js"></script></p>
+</body>
+</html>

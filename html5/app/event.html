@@ -1,0 +1,87 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<script src="../static/js/vue.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="../lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/style.css" />
+
+<style>
+  td {
+    padding:5px 5px 5px 0px
+  }
+</style>
+
+<title>事件</title>
+</head>
+<body>
+
+<div id="app" class="page-container">
+
+    <table>
+      <tr>
+        <td width="100px">
+          <input class="input-text radius  size-L " style="width:200px" placeholder="设备编号或名称" v-model="deviceKey" />
+        </td>
+        <td width="150px" valign="bottom">
+            <input type="checkbox" id="ck-onlyLast" class="size-L" v-model="onlyLast" style=""/>
+            <label for="ck-onlyLast">只显示最新状态</label>
+        </td>
+        <td valign="left">
+          <button class="btn btn-success-outline radius size-L " v-on:click="query">查询</button>
+        </td>
+      </tr>
+    </table>
+    <div class="mt-20">
+
+      <table class="table table-border  table-bg table-hover table-sort table-responsive">
+        <thead>
+          <tr class="text-c">
+            <th width="30px">No.</th>
+            <th width="100px">设备编号</th>
+            <th width="150px">设备名称</th>
+            <th width="150px">事件</th>
+            <th width="150px">时间</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody id="table_rows">
+
+          <template v-for="item in eventList">
+
+            <tr class="text-c">
+            <td>{{item.seq}}</td>
+            <td><a v-on:click="showAll(item.deviceSn)" title="查看历史状态">{{item.deviceSn}}</a></td>
+            <td>{{item.deviceName}}</td>
+            <td>{{item.event}}</td>
+            <td>{{item.time}}</td>
+            <td>{{item.memo}}</td>
+            </tr>
+
+          </template>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+
+
+<script type="text/javascript" src="common/constant.js?v=6"></script>
+<script type="text/javascript" src="common/common.js?v=8"></script>
+<script type="text/javascript" src="event.js?v=6"></script>
+</body>
+</html>

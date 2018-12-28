@@ -1,6 +1,7 @@
 package cloud.jbus.logic.realtime;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Collections;
 
@@ -30,16 +31,8 @@ public class GetOnlineInfoOfDevicesLogic extends BaseZLogic {
 	protected boolean execute(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 		
 		GetOnlineInfoOfDevicesLogicParam myParam = (GetOnlineInfoOfDevicesLogicParam)logicParam;
-			
-		String response = HttpHelper.doPost(
-				URL, 
-				JsonBuilder.build()
-					.add("method", "getOnlineInfoOfDevices")
-					.add("auth", ImmutableMap.of("appId", APPID, "appToken", APPTOKEN))
-					.add("data", ImmutableMap.of("deviceIds", myParam.getDeviceIds())
-					).toString());
 		
-		Map<String, Object> map = JsonHelper.json2map(response);
+		Map<String, Object> map = getOnlineStatus(myParam.getDeviceIds());
 		res.add("status", map.get("status"))
 			.add("msg", map.get("msg"))
 			.add("result", map.get("result"));
@@ -60,5 +53,21 @@ public class GetOnlineInfoOfDevicesLogic extends BaseZLogic {
 		
 		return true;
 	}
+
+	public static Map<String, Object> getOnlineStatus(List<String> deviceSnList) {
+
+		String response = HttpHelper.doPost(
+				URL, 
+				JsonBuilder.build()
+					.add("method", "getOnlineInfoOfDevices")
+					.add("auth", ImmutableMap.of("appId", APPID, "appToken", APPTOKEN))
+					.add("data", ImmutableMap.of("deviceIds", deviceSnList)
+					).toString());
+		
+		Map<String, Object> map = JsonHelper.json2map(response);
+		
+		return map;
+	}
+	
 
 }

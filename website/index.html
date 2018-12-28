@@ -7,15 +7,36 @@
   <meta property="og:url" content="http://www.moqbus.com/">
   <meta property="og:image" content="">
   <meta property="og:image:width" content="500">
-  <meta property="og:image:height" content="500"><meta property="og:description" content="Ethereum is a decentralized platform for applications that run exactly as programmed without any chance of fraud, censorship or third-party interference."><link href="./static/css.css" rel="stylesheet" type="text/css"><link rel="stylesheet" href="./static/app.min.css?v=2"><link rel="stylesheet" href="./static/default.min.css">
+  <meta property="og:image:height" content="500"><meta property="og:description" content="Ethereum is a decentralized platform for applications that run exactly as programmed without any chance of fraud, censorship or third-party interference.">
+  <link href="./static/css.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="./static/app.min.css?v=2">
+  <link rel="stylesheet" href="./static/default.min.css">
   <link rel="icon" href="favicon.ico" />
+  <style>
+  .tooltip {position: absolute;z-index: 1070;display: block;font-size: 12px;line-height: 1.4;visibility: visible;filter: alpha(opacity=0);opacity: 0}
+.tooltip.in {filter: alpha(opacity=90);opacity: .9}
+.tooltip.top {padding: 5px 0;margin-top: -3px}
+.tooltip.right {padding: 0 5px;margin-left: 3px}
+.tooltip.bottom {padding: 5px 0;margin-top: 3px}
+.tooltip.left {padding: 0 5px;margin-left: -3px}
+	.tooltip-inner {max-width: 200px;padding: 3px 8px;color: #fff;text-align: center;text-decoration: none;background-color: #000;border-radius: 4px}
+	.tooltip-arrow {position: absolute;width: 0;height: 0;border-color: transparent;border-style: solid}
+.tooltip.top .tooltip-arrow {bottom: 0;left: 50%;margin-left: -5px;border-width: 5px 5px 0;border-top-color: #000}
+.tooltip.top-left .tooltip-arrow {bottom: 0;left: 5px;border-width: 5px 5px 0;border-top-color: #000}
+.tooltip.top-right .tooltip-arrow {right: 5px;bottom: 0;border-width: 5px 5px 0;border-top-color: #000}
+.tooltip.right .tooltip-arrow {top: 50%;left: 0;margin-top: -5px;border-width: 5px 5px 5px 0;border-right-color: #000}
+.tooltip.left .tooltip-arrow {top: 50%;right: 0;margin-top: -5px;border-width: 5px 0 5px 5px;border-left-color: #000}
+.tooltip.bottom .tooltip-arrow {top: 0;left: 50%;margin-left: -5px;border-width: 0 5px 5px;border-bottom-color: #000}
+.tooltip.bottom-left .tooltip-arrow {top: 0;left: 5px;border-width: 0 5px 5px;border-bottom-color: #000}
+.tooltip.bottom-right .tooltip-arrow {top: 0;right: 5px;border-width: 0 5px 5px;border-bottom-color: #000}
+  </style>
 </head>
 
 <body class="MacIn">
   <div class="main-tutorial scrollme intro">
     <div class="scrollme row introduction animateme" data-when="span" data-from="0" data-to="1" data-opacity="0.2" data-translatey="300" data-easing="linear">
       <h1 class="animateme" data-when="span" data-from="0" data-to="1" data-scale="0.75" data-translatey="100" data-easing="linear">
-        Ethereum: Build unstoppable applications
+        Moqbus: 快速构建工业物联网通讯层
       </h1>
     </div>
   </div>
@@ -24,8 +45,8 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <h2>Build unstoppable applications</h2>
-          <p>Ethereum is a  <strong>decentralized platform that runs smart contracts</strong>: applications that run exactly as programmed without any possibility of downtime, censorship, fraud or third-party interference.</p><p>These apps run on a custom built  <strong>blockchain, an enormously powerful shared global infrastructure that can move value around and represent the ownership of property. </strong></p><p>This enables developers to create markets, store registries of debts or promises, move funds in accordance with instructions given long in the past (like a will or a futures contract) and many other things that have not been invented yet, all without a middleman or counterparty risk.</p><p>The project was bootstrapped via an ether presale in August 2014 by fans all around the world. It is developed by the  <a href="https://www.ethereum.org/foundation">Ethereum Foundation</a>, a Swiss non-profit, with contributions from great minds across the globe.</p>
+          <h2>构建工业物联网通讯层</h2>
+          <p>Moqbus是物联网架构中连接传感器和应用程序的中介，传感器将采集的数据发送给moqubus，应用程序从moqbus获取数据，并可以通过moqbus向传感器设备发送指令进行反控。应用程序包括web app、手机／平板app、微信小程序等人机交互程序，不需要过多考虑传感设备连接的复杂性，就可以轻松创建高效的物联网系统。</p>
         </div>
         <div class="col-md-6">
           <div class="row">
@@ -52,7 +73,11 @@
           </div>
           <div class="row">
             <div class="col-md-12 caption caption-server-figure">
-              <p>On traditional server architectures, every application has to set up its own servers that run their own code in isolated silos, making sharing of data hard. If a single app is compromised or goes offline, many users and other apps are affected.</p><p>On a blockchain, anyone can set up a node that replicates the necessary data for all nodes to reach an agreement and be compensated by users and app developers. This allows user data to remain private and apps to be decentralized like the Internet was supposed to work.</p>
+              <p>传统的工业自动化使用plc程序来控制传感设备，可以实现实时控制和数据显示。受到现场设备存储容量的制约，难以保留大量历史数据，而这些历史数据，是大数据分析的基础。即使在现场配备PC服务器来保存数据，如果不能及时上传到云端，这些数据形成封闭的信息孤岛，也难以发挥它们的价值。
+              </p>
+              <p>
+                工业物联网使用网关（以太网或GPRS），将现场设备数据实时上传到云端，在云端形成海量数据，为大数据分析提供便利。同时，网关接收来自云端的指令，根据指令的来源（人机交互或其它系统），可以实现远程控制和基于互联网的工业自动化系统。
+              </p>
             </div>
           </div>
         </div>
@@ -63,11 +88,13 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <h2>Smart money, smart wallet</h2>
-          <p>The  <strong>Ethereum Wallet  </strong>is a gateway to decentralized applications on the Ethereum blockchain. It allows you to hold and secure ether and other crypto-assets built on Ethereum, as well as write, deploy and use smart contracts.</p>
-          <a class="button mac ethereum-wallet require-legal" href="https://github.com/ethereum/mist/releases/download/v0.11.1/Ethereum-Wallet-macosx-0-11-1.dmg"><strong>Download</strong>Ethereum Wallet for Mac OS X</a><a class="button win64 ethereum-wallet require-legal" href="https://github.com/ethereum/mist/releases/download/v0.11.1/Ethereum-Wallet-win64-0-11-1.zip"><strong>Download</strong> Ethereum Wallet for Windows 64 bits</a><a class="button win32 ethereum-wallet" href="https://github.com/ethereum/mist/releases/download/v0.11.1/Ethereum-Wallet-win32-0-11-1.zip"><strong>Download</strong> Ethereum Wallet for Windows 32 bits (requires Command Line tools)</a><a class="button linux ethereum-wallet require-legal" href="https://github.com/ethereum/mist/releases/latest"><strong>Download</strong> Ethereum Wallet for Linux
+          <h2>简单, 快速</h2>
+          <p>Moqbus cloud 提供了一个简单的设备管理平台，你可以使用它来管理网关设备、接收数据和发送指令。
+            也可以使用 open API，快速开发自己的工业物联网应用系统。</p>
+          <a class="button mac ethereum-wallet " href="http://moqbus.com/doc/quickstart.html" target="_moqbus_doc">
+            <strong>开发文档</strong>
+            <font size="0.5em">快速体验、设备接入、应用开发</font>
           </a>
-          <a class="allversions button ethereum-wallet require-legal" href="https://github.com/ethereum/mist/releases/latest"><strong>Download</strong> Ethereum Wallet (Windows 64 bits, Linux and OS X)</a><a class="allversions ethereum-wallet link require-legal" href="https://github.com/ethereum/mist/releases/latest">See all versions</a>
         </div>
         <div class="col-md-6">
           <div class="row">
@@ -76,19 +103,19 @@
                 <figure class="wallet-figure scrollme animateme" data-when="span" data-from="0.425" data-to="0.475" data-opacity="0" data-translatey="-100">
                   <div class="wallet-01 animateme" data-when="enter" data-from="0.9" data-to="0" data-opacity="0.5" data-scale="0.8" data-translatey="100">
                   </div>
-                  <div class="caption animateme" data-when="enter" data-from="0.9" data-to="0.1" data-opacity="0.5" data-scale="0.8" data-translatey="100">Hold ether or any Ethereum-based token in safe wallets
+                  <div class="caption animateme" data-when="enter" data-from="0.9" data-to="0.1" data-opacity="0.5" data-scale="0.8" data-translatey="100">
                   </div>
                 </figure>
                 <figure class="wallet-figure scrollme animateme" data-when="span" data-from="0.67" data-to="0.68" data-opacity="0" data-translatey="-100">
                   <div class="wallet-02 animateme" data-when="span" data-from="0.5" data-to="0.45" data-opacity="0" data-translatey="100">
                   </div>
-                  <div class="caption animateme" data-when="span" data-from="0.5" data-to="0.45" data-opacity="0" data-translatey="100">Easy template-based contract creation
+                  <div class="caption animateme" data-when="span" data-from="0.5" data-to="0.45" data-opacity="0" data-translatey="100">Graph and text unrelated
                   </div>
                 </figure>
                 <figure class="wallet-figure scrollme">
                   <div class="wallet-03 animateme" data-when="span" data-from="0.7" data-to="0.675" data-opacity="0" data-translatey="100">
                   </div>
-                  <div class="caption animateme" data-when="span" data-from="0.7" data-to="0.65" data-opacity="0" data-translatey="100">Your accessible interface to blockchain applications
+                  <div class="caption animateme" data-when="span" data-from="0.7" data-to="0.65" data-opacity="0" data-translatey="100">And the same below
                   </div>
                 </figure>
               </div>
@@ -110,13 +137,18 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-12 scrollme">
-              <h2 class="animateme" data-when="span" data-from="0.5" data-to="0" data-opacity="0" data-translatey="200">Learn <strong>Solidity</strong>, a new language for smart contracts</h2>
+              <h2 class="animateme" data-when="span" data-from="0.5" data-to="0" data-opacity="0" data-translatey="200">TCP 透传, MQTT 订阅与发布</h2>
             </div>
           </div>
           <div class="row">
             <div class="col-md-6">
-              <h3>Design and issue your own cryptocurrency</h3>
-              <p>Create a tradeable digital token that can be used as a currency, a representation of an asset, a virtual share, a proof of membership or anything at all. These tokens use a standard coin API so your contract will be automatically compatible with any wallet, other contract or exchange also using this standard. </p><p>The total amount of tokens in circulation can be set to a simple fixed amount or fluctuate based on any programmed ruleset.</p>
+              <h3>网关设备接入 - TCP透传</h3>
+              <p>
+                Moqbus透传服务器基于TCP协议与网关设备建立长连接，网关设备将传感器数据通过TCP长连接发送到moqbus，并接收来自moqbus的反控指令。
+              </p>
+              <p>
+                网关设备作为TCP客户端，向moqbus提供设备编号和通讯密码进行注册后，就可以实现透传通讯，无需实现复杂的上层协议。
+              </p>
             </div>
             <div class="col-md-6">
               <figure class="coin scrollme">
@@ -132,13 +164,14 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              <a class="button" href="https://www.ethereum.org/token">Issue your token </a>
             </div>
             <div class="col-md-6">
               <div class="recipe">
-                <h4>You can build:</h4>
+                <h4>接收与反控 - MQTT</h4>
                 <ul>
-                  <li>A tradeable token with a fixed supply</li><li>A central bank that can issue money</li><li>A puzzle-based cryptocurrency</li>
+                  <li>订阅（subscribe）网关上报的数据</li>
+                  <li>发布（publish）控制指令实现反控</li>
+                  <li>权限控制保障设备安全</li>
                 </ul>
               </div>
             </div>
@@ -167,21 +200,21 @@
               </figure>
             </div>
             <div class="col-md-6">
-              <h3>Kickstart a project with a trustless crowdsale</h3>
-              <p>Do you already have ideas that you want to develop on Ethereum? Maybe you need help and some funds to bring them to life, but who would lend money to someone they don’t trust?</p><p>Using Ethereum, you can create a contract that will hold a contributor's money until any given date or goal is reached. Depending on the outcome, the funds will either be released to the project owners or safely returned back to the contributors. All of this is possible without requiring a centralized arbitrator, clearinghouse or having to trust anyone.</p><p>You can even use the token you created earlier to keep track of the distribution of rewards.</p>
+              <h3>智能制造</h3>
+              <ul>
+              <li>
+                工厂设备上平台后实现联网以提升设备OEE,实现设备预测性维护，产品良率提升，以及能源节省等应用场景；
+              </li>
+              <li>
+                平台提供数据接口和数据中台，帮助企业消除信息孤岛，逐步实现智能化；
+              </li>
+              <li>
+                平台提供开发环境，吸引生态开发信息化和智能化SaaS，实现平台和开发者双赢。
+              </li>
+              </ul>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
-              <a class="button" href="https://www.ethereum.org/crowdsale">Kickstart your project </a>
-            </div>
-            <div class="col-md-6">
-              <div class="recipe">
-                <h4>You can build:</h4>
-                <ul><li>A crowdfund to pre-sell a product</li><li>A crowdsale to sell virtual shares in a blockchain organization</li><li>An auction of a limited number of items</li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -207,19 +240,19 @@
               </figure>
             </div>
             <div class="col-md-6">
-              <h3>Create a democratic autonomous organization</h3>
-              <p>Now that you have developed your idea and secured funds, what’s next? You have to hire managers, find a trustworthy CFO to handle the accounts, run board meetings and do a bunch of paperwork. </p><p>Or you can simply leave all that to an Ethereum contract. It will collect proposals from your backers and submit them through a completely transparent voting process.</p><p>One of the many advantages of having a robot run your organization is that it is immune to any outside influence as it’s guaranteed to execute only what it was programmed to. And because the Ethereum network is decentralized, you'll be able to provide services with a 100% uptime guarantee. </p>
+              <h3>智慧农业</h3>
+              <ul>
+
+                <li><i>智能大田</i><br/>
+                  智能种植通过运用物联网和云计算技术，可实时远程获取大田种植园的空气温湿度、土壤水分、土壤温度、CO2浓度、光照强度及视频图像等信息，通过2G/3G/4G/Nb-IoT/LoRA/WiFi等网络传输到云上，经过作物生长模型分析适宜作物生长，同时可以根据作物长势或病虫草害情况，有效降低劳动强度和生产成本，减少病害发生，提升农产品品质和经济效益。
+                </li>
+                <li><i>智能灌溉</i><br/>
+                  通过部署可持续高效灌溉系统以保护水资源的这种方式愈来愈受 到重视。基于物 联网的智能灌溉解决方案对空气湿度、土壤湿度、温度、 光照度等参数进行测 量，由此精确计算出灌溉用水需求量。经验证，该机制可有效提高灌溉效率。
+                </li>
+              </ul>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6"><a class="button" href="https://www.ethereum.org/dao">Start your organization </a>
-            </div>
-            <div class="col-md-6">
-              <div class="recipe">
-                <h4>You can build:</h4>
-                <ul><li>A virtual organization where members vote on issues</li><li>A transparent association based on shareholder voting</li><li>Your own country with an unchangeable constitution</li><li>A better delegative democracy</li></ul>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -231,8 +264,10 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-6">
-              <h3>Build a new kind of decentralized application</h3>
-              <p>Now it's your turn: start building what you dream of creating in Ethereum! Could your business be enhanced by operating on a cryptographically secure, decentralized, tamper-proof network?</p><p>Check out the <a href="https://www.stateofthedapps.com/" target="_blank">many great projects</a>* already being built on Ethereum. And since you'll be among the first developers in the world that are able to program decentralized applications, some of them might need your help. </p><p class="small"> <em>*The above list is maintained by an independent party and the Foundation does not endorse its content or any particular project</em></p>
+              <h3>应用开发</h3>
+              <p>
+                利用moqbus平台提供的api，开发物联网大数据可视化系统、远程控制系统以及分析决策系统。
+              </p>
             </div>
             <div class="col-md-6 future-figure">
               <figure class="moon scrollme">
@@ -253,9 +288,12 @@
     <div class="container">
       <div class="row scrollme">
         <div class="col-md-6">
-          <h3>Get the command line tools</h3>
-          <p>If you feel more comfortable around a terminal, you can download our command line tools. We have different client implementations built in Go, C++, Python, Java and more.</p>
-          <a class="button require-legal" href="https://www.ethereum.org/cli">Install the command line tools</a></div><div class="col-md-6">
+          <h3>网关设备模拟器</h3>
+          <p>
+            使用网关模拟器，可以像真实的网关设备一样，向透传服务器发送数据、接收控制指令。
+            这是一个小巧的跨平台命令行程序，便于调试你的应用程序。
+          </p>
+          <a class="button " href="http://www.moqbus.com/download/devmock.zip" >下载模拟器 </a></div><div class="col-md-6">
             <figure class="geth-console animateme" data-when="span" data-from="0.8" data-to="0" data-opacity="0" data-translatey="300">
             </figure>
           </div>
@@ -271,7 +309,12 @@
           </div>
           <div class="row row-footer-copyright">
             <div class="col-md-12">
-              <p class="copyright">Copyright © 2018 Moqbus.com. All Rights Reserved.</p><p class="footer-links">
+              <p class="copyright">
+                Copyright © 2018 Moqbus.com. All Rights Reserved.<br/>
+                <label class="btn btn-link" data-toggle="tooltip" data-placement="left" title="QQ群:941036927">Contact us</label>
+              </p>
+              <p class="footer-links">
+
               </p>
             </div>
           </div>
@@ -284,8 +327,12 @@
         </div>
       </div>
     </footer>
+
+
+    <script src="./static/jquery.min.js"></script>
     <script src="./static/app.min.js"></script>
     <script src="./static/highlight.min.js"></script>
+    <script src="./static/H-ui.min.js"></script>
     <script>
       $(document).ready(function(){
         $("#toc").tableOfContents(
@@ -297,5 +344,15 @@
         );
       });
     </script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?38fe4154dd043b68c83592016ec142fb";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+
  </body>
  </html>

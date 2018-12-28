@@ -77,6 +77,9 @@ public abstract class BaseZLogic extends ZLogic {
 			
 		}
 		
+		cacheUserSecretKey.add(_loginUser.getSecretId(), _loginUser.getSecretKey());
+		cacheUserId.add(_loginUser.getSecretId(), _loginUser.getId());
+		
 		// 权限
 		if (logicParam instanceof IPrivilegedParam) {
 			if(!checkPrivilege((IPrivilegedParam)logicParam, em)) {
