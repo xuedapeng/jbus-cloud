@@ -16,11 +16,11 @@ public class ServiceServlet extends HttpServlet implements Servlet {
 	@Override
 	public void init() {
 
-		MqttProxy.init();
+//		MqttProxy.init();
 
 		// 在线状态更新
-		EventService.subscribeEventOfAll();
-		EventService.updateStatusOnStart();
+//		EventService.subscribeEventOfAll();
+//		EventService.updateStatusOnStart();
 		
 	}
 	

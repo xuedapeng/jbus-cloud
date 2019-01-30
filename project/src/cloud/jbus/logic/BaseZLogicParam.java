@@ -24,5 +24,6 @@ public class BaseZLogicParam extends ZLogicParam {
 		this.secretKey = secretKey;
 	}
 	
+	
 
 }

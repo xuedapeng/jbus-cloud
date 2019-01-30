@@ -15,10 +15,13 @@
 <link rel="stylesheet" type="text/css" href="../lib/Hui-iconfont/1.0.8/iconfont.css" />
 <link rel="stylesheet" type="text/css" href="../static/h-ui.admin/skin/default/skin.css" id="skin" />
 <link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../static/plugin/myPagination.css" />
+<link rel="stylesheet" type="text/css" href="../lib/BootstrapMenu/dropdown-menu.css" />
+
 
 <style>
   td {
-    padding:5px 5px 5px 0px
+    padding:5px 5px 5px 0px;
   }
 </style>
 
@@ -26,18 +29,25 @@
 </head>
 <body>
 
-<div id="app" class="page-container">
+<div id="app" class="page-container" style="margin-top:-15px">
 
     <div class="mt-20">
-
       <table class="table table-border  table-bg table-hover table-sort table-responsive">
         <thead>
           <tr class="text-c">
             <th width="30px">No.</th>
-            <th width="100px">设备编号</th>
-            <th width="150px">设备名称</th>
-            <th>备注</th>
-            <th width="50px">操作
+            <th  style="text-align:left" width="80px">设备编号</th>
+            <th  style="text-align:left" width="150px">设备名称</th>
+            <th  style="text-align:center" width="50px">传感器</th>
+            <th style="text-align:left">备注</th>
+            <th width="80px">
+              操作
+              <a onclick="app_add_device.openAddDevice()" title="新增设备">
+                <i class="Hui-iconfont" style="font-size:1em;">&#xe600;</i>
+              </a>
+              <a onclick="loadData()" title="刷新">
+                <i class="Hui-iconfont" style="font-size:1em">&#xe68f;</i>
+              </a>
             </th>
           </tr>
         </thead>
@@ -47,17 +57,36 @@
 
             <tr class="text-c">
             <td>{{item.seq}}</td>
-            <td><a v-on:click="showSecretKey(item.deviceSn, item.secretKey)" title="查看通讯密码">{{item.deviceSn}} </a></td>
-            <td>{{item.deviceName}}</td>
-            <td>{{item.memo}}</td>
+            <td style="text-align:left"><a v-on:click="showSecretKey(item.deviceSn, item.secretKey)" title="查看通讯密码">{{item.deviceSn}} </a></td>
+            <td style="text-align:left">{{item.deviceName}}</td>
+            <td style="text-align:center">
+              <a v-on:click="openSensorList(item.deviceId)">{{item.sensorAmount}}</a>
+            </td>
+            <td style="text-align:left">{{item.memo}}</td>
             <td>
-              <a v-on:click="openEditDevice(item.deviceId)" title="修改"><i class="Hui-iconfont" style="font-size:1.5em">&#xe60c;</i></a>
-							<a :id="item.deviceId" :data-href="'app/realtime.html?deviceId='+item.deviceId" :data-title="'实时控制（' + item.deviceSn + '）'" :href="'javascript:Hui_admin_tab(document.getElementById(' + item.deviceId + '))'" title="控制">
+							<span class="needContextMenu" :id="'conf_' + item.deviceId">
+								<i class="Hui-iconfont" style="font-size:1.5em">&#xe60c;</i>
+							</span>
+							<span class="needContextMenu" :id="'ctrl_' + item.deviceId">
 								<i class="Hui-iconfont" style="font-size:1.5em">&#xe603;</i>
-							</a>
-              <!-- <a :id="item.deviceId" :data-href="'app/realtime.html?deviceId='+item.deviceId" data-title="实时控制" :href="'javascript:alert(' + item.deviceId + ');'">
-                <i class="Hui-iconfont" style="font-size:1.5em">&#xe603;</i>
-              </a> -->
+							</span>
+							<div style="display:none">
+								<a :id="'21'+item.deviceId" 
+										:data-href="'app/realtime.html?deviceId='+item.deviceId" 
+										:data-title="'实时控制（' + item.deviceSn + '）'" 
+										:href="'javascript:Hui_admin_tab(document.getElementById(' + '21' + item.deviceId + '))'" 
+										title="控制">
+									 实时控制
+								</a>
+								<a :id="'11'+item.deviceId" 
+										:data-href="'app/datDecode.html?deviceId='+item.deviceId" 
+										:data-title="'解码器（' + item.deviceSn + '）'" 
+										:href="'javascript:Hui_admin_tab(document.getElementById(' + '11'+ item.deviceId + '))'" 
+										title="解码器">
+									 设置解码器
+								</a>
+
+							</div>
             </td>
             </tr>
 
@@ -67,7 +96,8 @@
       <table>
         <tr>
           <td align="right" >
-            <input class="btn btn-link radius" type="button" onclick="app_add_device.openAddDevice()" value="新增">
+            <div id="pagination" class="pagination" :style="'display:'+ (pageOption.pageTotal<2?'none':'inline-block')" >
+            </div>
           </td>
         </tr>
       </table>
@@ -104,6 +134,27 @@
     		</div>
     	</div>
     </div><!-- modal-showSecretKey end -->
+
+    <!-- modal-sensorList start -->
+    <div id="modal-sensorList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    	<div class="modal-dialog">
+    		<div class="modal-content radius">
+    			<div class="modal-header" style="height:20px;margin-top:-15px;">
+      				<h3 class="modal-title">传感器列表 -
+                {{selectedDevice!=null?selectedDevice.deviceName:""}}
+                ({{selectedDevice!=null?selectedDevice.deviceSn:""}})</h3>
+      				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+    			</div>
+    			<div class="modal-body">
+            <iframe :src="'sensorList.html?deviceId=' + selectedDeviceId" width="100%" height="300px" frameborder="0" ></iframe>
+
+    			</div>
+    			<div class="modal-footer">
+    				<button class="btn" data-dismiss="modal" aria-hidden="true" v-on:click="closeSecretKey">关闭</button>
+    			</div>
+    		</div>
+    	</div>
+    </div><!-- modal-sensorList end -->
 </div> <!-- app end -->
 
 <!-- modal-addDevice start -->
@@ -201,10 +252,15 @@
 <script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
 <script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
 <script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../static/plugin/myPagination.js?v=3"></script>
+<script type="text/javascript" src="../lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
+<script type="text/javascript" src="../lib/BootstrapMenu/BootstrapMenu.my.js?v=4"></script>
 
 
-<script type="text/javascript" src="common/constant.js?v=5"></script>
+
+<script type="text/javascript" src="common/constant.js?v=6"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="deviceList.js?v=26"></script>
+<script type="text/javascript" src="deviceList.js?v=100"></script>
+
 </body>
 </html>

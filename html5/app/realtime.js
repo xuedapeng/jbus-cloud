@@ -458,7 +458,7 @@ function searchDevice() {
 
         if (sensorId == app.selectedDeviceInfo.sensorList[i].sensorId) {
             app.selectedSensorInfo.sensorId = sensorId;
-                app.selectedSensorInfo.sensorNo = app.selectedDeviceInfo.sensorList[i].sensorNo;
+            app.selectedSensorInfo.sensorNo = app.selectedDeviceInfo.sensorList[i].sensorNo;
             app.selectedSensorInfo.cmdEncodeList = app.selectedDeviceInfo.sensorList[i].cmdEncodeList;
 
             console.log("cmdEncodeList.length:"+app.selectedSensorInfo.cmdEncodeList.length);

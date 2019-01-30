@@ -32,7 +32,7 @@ function checkAuth() {
 }
 
 // Post
-function ajaxPost(url, param, callback){
+function ajaxPost(url, param, callback, errorHandler){
 
     var data = param;
 
@@ -52,8 +52,12 @@ function ajaxPost(url, param, callback){
           },
 
           error   : function(request, status, ex){
+            if (errorHandler) {
+                errorHandler(status, ex);
+            } else {
+                layer.msg("网络不给力！"+status, {icon:1,time:1000});
+            }
             var err = "ajaxPost error!\t(status:"+status+", exception:" + ex + ")";
-            layer.msg("网络不给力！"+status, {icon:1,time:1000});
             console.log(err);
           }
     });

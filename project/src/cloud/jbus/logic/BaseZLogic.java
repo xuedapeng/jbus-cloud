@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 
+import cloud.jbus.common.helper.ValidateHelper;
 import cloud.jbus.db.bean.UserEntity;
 import cloud.jbus.db.dao.UserDao;
 import cloud.jbus.logic.device.param.IPrivilegedParam;
@@ -15,6 +16,7 @@ import fw.jbiz.ext.memcache.ZCacheManager;
 import fw.jbiz.ext.memcache.interfaces.ICache;
 import fw.jbiz.logic.ZLogic;
 import fw.jbiz.logic.ZLogicParam;
+import fw.jbiz.logic.interfaces.IResponseObject;
 
 public abstract class BaseZLogic extends ZLogic {
 
@@ -132,6 +134,24 @@ public abstract class BaseZLogic extends ZLogic {
 		}
 		
 		return false;
+	}
+	
+	protected Integer toInt(String s) {
+		return Integer.valueOf(s);
+	}
+	
+	protected boolean checkParam(ZLogicParam logicParam, ZSimpleJsonObject res, String[][] matrix) {
+		
+		String result = ValidateHelper.checkByMatrix(logicParam, matrix);
+
+		if (StringUtils.isNotEmpty(result)) {
+			res.add("status", IResponseObject.RSP_CD_ERR_PARAM)
+				.add("msg", "参数错误：" + result);
+			
+			return false;
+		}
+		
+		return true;
 	}
 	
 }

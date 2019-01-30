@@ -1,0 +1,133 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<script src="../static/js/vue.min.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="../static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="../lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../static/plugin/jquery.datetimepicker.css" />
+
+<style  type="text/css">
+  table .{
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 3px 10px;
+  }
+  .selbtn-unselected{background-color: #8a8a8a; color:#fff;cursor:pointer}
+  .selbtn-selected{background-color: #5a98de; color:#fff;}
+  .selbtn-label{background-color: #fff; color:#000;}
+  .bottom{vertical-align:bottom}
+  .middle{vertical-align:middle}
+  .online{color:#00FF00}
+  .offline{color:#FF0000}
+  .left-space{margin-left:5px}
+</style>
+
+<title>历史数据</title>
+</head>
+<body>
+
+<div id="app" class="page-container">
+  <table border="0" >
+    <tr>
+      <td colspan="4">
+        <div id="myDevice" >
+          <span class="label label-default radius">网关设备({{myDeviceInfo.length}})</span>
+          <template v-for="item in myDeviceInfo">
+
+              <span :class="'label radius left-space ' + (item.deviceId==selectedDeviceInfo.deviceId?'selbtn-selected': 'selbtn-unselected')" :id="'dev_'+item.deviceId" v-on:click="selectDevice(item.deviceId)">
+              {{item.deviceName}}（{{item.deviceSn}}）
+              <label  style="font-size:1.5em" :class="item.status + 'line'"> </label>
+          </template>
+        </div>
+      </td>
+    </tr>
+    <tr >
+      <td colspan="4">
+        <div id="mySensor" >
+          <span class="label label-default radius">传感器({{mySensorInfo.length}})</span>
+          <template v-for="item in mySensorInfo">
+
+            <span :class="'label radius left-space ' + (item.sensorId==selectedSensorInfo.sensorId?'selbtn-selected': 'selbtn-unselected')" :id="'sen_'+item.sensorId" v-on:click="selectSensor(item.sensorId)">
+              {{item.sensorName}}（{{item.sensorNo}}）
+            </span>
+          </template>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="250px">
+          <span class="label label-default radius">期间</span>
+            <span :class="'label radius left-space ' + (shortcutDays==DAYS_1H?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(0.04167)">1小时</span>
+            <span :class="'label radius left-space ' + (shortcutDays==DAYS_24H?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(1)">24小时</span>
+            <span :class="'label radius left-space ' + (shortcutDays==DAYS_3D?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(3)">3天</span>
+            <span :class="'label radius left-space ' + (shortcutDays==DAYS_7D?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(7)">7天</span>
+            <span :class="'label radius left-space ' + (shortcutDays==DAYS_30D?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(30)">30天</span>
+            
+      </td>
+      <td :width="dateMode=='slide'?'375px':'280'" valign="top">
+        <div :style="'display:'+ (dateMode=='slide'?'block':'none')">
+            <div id="slider" style="margin-top:6px"></div>
+            <label id="from_slider" :style="'position:relative;left:'+ (fromPos-78) + 'px;top:0px'">
+              {{fromDate}}
+            </label>
+            <label id="to_slider" :style="'position:relative;left:'+ (toPos-65) + 'px;top:0px'">
+              {{toDate}}
+            </label>
+        </div>
+
+        <div :style="'display:'+ (dateMode=='pick'?'block':'none')">
+            <input type="text" v-model="fromTimeDp" id="datetimepicker_from" title="开始时间" class="input-text radius size-S" style="width:130px"/> ~ 
+            <input type="text" v-model="toTimeDp" id="datetimepicker_to"  title="结束时间"  class="input-text radius size-S" style="width:130px"/>
+        </div>
+      </td>
+      <td valign="top" align="left"><a v-on:click="refreshGraph()">
+
+          <i class="Hui-iconfont" style="font-size:1.3em">&#xe665;</i>
+          </a>&nbsp;&nbsp;&nbsp;&nbsp;
+      </td>
+      <td align="right"  valign="top">
+          <span title="滑动条" :class="'label radius left-space ' + (dateMode=='slide'?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(30)">S</span>
+          <span title="日历" :class="'label radius ' + (dateMode=='pick'?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(30)">C</span>
+        
+          <span title="过程线" :class="'label radius left-space ' + (queryMode=='graph'?'selbtn-selected': 'selbtn-unselected')">
+            <i class="Hui-iconfont" style="font-size:1.3em">&#xe61c;</i>
+          </span>
+          <span title="数据表" :class="'label radius ' + (queryMode=='detail'?'selbtn-selected': 'selbtn-unselected')">
+            <i class="Hui-iconfont" style="font-size:1.3em">&#xe667;</i>
+          </span>
+      </td>
+    </tr>
+  </table>
+
+  <div style="margin-top:0px">
+    <iframe width="100%" :height="(graphCount*340) +'px'" frameborder="0"  :src="iframeSrc" ></iframe>
+
+  </div>
+</div>
+
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../static/plugin/jquery.datetimepicker.full.js?v=3"></script>
+
+
+<script type="text/javascript" src="common/constant.js?v=6"></script>
+<script type="text/javascript" src="common/common.js?v=8"></script>
+<script type="text/javascript" src="history.js?v=39"></script>
+</body>
+</html>

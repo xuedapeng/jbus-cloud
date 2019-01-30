@@ -94,7 +94,7 @@ public class EventService {
 	
 	public static void unsubscribeEvent(String deviceSn) {
 
-		MqttProxy.subscribe(JbusConst.TOPIC_PREFIX_STS + deviceSn);
+		MqttProxy.unsubscribe(JbusConst.TOPIC_PREFIX_STS + deviceSn);
 	}
 
 	public static void subscribeEvent(List<String> deviceSnList) {

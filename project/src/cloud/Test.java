@@ -1,29 +1,28 @@
 package cloud;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
+
+import cloud.jbus.common.helper.DateHelper;
 import cloud.jbus.common.helper.GuidHelper;
-import cloud.jbus.common.helper.HexHelper;
-import cloud.jbus.common.utils.FormatChecker;
-import cloud.jbus.common.utils.Md5SaltTool;
+import cloud.jbus.common.helper.JsonHelper;
+import cloud.jbus.db.mongo.MongoUtil;
+import cloud.jbus.proxy.DbProxy;
 
 public class Test {
 
 	public static void main(String[] args) {
-		String src = "artc8YT";
-		byte[] b = src.getBytes();
-		byte[] b1 = new byte[b.length];
-		for (int i=0; i<b.length; i++) {
-			b1[i] = (byte) (b[i] + 10);
-		}
-		String hex = HexHelper.bytesToHexString(b1);
-		System.out.println(hex);
 		
-		byte[] b2 = HexHelper.hexStringToBytes(hex);
-		byte[] b3 = new byte[b2.length];
-
-		for (int i=0; i<b2.length; i++) {
-			b3[i] = (byte) (b2[i] - 10);
-		}
+		String json = "{\"a\":1.00, \"b\":[2.30,3], \"c\":\"0\"}";
+		Map<String, Object> map = JsonHelper.json2map(json);
+		String p = JsonHelper.map2json(map);
+		System.out.println(json);
+		System.out.println(p);
 		
-		System.out.println(new String(b3));
 	}
 }

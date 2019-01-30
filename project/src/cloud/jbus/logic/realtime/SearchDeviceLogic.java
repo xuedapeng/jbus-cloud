@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.NumericHelper;
 import cloud.jbus.db.bean.CmdEncodeEntity;
 import cloud.jbus.db.bean.DatDecodeEntity;
@@ -62,7 +63,8 @@ public class SearchDeviceLogic extends BaseZLogic {
 				map.put("datDecode", decMap);
 			}
 			
-			List<SensorEntity> sensorList = sensorDao.findByDeviceId(deviceId);
+			List<SensorEntity> sensorList = sensorDao.findByDeviceId(
+					deviceId, StatusConst.DEFAULT_PAGE_IDX, StatusConst.MAX_SENSOR_AMOUNT);
 			List<Map<String, Object>> resultSensorList = new ArrayList<Map<String, Object>>();
 			for(SensorEntity sensor: sensorList) {
 				Map<String, Object> mapSensor = new HashMap<String, Object>(); 

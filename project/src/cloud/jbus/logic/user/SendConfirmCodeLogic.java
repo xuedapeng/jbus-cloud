@@ -18,6 +18,7 @@ import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.user.param.LoginLogicParam;
 import cloud.jbus.logic.user.param.SendConfirmCodeLogicParam;
+import fw.jbiz.common.conf.ZSystemConfig;
 import fw.jbiz.ext.comms.mail.ZMailManager;
 import fw.jbiz.ext.comms.mail.bean.ZMailBean;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
@@ -62,7 +63,7 @@ public class SendConfirmCodeLogic extends BaseZLogic {
 		mailBean.setContent(
 				String.format("验证码: %s , %s", userReg.getConfirmCode() , "10分钟内有效"));
 		mailBean.setFromNickname("moqbus cloud");
-		mailBean.setFromAddressDisp("xuedp@bz12306.com");
+		mailBean.setFromAddressDisp(ZSystemConfig.getProperty("mail_send_account"));
 		ZMailManager.send(mailBean);
 		
 		res.add("status", 1)

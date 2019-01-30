@@ -13,6 +13,7 @@ import cloud.jbus.common.helper.HexHelper;
 import cloud.jbus.common.helper.NumericHelper;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.dao.DeviceDao;
+import cloud.jbus.db.dao.SensorDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.device.param.DeviceListLogicParam;
@@ -34,6 +35,8 @@ public class DeviceListLogic extends BaseZLogic {
 		
 		List<DeviceEntity> deviceList = dao.findByPage(userId, page, pageSize);
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+
+		SensorDao sensorDao = new SensorDao(em);
 		
 		deviceList.forEach(E->{
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -46,6 +49,9 @@ public class DeviceListLogic extends BaseZLogic {
 			map.put("crcMode", E.getCrcMode());
 			map.put("memo", E.getMemo());
 			map.put("secretKey", HexHelper.bytesToHexStringNoBlank(E.getSecretKey().getBytes()));
+			
+			map.put("sensorAmount", sensorDao.findTotal(E.getId()));
+			
 			resultList.add(map);
 		});
 		

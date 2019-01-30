@@ -1,11 +1,21 @@
 
-
 var app = new Vue({
   el: '#app',
   data: {
     deviceList:[],
     deviceSnView:'',
     secretKeyView:'',
+    pageOption : {
+          "pageTotal":0, //必填,总页数
+          "pageAmount":20, //每页多少条
+          "dataTotal":0, //总共多少条数据
+          "curPage":1, //初始页码,不填默认为1
+          "pageSize": 10, //分页个数,不填默认为5
+        },
+    selectedDeviceId:null,
+    selectedDevice:null,
+    prefix_realtime:"realtime_",
+    prefix_datDecode:"datDecode_",
   },
   methods:{
     showSecretKey:function(sn, key){
@@ -22,19 +32,29 @@ var app = new Vue({
       loadDeviceData(deviceId);
       $("#modal-editDevice").modal("show");
     },
+
+    openSensorList:function(deviceId) {
+      app.selectedDeviceId = deviceId;
+      app.selectedDevice = getSelectedDevice(deviceId)
+      $("#modal-sensorList").modal("show");
+    },
   }
 });
 
+window.onload = function() {
+  loadData();
+};
 
-loadData();
-function loadData() {
+function loadData(silent) {
 
   if (!checkAuth()) {
     return;
   }
 
   var param = {"method":"device.list",
-              "auth":[getStorage("appId"), getStorage("appToken")]};
+              "auth":[getStorage("appId"), getStorage("appToken")],
+              "data":{"page":app.pageOption.curPage+"", "pageSize": app.pageOption.pageAmount+""}
+              };
 
   ajaxPost(G_RPC_URL, param,
     function(response){
@@ -46,10 +66,22 @@ function loadData() {
 
       var rowsStr = "";
       var result = response.result;
+
+
       makeDeviceList(result);
+      if (!silent) {
+        layer.msg("设备查询成功！", {icon:1,time:1000});
+      }
 
-      layer.msg("查询成功！", {icon:1,time:1000});
+      var pageOption = app.pageOption;
+      pageOption.dataTotal = response.total;
+      pageOption.pageTotal = Math.ceil(app.pageOption.dataTotal/app.pageOption.pageAmount);
+      app.pageOption = pageOption;
+      console.log("app.pageOption.dataTotal=" + app.pageOption.dataTotal);
+      console.log("app.pageOption.pageTotal=" + app.pageOption.pageTotal);
+      setPaginator();
 
+      setTimeout('initContextMenu()', 1000);
     });
 }
 
@@ -58,7 +90,7 @@ function makeDeviceList(result, seq) {
 
   var dList =[];
 
-  var seq = 0;
+  var seq = (app.pageOption.curPage-1)*app.pageOption.pageAmount;
   for(i in result) {
     var record = result[i];
     seq++;
@@ -67,6 +99,7 @@ function makeDeviceList(result, seq) {
     item.deviceId = record['deviceId'];
     item.deviceSn = record['deviceSn'];
     item.deviceName = record['deviceName'];
+    item.sensorAmount = record['sensorAmount'];
     item.crcMode = record['crcMode']==1?"CRC16_MODBUS":"";
     item.memo = record['memo']?record['memo']:"";
     item.secretKey = record['secretKey'];
@@ -228,3 +261,138 @@ function doDeleteDevice() {
 
       });
 }
+
+
+function getSelectedDevice(deviceId) {
+
+  var list = app.deviceList;
+
+  for(i in list) {
+    if (list[i].deviceId == deviceId) {
+      return list[i];
+    }
+  }
+
+  return  null;
+}
+
+
+
+function setPaginator() {
+
+  $("#pagination").empty();
+
+  // return;
+  var obj = new Page({
+      id: 'pagination',
+      pageTotal: app.pageOption.pageTotal, //必填,总页数
+      pageAmount: app.pageOption.pageAmount,  //每页多少条
+      dataTotal: app.pageOption.dataTotal, //总共多少条数据
+      curPage:app.pageOption.curPage, //初始页码,不填默认为1
+      pageSize: app.pageOption.pageSize, //分页个数,不填默认为5
+      showPageTotalFlag:true, //是否显示数据统计,不填默认不显示
+      showSkipInputFlag:true, //是否支持跳转,不填默认不显示
+      getPage: function (page) {
+          //获取当前页数
+         console.log("获取当前页数:" + page);
+         app.pageOption.curPage = page;
+         loadData();
+      }
+  });
+
+  return obj;
+}
+
+/*
+  context menu start
+*/
+
+function initContextMenu() {
+  $('.needContextMenu').each(
+    function(index, element) {
+
+      var arr = element.id.split("_"); // edit_deviceId, ctrl_deviceId
+      if (!arr) {
+        return;
+      } 
+      var type = arr[0];
+      var id = arr[1];
+      // var tag = element.innerHTML;
+      addContextMenu(element.id, getActions(type, id));
+  });
+}
+
+
+function addContextMenu(_id, _actions) {
+  if (_actions.length == 0) {
+    return;
+  }
+
+  var menuRight = new BootstrapMenu('#'+_id, {
+    menuEvent: 'click',
+    menuSource: 'element',
+    menuPosition: 'belowLeft',
+    actions: _actions,
+  });
+}
+
+
+function getActions(type, id) {
+
+  var actions = [];
+  if (type=='conf') {
+    actions = [
+      {
+        name:'修改设备',
+        onClick:function() {
+          app.openEditDevice(id);
+        }
+      },
+      {
+        name:'设置解码器',
+        onClick:function() {
+          if (confirm("是否跳转 解码器设置 页面？")) {
+            document.getElementById("11"+id).click();
+          }
+        }
+      },
+      {
+        name:'计划任务',
+        onClick:function() {
+          alert("schedule");
+        }
+      },
+      {
+        name:'报警&阀值',
+        onClick:function() {
+          alert("warning");
+        }
+      }
+    ];
+  }
+
+  if (type=='ctrl') {
+    actions = [
+      {
+        name:'实时控制',
+        onClick:function() {
+          document.getElementById("21"+id).click();
+        }
+      },
+      {
+        name:'历史数据',
+        onClick:function() {
+        }
+      },
+      {
+        name:'状态监控',
+        onClick:function() {
+        }
+      }
+    ];
+  }
+
+
+  return actions;
+}
+

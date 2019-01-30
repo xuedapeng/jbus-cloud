@@ -26,7 +26,7 @@ public class SensorDao extends BaseZDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SensorEntity> findByDeviceId(Integer deviceId) {
+	public List<SensorEntity> findByDeviceId(Integer deviceId, Integer page, Integer  pageSize) {
 
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from SensorEntity");
@@ -35,6 +35,9 @@ public class SensorDao extends BaseZDao {
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("deviceId", deviceId);
+		
+		query.setFirstResult((page-1)*pageSize);
+		query.setMaxResults(pageSize);
 		
 		List<SensorEntity> list = (List<SensorEntity>)query.getResultList();
 		
@@ -45,7 +48,70 @@ public class SensorDao extends BaseZDao {
 		return new ArrayList<SensorEntity>();
 
 	}
+
+	@SuppressWarnings("unchecked")
+	public Long findTotal(Integer deviceId) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("select count(id) from SensorEntity");
+		queryString.append(" where deviceId=:deviceId");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("deviceId", deviceId);
+
+		List<Long> list = query.getResultList();
+		if(list != null && list.size()>0) {
+			return list.get(0);
+		}
+		return Long.valueOf(0);
+
+	}
 	
+	@SuppressWarnings("unchecked")
+	public SensorEntity findBySensorNo(Integer deviceId, Integer sensorNo) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("from SensorEntity");
+		queryString.append(" where deviceId=:deviceId");
+		queryString.append(" and sensorNo=:sensorNo ");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("deviceId", deviceId);
+		query.setParameter("sensorNo", sensorNo);
+		
+		
+		List<SensorEntity> list = (List<SensorEntity>)query.getResultList();
+		
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		
+		return null;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public SensorEntity findBySensorId(Integer deviceId, Integer sensorId) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("from SensorEntity");
+		queryString.append(" where deviceId=:deviceId");
+		queryString.append(" and id=:sensorId ");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("deviceId", deviceId);
+		query.setParameter("sensorId", sensorId);
+		
+		
+		List<SensorEntity> list = (List<SensorEntity>)query.getResultList();
+		
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		
+		return null;
+
+	}
 	
 	
 }

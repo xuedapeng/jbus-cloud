@@ -63,10 +63,10 @@ public class DeviceAddLogic extends BaseZLogic {
 		}
 		
 		Long total = new DeviceDao(em).findTotal(this.getLoginUserId(myParam.getSecretId()));
-		if (total >= StatusConst.MAX_DEVICE_COUNT) {
+		if (total >= StatusConst.MAX_DEVICE_AMOUNT) {
 
 			res.add("status", -11)
-				.add("msg", "已达设备数上限。");
+				.add("msg", "已达设备数上限("+ StatusConst.MAX_DEVICE_AMOUNT + ")。");
 			
 			return false;
 		}

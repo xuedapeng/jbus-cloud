@@ -7,9 +7,11 @@ import javax.persistence.EntityManager;
 
 import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.db.bean.DeviceEntity;
+import cloud.jbus.db.bean.SensorEntity;
 import cloud.jbus.db.bean.UserEntity;
 import cloud.jbus.db.bean.UserRegEntity;
 import cloud.jbus.db.dao.DeviceDao;
+import cloud.jbus.db.dao.SensorDao;
 import cloud.jbus.db.dao.UserDao;
 import cloud.jbus.db.dao.UserRegDao;
 import cloud.jbus.logic.user.SendConfirmCodeLogic;
@@ -86,6 +88,18 @@ public class CommonLogic {
 	}
 	
 
+	public static String getDeviceSnById(Integer deviceId, EntityManager em) {
+		DeviceDao dao = new DeviceDao(em);
+		DeviceEntity device = dao.findById(deviceId);
+		
+		if (device == null) {
+			return null;
+		}
+		
+		return device.getDeviceSn();
+		
+	}
+	
 	public static Integer getDeviceIdBySn(String deviceSn, EntityManager em) {
 		DeviceDao dao = new DeviceDao(em);
 		DeviceEntity device = dao.findByDeviceSn(deviceSn);
@@ -95,6 +109,31 @@ public class CommonLogic {
 		}
 		
 		return device.getId();
+		
+	}
+
+	public static String getDeviceNameById(Integer deviceId, EntityManager em) {
+		DeviceDao dao = new DeviceDao(em);
+		DeviceEntity device = dao.findById(deviceId);
+		
+		if (device == null) {
+			return null;
+		}
+		
+		return device.getDeviceName();
+		
+	}
+	
+
+	public static String getSensorNameByNo(Integer deviceId, Integer sensorNo, EntityManager em) {
+		SensorDao dao = new SensorDao(em);
+		SensorEntity sensor = dao.findBySensorNo(deviceId, sensorNo);
+		
+		if (sensor == null) {
+			return null;
+		}
+		
+		return sensor.getSensorName();
 		
 	}
 	

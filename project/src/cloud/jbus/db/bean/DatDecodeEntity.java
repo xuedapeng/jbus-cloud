@@ -12,9 +12,12 @@ public class DatDecodeEntity extends BaseZEntity {
 
 	private Integer id;
 	private Integer deviceId;
+	private String deviceSn;
 	private String scriptText;
 	private String resultSchema;
 	private Integer includeCrc;
+	private String sampleCases;
+	private Integer status;
 
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +34,16 @@ public class DatDecodeEntity extends BaseZEntity {
 
 	public void setDeviceId(Integer deviceId) {
 		this.deviceId = deviceId;
+	}
+	
+
+	public String getDeviceSn() {
+		return deviceSn;
+	}
+
+
+	public void setDeviceSn(String deviceSn) {
+		this.deviceSn = deviceSn;
 	}
 
 
@@ -67,5 +80,26 @@ public class DatDecodeEntity extends BaseZEntity {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+
+	public String getSampleCases() {
+		return sampleCases;
+	}
+
+
+	public void setSampleCases(String sampleCases) {
+		this.sampleCases = sampleCases;
+	}
+
+
+	public Integer getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
 	
 }
