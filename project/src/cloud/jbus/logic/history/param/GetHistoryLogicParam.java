@@ -4,17 +4,17 @@ import cloud.jbus.logic.BaseZLogicParam;
 
 public class GetHistoryLogicParam extends BaseZLogicParam {
 
-	private String deviceSn;
+	private String deviceId;
 	private String sensorNo;
 	private String fromTime;
-	private String toTime;
 	private String pageSize;
-	private String page;
-	public String getDeviceSn() {
-		return deviceSn;
+	private String direction; // -1:过去，1:将来
+	
+	public String getDeviceId() {
+		return deviceId;
 	}
-	public void setDeviceSn(String deviceSn) {
-		this.deviceSn = deviceSn;
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 	public String getSensorNo() {
 		return sensorNo;
@@ -28,23 +28,18 @@ public class GetHistoryLogicParam extends BaseZLogicParam {
 	public void setPageSize(String pageSize) {
 		this.pageSize = pageSize;
 	}
-	public String getPage() {
-		return page;
-	}
-	public void setPage(String page) {
-		this.page = page;
-	}
 	public String getFromTime() {
 		return fromTime;
 	}
 	public void setFromTime(String fromTime) {
 		this.fromTime = fromTime;
 	}
-	public String getToTime() {
-		return toTime;
+	public String getDirection() {
+		return direction;
 	}
-	public void setToTime(String toTime) {
-		this.toTime = toTime;
+	public void setDirection(String direction) {
+		this.direction = direction;
 	}
+	
 	
 }

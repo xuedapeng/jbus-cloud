@@ -17,7 +17,6 @@ public class StatusConst {
 
 	public static final int MAX_DEVICE_AMOUNT = 255;
 	public static final int MAX_SENSOR_AMOUNT = 255;
-
-	
+	public static final int MAX_SCHEDULE_AMOUNT = 255;
 	
 }

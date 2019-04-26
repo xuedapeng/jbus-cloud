@@ -11,7 +11,6 @@ import cloud.jbus.db.dao.DeviceDao;
 import cloud.jbus.db.dao.UserDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
-import cloud.jbus.service.EventService;
 import cloud.jbus.logic.device.param.DeviceSecretKeyResetLogicParam;
 import cloud.jbus.logic.device.param.DeviceStopLogicParam;
 import cloud.jbus.logic.device.param.DeviceUpdateLogicParam;

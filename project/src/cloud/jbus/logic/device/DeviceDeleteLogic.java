@@ -11,7 +11,6 @@ import cloud.jbus.db.dao.DeviceDao;
 import cloud.jbus.db.dao.UserDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
-import cloud.jbus.service.EventService;
 import cloud.jbus.logic.device.param.DeviceDeleteLogicParam;
 import cloud.jbus.logic.device.param.DeviceSecretKeyResetLogicParam;
 import cloud.jbus.logic.device.param.DeviceStopLogicParam;
@@ -39,7 +38,7 @@ public class DeviceDeleteLogic extends BaseZLogic {
 		dao.delete(device);
 
 		// 订阅在线状态
-		EventService.unsubscribeEvent(device.getDeviceSn());
+//		EventService.unsubscribeEvent(device.getDeviceSn());
 		
 		res.add("status", 1)
 			.add("msg", "device.delete ok.")

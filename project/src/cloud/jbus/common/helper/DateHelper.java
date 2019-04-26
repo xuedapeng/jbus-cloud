@@ -12,9 +12,14 @@ public class DateHelper {
 	static Logger log = Logger.getLogger(DateHelper.class);
 	
 	static SimpleDateFormat _ymdhms = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	static SimpleDateFormat _ymdhmsMs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
 	
 	public static String toYmdhms(Date date) {
 		return _ymdhms.format(date);
+	}
+
+	public static String toYmdhmsMs(Date date) {
+		return _ymdhmsMs.format(date);
 	}
 	
 	public static Date fromYmdhms(String dateStr) {

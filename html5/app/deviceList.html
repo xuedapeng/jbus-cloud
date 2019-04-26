@@ -248,6 +248,59 @@
 	</div>
 </div><!-- modal-editDevice end -->
 
+<!-- modal-editContact start -->
+<div id="modal-editContact" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content radius">
+				<div class="modal-header" style="height:20px;margin-top:-15px;">
+						<h3 class="modal-title">警报信息联系人 -
+                {{app.selectedDevice!=null?app.selectedDevice.deviceName:""}}
+                ({{app.selectedDevice!=null?app.selectedDevice.deviceSn:""}})</h3>
+						<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+				</div>
+				<div class="modal-body">
+					<table style="border-top:0px solid #ccc">
+						<tr>
+							<td width="100px" valign="top">
+								邮箱(多个以逗号隔开)：
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<textarea v-model="email" name="" type="text" class="input-text  size-M" style="width:98%;height:100px" ></textarea>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" onclick="doSaveContact()" >确定</button>
+					<button class="btn" data-dismiss="modal" aria-hidden="true" >取消</button>
+				</div>
+			</div>
+		</div>
+	</div><!-- modal-editContact end -->
+	
+    <!-- modal-scheduleList start -->
+	<div id="modal-scheduleList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+				<div class="modal-content radius">
+					<div class="modal-header" style="height:20px;margin-top:-15px;">
+							<h3 class="modal-title">计划任务 -
+								{{app.selectedDevice!=null?app.selectedDevice.deviceName:""}}
+								({{app.selectedDevice!=null?app.selectedDevice.deviceSn:""}})</h3>
+							<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+					</div>
+					<div class="modal-body">
+						<iframe :src="'scheduleList.html?deviceId=' + app.selectedDeviceId" width="100%" height="300px" frameborder="0" ></iframe>
+
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true" >关闭</button>
+					</div>
+				</div>
+		</div>
+	</div><!-- modal-scheduleList end -->
+
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
 <script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
@@ -258,9 +311,9 @@
 
 
 
-<script type="text/javascript" src="common/constant.js?v=6"></script>
+<script type="text/javascript" src="common/constant.js?v=9"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="deviceList.js?v=100"></script>
+<script type="text/javascript" src="deviceList.js?v=107"></script>
 
 </body>
 </html>

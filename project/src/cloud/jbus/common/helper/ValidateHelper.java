@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import cloud.jbus.common.utils.FormatChecker;
 import fw.jbiz.logic.ZLogicParam;
 
 public class ValidateHelper {
@@ -117,6 +118,21 @@ public class ValidateHelper {
 			}
 			if (!NumericHelper.isInteger(fieldNameValues[i])) {
 				errorNames.add(fieldNameValues[i-1]);
+			}
+		}
+		
+		return errorNames.stream().reduce("", (acc, element)->acc + (acc.isEmpty()?"":",") + element);
+	}
+
+	// return: error names
+	public static String emailCheck(String[] values) {
+		
+		List<String> errorNames = new ArrayList<String>();
+		
+		for (String email: values) {
+			
+			if (!FormatChecker.email(email)) {
+				errorNames.add(email);
 			}
 		}
 		

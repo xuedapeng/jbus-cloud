@@ -6,7 +6,9 @@ import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Filters.lt;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Sorts.descending;
 
 import java.text.DecimalFormat;
@@ -26,7 +28,10 @@ import org.bson.conversions.Bson;
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.Block;
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 
 import cloud.jbus.common.helper.DateHelper;
 import cloud.jbus.db.mongo.MongoUtil;
@@ -103,5 +108,57 @@ public class DbProxy {
 		
 	}
 
+
+	/*
+	 * db.getCollection('dat').find({"deviceSn":"BJW401", "content.sno":1, "time.second":{$lt:"2019-04-12 12:00:00"}}).sort({"_id":-1}).limit(10)
+	 */
+	public static List<Map<String, Object>> findForTimeline(
+			String deviceSn, Integer sensorNo, Date from,  Integer direction, Integer pageSize, Map<String, Map<String, String>> fieldStyle) {
+		
+		
+		MongoCollection<Document> coll = MongoUtil.getCollection(_dbName, _collDat);
+		
+		Bson filterTime = null;
+		if (from != null) {
+			filterTime = (direction < 0
+						? lt("time.second", DateHelper.toYmdhms(from))
+						:gt("time.second", DateHelper.toYmdhms(from)));
+		}
+		Bson filter = (filterTime==null
+						? and(eq("deviceSn", deviceSn), eq("content.sno", sensorNo))
+						: and(eq("deviceSn", deviceSn), eq("content.sno", sensorNo), filterTime));
+	    //指定查询过滤器查询
+	    FindIterable<Document> iterable = coll.find(filter).sort(new Document("_id",direction)).limit(pageSize);
+
+		final List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+		iterable.forEach(new Block<Document>() {
+            public void apply(final Document document) {
+            	Map<String, Object> map = new HashMap<String, Object>();
+            	map.put("time", DateHelper.toYmdhms(document.getObjectId("_id").getDate()));
+            	fieldStyle.forEach((K,V)->{
+            		String fieldName = K;
+            		map.put(fieldName, new DecimalFormat(V.get("format")).format(getDouble(document, "content.data." + fieldName)));
+            	});
+            	
+            	retList.add(map);
+            }
+        });
+		
+		return retList;
+	}
 	
+	public static Double getDouble(Document doc, String key) {
+		
+		String[] keys = key.split("\\.");
+		for(int i=0; i<keys.length; i++) {
+			if (i == keys.length-1) {
+				return Double.valueOf(String.valueOf(doc.get(keys[i])));
+			}
+			
+			doc = (Document)doc.get(keys[i]);
+			
+		}
+		
+		return null;
+	}
 }

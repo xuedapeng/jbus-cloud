@@ -5,9 +5,6 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
 
-import cloud.jbus.proxy.MqttProxy;
-
-
 public class ServiceServlet extends HttpServlet implements Servlet {
 
 	private static final long serialVersionUID = 1L;

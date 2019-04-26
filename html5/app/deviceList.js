@@ -27,16 +27,28 @@ var app = new Vue({
       app.deviceSnView = '';
       app.secretKeyView = '';
     },
-
+    
     openEditDevice:function(deviceId){
       loadDeviceData(deviceId);
       $("#modal-editDevice").modal("show");
+    },
+
+    openEditContact:function(deviceId){
+      app.selectedDeviceId = deviceId;
+      app.selectedDevice = getSelectedDevice(deviceId)
+      loadContactData(deviceId);
+      // open action when loadContactData succeed
     },
 
     openSensorList:function(deviceId) {
       app.selectedDeviceId = deviceId;
       app.selectedDevice = getSelectedDevice(deviceId)
       $("#modal-sensorList").modal("show");
+    },
+    openScheduleList:function(deviceId) {
+      app.selectedDeviceId = deviceId;
+      app.selectedDevice = getSelectedDevice(deviceId)
+      $("#modal-scheduleList").modal("show");
     },
   }
 });
@@ -359,13 +371,13 @@ function getActions(type, id) {
       {
         name:'计划任务',
         onClick:function() {
-          alert("schedule");
+          app.openScheduleList(id);
         }
       },
       {
-        name:'报警&阀值',
+        name:'报警设置',
         onClick:function() {
-          alert("warning");
+          app.openEditContact(id);
         }
       }
     ];
@@ -379,16 +391,16 @@ function getActions(type, id) {
           document.getElementById("21"+id).click();
         }
       },
-      {
-        name:'历史数据',
-        onClick:function() {
-        }
-      },
-      {
-        name:'状态监控',
-        onClick:function() {
-        }
-      }
+      // {
+      //   name:'历史数据',
+      //   onClick:function() {
+      //   }
+      // },
+      // {
+      //   name:'状态监控',
+      //   onClick:function() {
+      //   }
+      // }
     ];
   }
 
@@ -396,3 +408,99 @@ function getActions(type, id) {
   return actions;
 }
 
+var app_edit_contact = new Vue({
+  el: '#modal-editContact',
+  data: {
+    deviceId:'',
+    email:'',
+  },
+  methods:{
+
+  }
+});
+
+
+function loadContactData(deviceId) {
+  
+  app_edit_contact.deviceId = '';
+  app_edit_contact.email = '';
+
+  if (!checkAuth()) {
+    return;
+  }
+
+  var param = {"method":"setting.contact.get",
+              "auth":[getStorage("appId"), getStorage("appToken")],
+              "data":{
+                "deviceId":deviceId+'',
+              }
+            };
+
+  ajaxPost(G_RPC_URL, param,
+    function(response){
+
+      if (response.status < 0) {
+        layer.msg(response.msg,{icon:2,time:2000});
+        return;
+      }
+
+      app_edit_contact.deviceId = deviceId;
+      if(response.status == 1) {
+        app_edit_contact.email = response.email.replaceAll(",", ",\n");
+      } 
+
+      if (response.status == 11) {
+        layer.msg("没有添加联系人！", {icon:1,time:2000});
+      } else {
+        layer.msg("联系人获取成功！", {icon:1,time:2000});
+      }
+
+      $("#modal-editContact").modal("show");
+
+    });
+  
+}
+
+function doSaveContact() {
+
+  if (!checkAuth()) {
+    return;
+  }
+
+  var param = {"method":"setting.contact.save",
+              "auth":[getStorage("appId"), getStorage("appToken")],
+              "data":{
+                "deviceId":app_edit_contact.deviceId+'',
+                "email":app_edit_contact.email
+              }
+            };
+
+  ajaxPost(G_RPC_URL, param,
+    function(response){
+
+      if (response.status < 0) {
+        layer.msg(response.msg,{icon:2,time:2000});
+        return;
+      }
+
+      layer.msg("联系人保存成功！", {icon:1,time:2000});
+
+      setTimeout('hideEditContact()', 2000);
+
+    });
+}
+
+function hideEditContact() {
+  $("#modal-editContact").modal("hide");
+}
+
+
+var app_schedule_list = new Vue({
+  el: '#modal-scheduleList',
+  data: {
+    deviceId:'',
+  },
+  methods:{
+
+  }
+});

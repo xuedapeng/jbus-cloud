@@ -14,4 +14,14 @@ public class NumericHelper {
 		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
 		return pattern.matcher(str).matches();  
 	}
+	
+	public static boolean isEmail(String str) {
+
+		if (StringUtils.isEmpty(str)) {
+			  return false;
+		}
+		  
+		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");  
+		return pattern.matcher(str).matches();  
+	}
 }

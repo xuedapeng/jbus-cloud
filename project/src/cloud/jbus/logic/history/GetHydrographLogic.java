@@ -31,50 +31,24 @@ import fw.jbiz.logic.interfaces.IResponseObject;
 @Action(method="hydrograph.data.query")
 public class GetHydrographLogic extends BaseZLogic {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean execute(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 		GetHydrographLogicParam myParam = (GetHydrographLogicParam)logicParam;
 		Integer deviceId = Integer.valueOf(myParam.getDeviceId());
-		String sensorNo = myParam.getSensorNo();
+		Integer sensorNo = Integer.valueOf(myParam.getSensorNo());
 		Date fromTime = DateHelper.fromYmdhms(myParam.getFromTime());
 		Date toTime = DateHelper.fromYmdhms(myParam.getToTime());
 		String  deviceSn = CommonLogic.getDeviceSnById(deviceId, em);
 		
 		System.out.println(myParam.dumpParams());
 		
-		DatDecodeDao decodeDao = new DatDecodeDao(em);
-		DatDecodeEntity decode = decodeDao.findByDeviceId(deviceId);
-		
-		//校验：decode存在
-		if (decode == null || decode.getResultSchema() == null) {
-			res.add("status", -21)
-				.add("msg", "解码器错误。");
+		Map<String, Map<String, String>> fieldStyle = getFieldStyle(deviceId, myParam.getSensorNo(), res, em);
+		if (fieldStyle == null) {
 			return false;
 		}
-		
-		String resultSchema = decode.getResultSchema();
-		Map<String, Object> scheMap = JsonHelper.json2map(resultSchema);
-		
-		// 校验：resultSchema中sno存在
-		if (!scheMap.containsKey(sensorNo)) {
-			res.add("status", -22)
-				.add("msg", "解码器中缺少sno(" + sensorNo + ")");
-			return false;
-		}
-		
-		Map<String, Map<String, String>> fieldStyle = (Map<String, Map<String, String>>) ((Map<String, Object>)scheMap.get(sensorNo.toString())).get("field");
-		String type = (String) ((Map<String, Object>)scheMap.get(sensorNo.toString())).get("type");
-		
-		if (!"metric".equals(type) || fieldStyle == null){
-			res.add("status", -23)
-				.add("msg", "解码器模式错误");
-			return false;
-		}
-		
 		
 		DbProxy.TIME_UNIT unit = getUnit(fromTime, toTime);
-		List<Map<String, Object>> result = DbProxy.findForAvg(deviceSn, Integer.valueOf(sensorNo), fromTime, toTime, unit, fieldStyle);
+		List<Map<String, Object>> result = DbProxy.findForAvg(deviceSn, sensorNo, fromTime, toTime, unit, fieldStyle);
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("time", result.stream().map(m->m.get("time")).collect(Collectors.toList()));
@@ -189,6 +163,42 @@ public class GetHydrographLogic extends BaseZLogic {
 		// periodHours > 10*365*24) 
 		return DbProxy.TIME_UNIT.YEAR;
 		
+	}
+	
+	// check decode
+	@SuppressWarnings("unchecked")
+	protected static Map<String, Map<String, String>> getFieldStyle(Integer deviceId, String sensorNo, ZSimpleJsonObject res, EntityManager em) throws Exception {
+
+		DatDecodeDao decodeDao = new DatDecodeDao(em);
+		DatDecodeEntity decode = decodeDao.findByDeviceId(deviceId);
+		
+		//校验：decode存在
+		if (decode == null || decode.getResultSchema() == null) {
+			res.add("status", -21)
+				.add("msg", "解码器错误。");
+			return null;
+		}
+		
+		String resultSchema = decode.getResultSchema();
+		Map<String, Object> scheMap = JsonHelper.json2map(resultSchema);
+		
+		// 校验：resultSchema中sno存在
+		if (!scheMap.containsKey(sensorNo)) {
+			res.add("status", -22)
+				.add("msg", "解码器中缺少sno(" + sensorNo + ")");
+			return null;
+		}
+		
+		Map<String, Map<String, String>> fieldStyle = (Map<String, Map<String, String>>) ((Map<String, Object>)scheMap.get(sensorNo.toString())).get("field");
+		String type = (String) ((Map<String, Object>)scheMap.get(sensorNo.toString())).get("type");
+		
+		if (!"metric".equals(type) || fieldStyle == null){
+			res.add("status", -23)
+				.add("msg", "解码器模式错误");
+			return null;
+		}
+		
+		return fieldStyle;
 	}
 
 }

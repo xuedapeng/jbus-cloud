@@ -3,7 +3,6 @@ package cloud.jbus.logic.share;
 
 import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.NumericHelper;
-import cloud.jbus.logic.device.param.DeviceListLogicParam;
 import cloud.jbus.logic.device.param.IPageParam;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 

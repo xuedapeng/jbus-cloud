@@ -18,11 +18,7 @@ public class Test {
 
 	public static void main(String[] args) {
 		
-		String json = "{\"a\":1.00, \"b\":[2.30,3], \"c\":\"0\"}";
-		Map<String, Object> map = JsonHelper.json2map(json);
-		String p = JsonHelper.map2json(map);
-		System.out.println(json);
-		System.out.println(p);
+		DbProxy.findForTimeline("BJW401", 1, null, -1, 20, null);
 		
 	}
 }

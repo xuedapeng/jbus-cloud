@@ -142,7 +142,8 @@ function subscribeDeviceStatus() {
          }
        },
        userName:getStorage("emqUser"),
-       password:getStorage("emqPwd")
+       password:getStorage("emqPwd"),
+       useSSL: true,
      });//连接服务器并注册连接成功处理事件
 
      app.mqttClientStatus = client;
@@ -227,11 +228,14 @@ function onMessageArrived(message) {
 
     eval(app.selectedDeviceInfo.datDecode.scriptText);
     parsed= decodeDat(message.payloadBytes);
-    jsonObj = JSON.parse(parsed);
-    if (jsonObj.sno != app.selectedSensorInfo.sensorNo) {
-      console.log("sensorNo->rcv/sel: " + jsonObj.sno +"/"+ app.selectedSensorInfo.sensorNo);
-      return;
+    if(parsed==null) {
+      parsed = "null";
     }
+    // jsonObj = JSON.parse(parsed);
+    // if (jsonObj.sno != app.selectedSensorInfo.sensorNo) {
+    //   console.log("sensorNo->rcv/sel: " + jsonObj.sno +"/"+ app.selectedSensorInfo.sensorNo);
+    //   return;
+    // }
   }
   // var parsed = eval(script);
   addMessage(parsed, source,"received");
@@ -326,8 +330,8 @@ function addMessage(parsed, source, type) {
     app.messageList.splice(0, app.messageList.length-g_list_size);
   }
 
-  var currentIdx = app.messageList.length-1;
-  setTimeout("refreshImgData(" + currentIdx + ")", 1000);
+  // var currentIdx = app.messageList.length-1;
+  // setTimeout("refreshImgData(" + currentIdx + ")", 1000);
 }
 
 function searchDevice() {
