@@ -1,0 +1,18 @@
+<!--pages/login/login.wxml-->
+<view class="container" >
+<view class="section" style="width:100%">
+  <view class="section__title" style="padding-bottom:20px;text-align:center">
+   用户登录
+  </view>
+  <view  class="inputView">
+   <input bindinput="accountInput" class="input"  placeholder="用户名" value="{{account}}" />
+  </view>
+  <view  class="inputView">
+   <input bindinput="passwordInput" class="input"  placeholder="密码" value="{{password}}" type="password" />
+  </view>
+  <view class="buttonView">
+   <button bindtap="login" class="button" type="primary" >登录</button>
+  </view>
+
+</view>
+</view>

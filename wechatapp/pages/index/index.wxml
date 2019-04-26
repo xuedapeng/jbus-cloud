@@ -1,0 +1,49 @@
+<!--index.wxml-->
+<view class="container" >
+
+  <view class="section" style="width:100%">
+    <view class="" style="padding-bottom:20px;text-align:center;display:flex;justify-content:space-between" >
+   
+     <view>
+     </view>
+     <view>
+        设备列表
+      </view>
+      <view style="width:40px">
+        <navigator url="/pages/login/login">〓</navigator>
+      </view>
+   </view>
+    
+    <scroll-view
+      scroll-y=true
+      style="height:100%;"
+      bindscrolltoupper="upper"
+      bindscrolltolower="lower"
+      bindscroll="scroll"
+      scroll-into-view="{{toView}}"
+      scroll-top="{{scrollTop}}"
+      enable-back-to-top=true
+      style="margin-top:-5px"
+    >
+
+      <view wx:for="{{deviceList}}" style="border-bottom: 1px solid #e0e0e0;" >
+        <view bindtap="detail" data-device-id="{{item.deviceId}}" style="margin-bottom:5px;margin-top:5px;background-color:#fff">
+            <view style="display:inline-flex;align-items:center;">
+              <icon type="{{item.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
+              <view style="">{{item.deviceName}}</view>
+            </view>
+            <view style="margin-left:30px">
+              <view style="display:block">{{item.realtimeVal}}</view>
+            </view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="btn-area">
+    <!-- <button size="mini" bindtap="tap">click me to scroll into view</button> -->
+    </view>
+    <view>
+      {{console}}
+    </view>
+  </view>
+
+</view>
