@@ -35,7 +35,7 @@ public class GetEventLogic extends BaseZLogic {
 		String onlyLast = myParam.getOnlyLast();
 		Integer userId = getLoginUserId(myParam.getSecretId());
 		Integer page = 1;
-		Integer pageSize = 1000;
+		Integer pageSize = 100;
 		
 		if (StringUtils.isEmpty(StringUtils.trim(deviceKey))) {
 			deviceKey = null;
@@ -62,9 +62,9 @@ public class GetEventLogic extends BaseZLogic {
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 		// 查找事件
 		if ("yes".equals(onlyLast)) {
-			VDeviceOnlineDao onlineDao = new VDeviceOnlineDao(em);
-			List<VDeviceOnlineEntity> onlineList = onlineDao.searchEvent(userId, deviceSnList, page, pageSize);
-			onlineList.forEach((event)->{
+			EventDao eventDao = new EventDao(em);
+			List<EventEntity> eventList = eventDao.searchEventLast(userId, deviceSnList, page, pageSize);
+			eventList.forEach((event)->{
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("deviceId", event.getDeviceId());
 				map.put("deviceSn", event.getDeviceSn());

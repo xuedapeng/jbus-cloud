@@ -89,8 +89,8 @@
         </div>
 
         <div :style="'display:'+ (dateMode=='pick'?'block':'none')">
-            <input type="text" v-model="fromTimeDp" id="datetimepicker_from" title="开始时间" class="input-text radius size-S" style="width:130px"/> ~ 
-            <input type="text" v-model="toTimeDp" id="datetimepicker_to"  title="结束时间"  class="input-text radius size-S" style="width:130px"/>
+            <input type="text" v-model="fromTimeDp" id="datetimepicker_from" title="开始时间" class="input-text radius size-S" style="width:130px" onblur="dtpStartBlur()"/> ~ 
+            <input type="text" v-model="toTimeDp" id="datetimepicker_to"  title="结束时间"  class="input-text radius size-S" style="width:130px" onblur="dtpEndBlur()"/>
         </div>
       </td>
       <td valign="top" align="left"><a v-on:click="refreshGraph()">
@@ -99,13 +99,13 @@
           </a>&nbsp;&nbsp;&nbsp;&nbsp;
       </td>
       <td align="right"  valign="top">
-          <span title="滑动条" :class="'label radius left-space ' + (dateMode=='slide'?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(30)">S</span>
-          <span title="日历" :class="'label radius ' + (dateMode=='pick'?'selbtn-selected': 'selbtn-unselected')" v-on:click="resetPos(30)">C</span>
+          <span title="滑动条" :class="'label radius left-space ' + (dateMode=='slide'?'selbtn-selected': 'selbtn-unselected')" v-on:click="setDateMode('s')">S</span>
+          <span title="日历" :class="'label radius ' + (dateMode=='pick'?'selbtn-selected': 'selbtn-unselected')" v-on:click="setDateMode('c')">C</span>
         
-          <span title="过程线" :class="'label radius left-space ' + (queryMode=='graph'?'selbtn-selected': 'selbtn-unselected')">
+          <span title="过程线" :class="'label radius left-space ' + (queryMode=='graph'?'selbtn-selected': 'selbtn-unselected')"  v-on:click="setQueryMode('g')">
             <i class="Hui-iconfont" style="font-size:1.3em">&#xe61c;</i>
           </span>
-          <span title="数据表" :class="'label radius ' + (queryMode=='detail'?'selbtn-selected': 'selbtn-unselected')">
+          <span title="数据表" :class="'label radius ' + (queryMode=='detail'?'selbtn-selected': 'selbtn-unselected')"  v-on:click="setQueryMode('d')">
             <i class="Hui-iconfont" style="font-size:1.3em">&#xe667;</i>
           </span>
       </td>
@@ -126,8 +126,8 @@
 <script type="text/javascript" src="../static/plugin/jquery.datetimepicker.full.js?v=3"></script>
 
 
-<script type="text/javascript" src="common/constant.js?v=6"></script>
+<script type="text/javascript" src="common/constant.js?v=7"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="history.js?v=39"></script>
+<script type="text/javascript" src="history.js?v=54"></script>
 </body>
 </html>

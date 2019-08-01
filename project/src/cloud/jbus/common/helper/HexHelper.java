@@ -53,6 +53,21 @@ public class HexHelper {
         }
         return d;
     }
+
+    public static int[] hexStringToInts(String hexString) {
+    	
+    	byte[] bytes = hexStringToBytes(hexString);
+    	if (bytes==null) {
+    		return null;
+    	}
+    	
+    	int[] ints = new int[bytes.length];
+    	for(int i=0; i<bytes.length; i++) {
+    		ints[i] = ByteHelper.toUnsignedInt(bytes[i]);
+    	}
+    	
+        return ints;
+    }
     
     private static byte charToByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);

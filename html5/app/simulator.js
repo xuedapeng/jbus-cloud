@@ -55,8 +55,9 @@ function connectWs() {
   app.devicePwd = app.devicePwd.trim();
   if(app.deviceSn.length == 0 || app.devicePwd.length == 0) {
     
-    layer.msg("请输入设备编号和通讯密码！", {icon:1,time:1000});
-    return;
+    // layer.msg("请输入设备编号和通讯密码！", {icon:1,time:1000});
+    layer.msg("请发送注册包信息！", {icon:1,time:1000});
+    // return;
   }
 
   var target = G_TC_WS_URL;
@@ -64,6 +65,10 @@ function connectWs() {
   var reginfo = stringToByte("REG:" + app.deviceSn + "," + app.devicePwd + ";");
   // reginfo = hexStringToBytes("52 45 47 3A 42 4A 57 34 30 31 2C 61 3B");
   reginfo = hexStringToBytes(byteArray2hexStr(reginfo));
+
+  if (app.deviceSn.length == 0 || app.devicePwd.length == 0) {
+    reginfo = "";
+  }
     	
   if ('WebSocket' in window) {
       ws = new WebSocket(target);
@@ -76,8 +81,10 @@ function connectWs() {
   ws.onopen = function(obj){  
       console.info('ws open') ;
       console.info(obj) ;
-      console.info('send:' + reginfo);
-      ws.send(reginfo);
+      if (reginfo != "") {
+        console.info('send:' + reginfo);
+        ws.send(reginfo);
+      }
   } ;
   
   ws.onclose = function (obj) {

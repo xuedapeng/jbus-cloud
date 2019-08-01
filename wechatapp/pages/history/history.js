@@ -4,13 +4,13 @@ const app = getApp();
 
 var ecOptionInit = {
   title: {
-    text: '正在加载...',
+    text: '　　正在加载...',
     left: 'left'
   },
   // color: ["#37A2DA", "#67E0E3", "#9FE6B8"],
   legend: {
     data: [],
-    top: 50,
+    top: 30,
     left: 'center',
     backgroundColor: 'white',
     z: 100
@@ -18,9 +18,18 @@ var ecOptionInit = {
   grid: {
     containLabel: true
   },
+  
   tooltip: {
     show: true,
-    trigger: 'axis'
+    trigger: 'axis', 
+    snap:true,
+    position: function (pos, params, dom, rect, size) {
+      // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+      var obj = { top: pos[1]-150 };
+      // obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+      obj['left'] = (pos[0] - ([0, 100][+(pos[0] > size.viewSize[0] / 2)]));
+      return obj;
+    }
   },
   xAxis: {
     type: 'category',
@@ -75,11 +84,12 @@ Page({
       onInit: initChart 
     },
     deviceId:'',
-    sensorNo: '1',
+    sensorNo: '',
 
   },
   onLoad(q) {
-    this.data.deviceId = q.deviceId; 
+    this.data.deviceId = q.deviceId;
+    this.data.sensorNo = q.sno; 
     this.loadData();
   },
 
@@ -100,7 +110,7 @@ Page({
       data: {
         "method": "hydrograph.data.query",
         "auth": app.globalData.auth(),
-        "data": { deviceId: page.data.deviceId+'', sensorNo: "1", fromTime: fromTime, toTime: toTime}
+        "data": { deviceId: page.data.deviceId + '', sensorNo: page.data.sensorNo + '', fromTime: fromTime, toTime: toTime}
       },
       method: "POST",
       header: {
@@ -115,7 +125,7 @@ Page({
 
   clearGraph() {
     console.log("clearGraph");
-    ecOption.title.text = '正在加载...';
+    ecOption.title.text = '　　正在加载...';
     ecOption.xAxis.data = [];
     ecOption.series = [];
     ecOption.legend.data = [];
@@ -129,11 +139,11 @@ Page({
     var deviceSn = data.deviceSn;
     var sensorName = data.sensorName;
     var sensorNo = data.sensorNo;
-    ecOption.title.text = deviceName + '(' + deviceSn + ')' + '　' + sensorName + '(' + sensorNo + ')';
+    ecOption.title.text = "　　" + deviceName + '(' + deviceSn + ')' + '　' + sensorName + '(' + sensorNo + ')';
 
     ecOption.xAxis.data = data.result.time;
     for (var i in ecOption.xAxis.data) {
-      ecOption.xAxis.data[i] = ecOption.xAxis.data[i].substring(5);
+      ecOption.xAxis.data[i] = ecOption.xAxis.data[i].substring(11);
     }
 
     ecOption.series=[];

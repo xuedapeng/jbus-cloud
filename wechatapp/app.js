@@ -12,6 +12,11 @@ App({
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
       }
     })
+
+
+    wx.showShareMenu({
+      withShareTicket: true
+    })
   },
   globalData: {
     userInfo: null,
@@ -27,8 +32,8 @@ App({
       pwd: function () {
         return wx.getStorageSync("mqtt.pwd");
         },
-      host:"cloud.moqbus.com",
-      port:8083
+      // host:"cloud.moqbus.com",
+      // port:8083
     },
   }
 })

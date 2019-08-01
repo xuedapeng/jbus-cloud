@@ -95,7 +95,9 @@ public class DbProxy {
             	map.put("time", document.get("_id"));
             	fieldStyle.forEach((K,V)->{
             		String fieldName = K;
-            		map.put(fieldName, new DecimalFormat(V.get("format")).format(document.getDouble(fieldName)));
+            		Double fieldValue = document.getDouble(fieldName);
+            		
+            		map.put(fieldName, fieldValue==null?0:new DecimalFormat(V.get("format")).format(fieldValue));
             	});
             	
             	retList.add(map);
@@ -137,7 +139,9 @@ public class DbProxy {
             	map.put("time", DateHelper.toYmdhms(document.getObjectId("_id").getDate()));
             	fieldStyle.forEach((K,V)->{
             		String fieldName = K;
-            		map.put(fieldName, new DecimalFormat(V.get("format")).format(getDouble(document, "content.data." + fieldName)));
+            		Double dv = getDouble(document, "content.data." + fieldName);
+            		String sv = dv==null?"-":new DecimalFormat(V.get("format")).format(dv);
+            		map.put(fieldName, sv);
             	});
             	
             	retList.add(map);
@@ -151,8 +155,18 @@ public class DbProxy {
 		
 		String[] keys = key.split("\\.");
 		for(int i=0; i<keys.length; i++) {
+			
+			if (!doc.containsKey(keys[i])) {
+				return null;
+			}
+			
 			if (i == keys.length-1) {
-				return Double.valueOf(String.valueOf(doc.get(keys[i])));
+				try {
+					return Double.valueOf(String.valueOf(doc.get(keys[i])));
+				} catch (Exception e) {
+					log.error("", e);
+					return null;
+				}
 			}
 			
 			doc = (Document)doc.get(keys[i]);

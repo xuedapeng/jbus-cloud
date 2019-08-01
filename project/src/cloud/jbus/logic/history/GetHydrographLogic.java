@@ -116,11 +116,11 @@ public class GetHydrographLogic extends BaseZLogic {
 		return true;
 	}
 
-	@Override
-   protected boolean auth(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em){
-		// todo: no auth for test
-		return true;
-	}
+//	@Override
+//   protected boolean auth(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em){
+//		// todo: no auth for test
+//		return true;
+//	}
 	
 
 	/*

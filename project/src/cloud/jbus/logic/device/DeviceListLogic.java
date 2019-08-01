@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -51,6 +52,14 @@ public class DeviceListLogic extends BaseZLogic {
 			map.put("secretKey", HexHelper.bytesToHexStringNoBlank(E.getSecretKey().getBytes()));
 			
 			map.put("sensorAmount", sensorDao.findTotal(E.getId()));
+			map.put("sensorList", 
+					sensorDao.findByDeviceId(E.getId(), 1, 255)
+						.stream().map(S->{
+							Map<String, String> sensorMap = new HashMap<String, String>();
+							sensorMap.put("sno", String.valueOf(S.getSensorNo()));
+							sensorMap.put("name", S.getSensorName());
+							return sensorMap;
+						}).collect(Collectors.toList()));
 			
 			resultList.add(map);
 		});

@@ -56,9 +56,9 @@ public class SaveDatDecodeLogic extends BaseZLogic {
 
 		String[][] matrix = new String[][]{
 			{"deviceId", "1", "0", "1"},
-			{"scriptText", "1", "5000", "0"},
-			{"resultSchema", "1", "1000", "0"},
-			{"sampleCases", "1", "1000", "0"}
+			{"scriptText", "1", "8000", "0"},
+			{"resultSchema", "1", "10000", "0"},
+			{"sampleCases", "1", "5000", "0"}
 		};
 		
 		if (!checkParam(logicParam, res, matrix)) {

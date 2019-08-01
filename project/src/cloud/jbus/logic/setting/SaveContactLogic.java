@@ -42,7 +42,7 @@ public class SaveContactLogic extends BaseZLogic {
 		if (contact == null) {
 			contact = new ContactEntity();
 			contact.setDeviceSn(deviceSn);
-			contact.setEvent(15); // 1111
+			contact.setEvent(0b11111); // 11111
 			contact.setStatus(StatusConst.STATUS_NORMAL);
 		}
 		

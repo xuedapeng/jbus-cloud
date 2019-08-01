@@ -7,6 +7,8 @@ import java.util.Collections;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.ImmutableMap;
 
 import cloud.jbus.common.helper.JsonBuilder;
@@ -15,6 +17,7 @@ import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.realtime.param.GetOnlineInfoOfDevicesLogicParam;
 import cloud.jbus.logic.share.annotation.Action;
 import fw.jbiz.common.conf.ZSystemConfig;
+import fw.jbiz.common.helper.StringUtil;
 import fw.jbiz.common.helper.httpclient.HttpHelper;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
@@ -33,6 +36,15 @@ public class GetOnlineInfoOfDevicesLogic extends BaseZLogic {
 		GetOnlineInfoOfDevicesLogicParam myParam = (GetOnlineInfoOfDevicesLogicParam)logicParam;
 		
 		Map<String, Object> map = getOnlineStatus(myParam.getDeviceIds());
+		
+		if (map == null) {
+
+			res.add("status", -10)
+				.add("msg", "jbus服务不可用");
+			
+			return false;
+		}
+		
 		res.add("status", map.get("status"))
 			.add("msg", map.get("msg"))
 			.add("result", map.get("result"));
@@ -63,6 +75,12 @@ public class GetOnlineInfoOfDevicesLogic extends BaseZLogic {
 					.add("auth", ImmutableMap.of("appId", APPID, "appToken", APPTOKEN))
 					.add("data", ImmutableMap.of("deviceIds", deviceSnList)
 					).toString());
+		
+		if (StringUtils.isEmpty(response)
+				|| !response.contains("getOnlineInfoOfDevices ok.")) {
+			
+			return null;
+		}
 		
 		Map<String, Object> map = JsonHelper.json2map(response);
 		

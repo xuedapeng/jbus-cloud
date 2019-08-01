@@ -163,7 +163,7 @@ public class DecodeValidator {
 
 			Invocable invocable = nsb.getSandboxedInvocable();
 			String actual = (String)invocable.invokeFunction("decodeDat", 
-					HexHelper.hexStringToBytes((String)cs.get("input")));
+					HexHelper.hexStringToInts((String)cs.get("input")));
 
 			Object expected = cs.get("output");
 			if (actual == null) {

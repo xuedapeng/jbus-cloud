@@ -18,6 +18,7 @@ public class EventEntity extends BaseZEntity {
 	private String event;
 	private Date time;
 	private String memo;
+	private Integer islast;
 	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
@@ -68,4 +69,14 @@ public class EventEntity extends BaseZEntity {
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
+
+	public Integer getIslast() {
+		return islast;
+	}
+
+	public void setIslast(Integer islast) {
+		this.islast = islast;
+	}
+	
+	
 }

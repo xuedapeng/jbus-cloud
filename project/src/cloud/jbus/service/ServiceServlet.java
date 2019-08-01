@@ -5,6 +5,9 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
 
+import cloud.jbus.mqtt.MqttPoolManager;
+
+
 public class ServiceServlet extends HttpServlet implements Servlet {
 
 	private static final long serialVersionUID = 1L;
@@ -13,11 +16,9 @@ public class ServiceServlet extends HttpServlet implements Servlet {
 	@Override
 	public void init() {
 
-//		MqttProxy.init();
-
-		// 在线状态更新
-//		EventService.subscribeEventOfAll();
-//		EventService.updateStatusOnStart();
+		// 初始化mqtt pool
+		MqttPoolManager.initialize();
+		
 		
 	}
 	

@@ -5,6 +5,7 @@ var app = new Vue({
     deviceList:[],
     deviceSnView:'',
     secretKeyView:'',
+    deviceIdView:'',
     pageOption : {
           "pageTotal":0, //必填,总页数
           "pageAmount":20, //每页多少条
@@ -18,9 +19,10 @@ var app = new Vue({
     prefix_datDecode:"datDecode_",
   },
   methods:{
-    showSecretKey:function(sn, key){
+    showSecretKey:function(sn, key, deviceId){
       app.deviceSnView = sn;
       app.secretKeyView = byteToString(hexStringToBytes(key));
+      app.deviceIdView = deviceId;
       $("#modal-showSecretKey").modal("show");
     },
     closeSecretKey:function() {

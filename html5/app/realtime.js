@@ -143,7 +143,7 @@ function subscribeDeviceStatus() {
        },
        userName:getStorage("emqUser"),
        password:getStorage("emqPwd"),
-       useSSL: true,
+       useSSL: G_IS_HTTPS
      });//连接服务器并注册连接成功处理事件
 
      app.mqttClientStatus = client;
@@ -173,7 +173,8 @@ function connectMqtt() {
    client.connect({
      onSuccess:onConnect,
      userName:getStorage("emqUser"),
-     password:getStorage("emqPwd")
+     password:getStorage("emqPwd"),
+     useSSL: G_IS_HTTPS
    });//连接服务器并注册连接成功处理事件
 
    app.mqttClient = client;
@@ -442,6 +443,7 @@ function searchDevice() {
 
         app.mySensorInfo = app.selectedDeviceInfo.sensorList;
         console.log("sensorList.length:" + app.selectedDeviceInfo.sensorList.length);
+        console.log("app.mySensorInfo.length:" + app.mySensorInfo.length);
 
         if (app.selectedDeviceInfo.sensorList.length > 0) {
           app.selectedDeviceInfo.sensorList[0] = app.selectedDeviceInfo.sensorList[0];

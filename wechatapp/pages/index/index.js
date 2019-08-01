@@ -2,6 +2,7 @@
 //获取应用实例
 const app = getApp(); 
 import mqtt from '../../utils/mqtt.js';
+import dateFormat from '../../utils/util.js';
 
 var page=Page({
   data: {
@@ -119,7 +120,7 @@ var page=Page({
       connectTimeout: 30 * 1000, //1000毫秒，两次重新连接之间的间隔
       resubscribe: true //如果连接断开并重新连接，则会再次自动订阅已订阅的主题（默认true）
     }
-    var client = mqtt.connect('wxs://cloud.moqbus.com/mqtt', options);
+    var client = mqtt.connect('wss://cloud.moqbus.com/mqtt', options);
 
     log(page, "client connect");
 
@@ -205,19 +206,37 @@ var page=Page({
         page.getRealtimeData(i);
       }
     }
+
+    // setTimeout(page.setDataDeviceList, 5000);
+    
+  },
+
+  setDataDeviceList() {
+    this.setData({ "deviceList": this.data.deviceList });
   },
 
   getRealtimeData(idx) {
 
     var page = this;
     var pagedata = page.data;
+    var sensorList = pagedata.deviceList[idx].sensorList;
+    pagedata.deviceList[idx].realtimeVal = {};
+    for(var i in sensorList) {
+      page.requestRealtimeVal(idx, i);
+    }
+  },
 
+  requestRealtimeVal(dIdx, sIdx) {
+
+    var page = this;
+    var pagedata = page.data;
+    var sensorList = pagedata.deviceList[dIdx].sensorList;
     wx.request({
       url: app.globalData.url,
       data: {
         "method": "history.data.query",
-        "auth": app.globalData.auth,
-        "data": { "deviceId": pagedata.deviceList[idx].deviceId+"", "sensorNo": "1", "pageSize":"1" }
+        "auth": app.globalData.auth(),
+        "data": { "deviceId": pagedata.deviceList[dIdx].deviceId + "", "sensorNo":sensorList[sIdx].sno + '', "pageSize": "1" }
       },
       method: "POST",
       header: {
@@ -228,16 +247,18 @@ var page=Page({
         if (res.data.status < 0) {
           return;
         }
-        pagedata.deviceList[idx].realtimeVal = page.getRealtimeValDisplay(res.data);
+        pagedata.deviceList[dIdx].realtimeVal[sensorList[sIdx].sno] = page.getRealtimeValDisplay(res.data);
         // var key = "deviceList[" + idx + "].realtimeVal";
+        console.log("sIdx" + sIdx + "=" + sensorList[sIdx].sno);
+        console.log(pagedata.deviceList[dIdx].realtimeVal);
         page.setData({ "deviceList": pagedata.deviceList });
-        
+
       }
     })
   },
 
   getRealtimeValDisplay(resdata) {
-    var display = "";
+    var display = [];
     var fieldStyle = resdata.fieldStyle;
     var result = resdata.result;
     // log(pagedata, "result.time.length=" + result.time.length);
@@ -245,8 +266,30 @@ var page=Page({
       return "";
     }
 
+    var index = 0;
+    var len = Object.keys(fieldStyle).length;
     for (var key in fieldStyle) {
-      display += (fieldStyle[key].display + ":" + result[key][0] + fieldStyle[key].unit + " " );
+      var val = result[key][0];
+      var item = {
+        "name": fieldStyle[key].display,
+        "val": val,
+        "unit": fieldStyle[key].unit,
+        "color":"black",
+        "agoTime": ((index == (len-1))?getAgoTime(result["time"][0]):"")
+      };
+
+      var range = fieldStyle[key].range;
+      if (range) {
+        var minmax = range.split(",");
+        if (val < minmax[0]) {
+          item.color = "blue";
+        } else if (val > minmax[1]) {
+          item.color = "red";
+        }
+      }
+      
+      display.push(item);
+      index++;
     }
     return display;
   },
@@ -264,16 +307,17 @@ var page=Page({
   },
 
   detail(e) {
+    if (e.currentTarget.dataset.status != 'on') {
+      return;
+    }
     var deviceId = e.currentTarget.dataset.deviceId;
+    var sno = e.currentTarget.dataset.sno;
     // console.log(e.currentTarget.dataset.deviceId);
     wx.navigateTo({
-      url: '../history/history?deviceId='+deviceId
+      url: '../history/history?deviceId='+deviceId + '&sno=' + sno
     })
     
   }
-
-
-
 
 
 
@@ -289,5 +333,26 @@ function guid() {
 function log(obj, msg) {
   console.log(msg);
   // obj.setData({ "console": obj.data.console + " # " + msg});
+}
+
+function getAgoTime(time) {
+  // time = "2019-06-04 10:52";
+  time = time.replace(/[-]/g,"/");
+  var now = new Date();
+  var orgTime = Date.parse(time);
+  var intv = (now - orgTime) / 1000;
+  // return (time);
+  if (intv > 24*60*60) {
+    return "(1天前)";
+  }
+  if (intv > 1*60*60) {
+    return "(" + Math.floor(intv/(60*60)) + "小时前)";
+  }
+
+  if (intv > 3 * 60) {
+    return "(" + Math.floor(intv / (60)) + "分钟前)";
+  }
+
+  return "";
 }
 

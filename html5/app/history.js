@@ -20,7 +20,7 @@ var app = new Vue({
     toPos:MAX_POS,
     iframeSrc:'',
     shortcutDays:DAYS_30D,
-    queryMode:'detail', // graph, detail
+    queryMode:'graph', // graph, detail
     dateMode:'slide', // pick, slide
     fromTimeDp:"",
     toTimeDp:"",
@@ -28,6 +28,11 @@ var app = new Vue({
   },
   computed: {
     fromTime: function () {
+
+      if (this.dateMode == "pick") {
+        return this.fromTimeDp+":00";
+      }
+
       var  fromDate = new Date(Date.parse(new Date()) - 1000*60*60*24*(MAX_POS-this.fromPos));
       return dateFormat(fromDate, "yyyy-MM-dd HH:mm:ss");
 
@@ -37,6 +42,10 @@ var app = new Vue({
     },
 
     toTime: function () {
+
+      if (this.dateMode == "pick") {
+        return this.toTimeDp+":00";
+      }
       var  toDate = new Date(Date.parse(new Date()) - 1000*60*60*24*(MAX_POS-this.toPos));
       return dateFormat(toDate, "yyyy-MM-dd HH:mm:ss");
     },
@@ -45,7 +54,14 @@ var app = new Vue({
     },
     iframeSrcCalc:function() {
       console.log("frome-to:" +  this.fromTime + " - " + this.toTime);
-      return Object.keys(this.selectedSensorInfo).length==0?'':'hydrograph.html?showTitle=no&deviceId='+this.selectedDeviceInfo.deviceId+'&sensorNo='+this.selectedSensorInfo.sensorNo + '&fromTime=' + this.fromTime + '&toTime=' + this.toTime ;
+      return Object.keys(this.selectedSensorInfo).length==0?'': (this.htmlfile + '?showTitle=no&deviceId='+this.selectedDeviceInfo.deviceId+'&sensorNo='+this.selectedSensorInfo.sensorNo + '&fromTime=' + this.fromTime + '&toTime=' + this.toTime) ;
+    },
+    htmlfile:function() {
+      if (app.queryMode=="graph") {
+        return "hydrograph.html";
+      } else {
+        return "historyDetail.html";
+      }
     }
   },
   methods:{
@@ -67,6 +83,8 @@ var app = new Vue({
       sensorSelected(sensorId);
     },
     refreshGraph:function() {
+      console.log(app.fromTimeDp);
+      console.log(app.toTimeDp);
       app.iframeSrc = app.iframeSrcCalc;
     },
 
@@ -106,6 +124,23 @@ var app = new Vue({
         app.fromTimeDp = dateFormat(fromDate, "yyyy-MM-dd") + " 00:00";
         app.toTimeDp = dateFormat(toDate, "yyyy-MM-dd") + " 00:00";
       }
+    },
+
+
+    setDateMode:function(dateMode) {
+      if (dateMode=='s') {
+        app.dateMode = 'slide';
+      } else if (dateMode=='c') {
+        app.dateMode = 'pick';
+      } 
+    },
+    setQueryMode:function(queryMode) {
+      if (queryMode=='g') {
+        app.queryMode = 'graph';
+      } else if (queryMode=='d') {
+        app.queryMode = 'detail';
+      } 
+      app.refreshGraph();
     }
   }
 });
@@ -252,3 +287,16 @@ function setSlider() {
     }
   });
 }
+
+function dtpStartBlur() {
+  
+  app.fromTimeDp = $("#datetimepicker_from").val().replaceAll("/","-");
+
+}
+
+function dtpEndBlur() {
+  
+  app.toTimeDp = $("#datetimepicker_to").val().replaceAll("/","-");
+
+}
+

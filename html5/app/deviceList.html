@@ -57,7 +57,7 @@
 
             <tr class="text-c">
             <td>{{item.seq}}</td>
-            <td style="text-align:left"><a v-on:click="showSecretKey(item.deviceSn, item.secretKey)" title="查看通讯密码">{{item.deviceSn}} </a></td>
+            <td style="text-align:left"><a v-on:click="showSecretKey(item.deviceSn, item.secretKey, item.deviceId)" title="查看通讯密码">{{item.deviceSn}} </a></td>
             <td style="text-align:left">{{item.deviceName}}</td>
             <td style="text-align:center">
               <a v-on:click="openSensorList(item.deviceId)">{{item.sensorAmount}}</a>
@@ -109,6 +109,14 @@
     		<div class="modal-content radius">
     			<div class="modal-body">
     				<table style="border-top:0px solid #ccc">
+    					<tr>
+    						<td width="80px">
+    							设备ID：
+    						</td>
+    						<td>
+    			        {{deviceIdView}}
+    						</td>
+    					</tr>
     					<tr>
     						<td width="80px">
     							设备编号：
@@ -313,7 +321,7 @@
 
 <script type="text/javascript" src="common/constant.js?v=9"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="deviceList.js?v=107"></script>
+<script type="text/javascript" src="deviceList.js?v=108"></script>
 
 </body>
 </html>

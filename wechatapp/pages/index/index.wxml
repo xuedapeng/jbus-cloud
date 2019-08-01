@@ -27,13 +27,20 @@
     >
 
       <view wx:for="{{deviceList}}" style="border-bottom: 1px solid #e0e0e0;" >
-        <view bindtap="detail" data-device-id="{{item.deviceId}}" style="margin-bottom:5px;margin-top:5px;background-color:#fff">
+        <view style="margin-bottom:5px;margin-top:5px;background-color:#fff">
             <view style="display:inline-flex;align-items:center;">
               <icon type="{{item.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
               <view style="">{{item.deviceName}}</view>
             </view>
             <view style="margin-left:30px">
-              <view style="display:block">{{item.realtimeVal}}</view>
+              <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.realtimeVal}}" wx:for-index="sno" wx:for-item="sensor">
+                <view bindtap="detail" data-device-id="{{item.deviceId}}" data-status="{{item.status}}" data-sno="{{sno}}">
+                  {{sno}}:
+                  <view style="display:inline" wx:for="{{sensor}}" wx:for-item="field">
+                  {{field.name}}:<view style="display:inline;color:{{field.color}}">{{field.val}}</view>{{field.unit}} {{field.agoTime}}
+                  </view>
+                </view>
+              </view>
             </view>
         </view>
       </view>

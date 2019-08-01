@@ -50,4 +50,30 @@ public class EventDao extends BaseZDao {
 	}
 	
 
+	@SuppressWarnings("unchecked")
+	public List<EventEntity> searchEventLast(Integer userId, List<String> deviceSnList, Integer page, Integer pageSize) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("from EventEntity");
+		queryString.append(" where deviceSn in :deviceSnList and islast=1 ");
+
+		queryString.append(" order by time desc");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("deviceSnList", deviceSnList);
+
+		query.setFirstResult((page-1)*pageSize);
+		query.setMaxResults(pageSize);
+		
+		List<EventEntity> list = (List<EventEntity>)query.getResultList();
+		
+		if(list != null && list.size() > 0){
+			return list;
+		}
+		
+		return new ArrayList<EventEntity>();
+
+	}
+	
+
 }
