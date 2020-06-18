@@ -1,0 +1,85 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<script src="../static/js/vue.min.js"></script>
+<script src="../static/js/echarts.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="../lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/style.css" />
+
+<style>
+  td {
+    padding:5px 5px 5px 0px
+  }
+</style>
+
+<title>监测数据图表</title>
+</head>
+<body>
+
+<div id="app" class="page-container">
+
+    <table border="0" :style="'margin-top:-20px;display:'+showTitle">
+      <tr>
+        <td >
+          <div>
+            <label>{{deviceName}}({{deviceSn}})</label> &nbsp;
+            <label>{{sensorName}}({{sensorNo}})</label>
+          </div>
+        </td>
+        <td align="right">
+          <a v-on:click="query()" title="刷新">
+            <i class="Hui-iconfont" style="font-weight:bolder ;font-size:1.3em">&#xe68f;</i>
+          </a>
+        </td>
+      </tr>
+    </table>
+    <div class="mt-20" style="margin-top:0px">
+
+      <table class="table table-border  table-bg table-hover table-sort table-responsive">
+        <thead>
+          <tr class="text-c">
+
+          <template v-for="item in titleList">
+              <th style="text-align:left;" :width="(item=='No.'?'30px':(item=='time'?'120px':''))">{{item}}</th>
+          </template>
+          </tr>
+        </thead>
+        <tbody id="table_rows">
+
+          <template v-for="row in dataList">
+
+            <tr class="text-c">
+              <template v-for="col in row">
+                <td style="text-align:left">{{col}}</td>
+              </template>
+            </tr>
+
+          </template>
+        </tbody>
+      </table>
+      <!-- {{dataList.length==0?'没有找到符合条件的数据':''}} -->
+    </div>
+</div>
+
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+
+
+<script type="text/javascript" src="common/constant.js?v=7"></script>
+<script type="text/javascript" src="common/common.js?v=8"></script>
+<script type="text/javascript" src="historyDetail.js?v=6"></script>
+</body>
+</html>

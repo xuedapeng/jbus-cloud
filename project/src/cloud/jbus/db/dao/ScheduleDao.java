@@ -30,6 +30,7 @@ public class ScheduleDao extends BaseZDao {
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from ScheduleEntity");
 		queryString.append(" where deviceId=:deviceId");
+		queryString.append(" and status=1");
 		queryString.append(" order by id desc ");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
@@ -54,6 +55,7 @@ public class ScheduleDao extends BaseZDao {
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("select count(id) from ScheduleEntity");
 		queryString.append(" where deviceId=:deviceId");
+		queryString.append(" and status=1");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("deviceId", deviceId);

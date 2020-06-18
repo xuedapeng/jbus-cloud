@@ -28,6 +28,7 @@ public class SensorAddLogic extends BaseZLogic {
 		sensor.setSensorNo(Integer.valueOf(myParam.getSensorNo()));
 		sensor.setSensorName(myParam.getSensorName());
 		sensor.setMemo(myParam.getMemo());
+		sensor.setStatus(StatusConst.STATUS_NORMAL);
 		
 		SensorDao dao = new SensorDao(em);
 		dao.save(sensor);

@@ -13,6 +13,8 @@ var app = new Vue({
     sensorName:'',
     fieldStyle:{},
     showTitle:getQueryString("showTitle")=='no'?'none':'block',
+    field:getQueryString("field")?getQueryString("field"):'all',
+    graphHeight:getQueryString("height")?getQueryString("height"):'300',
 
   },
   methods:{
@@ -26,9 +28,9 @@ var app = new Vue({
 loadData();
 function loadData() {
 
-  // if (!checkAuth()) {
-  //   return;
-  // }
+  if (!checkAuth()) {
+    return;
+  }
 
   // alert(app.deviceId);
   console.log("app.deviceId=" + app.deviceId );
@@ -106,7 +108,7 @@ function makeDataList(result) {
         xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: result['time']
+            data: makeShortTime(result['time'])
         },
         yAxis: {
             type: 'value'
@@ -146,7 +148,39 @@ function makeGraph() {
 }
 
 function setParentFrame() {
-  if (window.parent) {
+  if (window.parent && window.parent.setGraphCount) {
     window.parent.setGraphCount(app.dataList.length);
   }
+}
+
+function makeShortTime(times) {
+  var nt = new Date();
+  var y = ""+nt.getFullYear();
+  var m = ""+(nt.getMonth()+1);
+  var d = ""+nt.getDate();
+
+  if (m<10) {
+    m = "0"+m
+  }
+  if (d<10) {
+    d = "0"+d
+  }
+
+  console.log(y + "," + m + "," + d);
+  
+  for(var i in times) {
+    var t = times[i];
+    if (y==t.substr(0,4)) {
+      times[i] = times[i].substr(5);
+
+      if (m == t.substr(5,2)) {
+        times[i] = times[i].substr(3);
+
+        if (d == t.substr(8,2)) {
+          times[i] = times[i].substr(3);
+        }
+      }
+    } 
+  }
+  return times;
 }

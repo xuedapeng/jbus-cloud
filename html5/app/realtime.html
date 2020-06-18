@@ -49,7 +49,17 @@
             <span :class="'label radius left-space ' + (item.deviceId==selectedDeviceInfo.deviceId?'selbtn-selected': 'selbtn-unselected')" :id="'dev_'+item.deviceId" v-on:click="selectDevice(item.deviceId)">
             {{item.deviceName}}（{{item.deviceSn}}）
             <label  style="font-size:1.5em" :class="item.status + 'line'">● </label>
-        </template>
+            </span>
+          </template>
+          <span class="label label-default radius" :style="'display:'+(deviceTotalPage>1?'inline':'none')">
+              <label :style="'color:'+(deviceCurrentPage==1?'grey':'black')+';cursor:'+(deviceCurrentPage==1?'auto':'pointer')" v-on:click="devicePrev()" >
+                &lt;
+              </label>
+              {{deviceCurrentPage}}/{{deviceTotalPage}} 
+              <label :style="'color:'+(deviceCurrentPage==deviceTotalPage?'grey':'black')+';cursor:'+(deviceCurrentPage==deviceTotalPage?'auto':'pointer')"  v-on:click="deviceNext()">
+                &gt;
+              </label>
+          </span>
       </div>
     </td>
   </tr>
@@ -181,6 +191,6 @@
 <script type="text/javascript" src="common/constant.js?v=18"></script>
 <script type="text/javascript" src="common/common.js?v=13"></script>
 <script type="text/javascript" src="common/crc.js?v=6"></script>
-<script type="text/javascript" src="realtime.js?v=21 "></script>
+<script type="text/javascript" src="realtime.js?v=27 "></script>
 </body>
 </html>

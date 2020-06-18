@@ -1,0 +1,38 @@
+[
+{
+    "type":"dat",
+    "style":{
+        "position": {
+                "top":"10",
+                "left":"10"
+            }
+    },
+    "bind":{
+        "deviceSn":"BJW401",
+        "sensorNo":"1",
+        "field":"wd"
+    },
+    "display":{
+        "type":"txt",
+        "text":"温度"
+    }
+},
+{
+    "type":"cmd",
+    "style":{
+        "position": {
+                "top":"10",
+                "left":"100"
+            }
+    },
+    "bind":{
+        "deviceSn":"BJW401",
+        "sensorNo":"1",
+        "cmdNo":"1"
+    },
+    "display":{
+        "type":"txt",
+        "text":"查询温度"
+    }
+}
+]

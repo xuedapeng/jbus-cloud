@@ -11,12 +11,13 @@ import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.NumericHelper;
 import cloud.jbus.db.bean.CmdEncodeEntity;
 import cloud.jbus.db.bean.DatDecodeEntity;
-import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.bean.SensorEntity;
+import cloud.jbus.db.bean.VDeviceSortEntity;
 import cloud.jbus.db.dao.CmdEncodeDao;
 import cloud.jbus.db.dao.DatDecodeDao;
 import cloud.jbus.db.dao.DeviceDao;
 import cloud.jbus.db.dao.SensorDao;
+import cloud.jbus.db.dao.VDeviceSortDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.realtime.param.SearchDeviceLogicParam;
 import cloud.jbus.logic.share.annotation.Action;
@@ -35,16 +36,30 @@ public class SearchDeviceLogic extends BaseZLogic {
 		Integer page = Integer.valueOf(myParam.getPage());
 		Integer pageSize = Integer.valueOf(myParam.getPageSize());
 		
+		// 总数
+		Long total = new DeviceDao(em).findTotal(userId);
+		int totalPages = (int) (total/pageSize + ((total%pageSize)==0?0:1));
+		if (page > totalPages) {
+			page = totalPages;
+		}
 		
-		DeviceDao deviceDao = new DeviceDao(em);
-		List<DeviceEntity> deviceList = deviceDao.searchDevice(userId, filter, page, pageSize);
+		VDeviceSortDao deviceDao = new VDeviceSortDao(em);
+		List<VDeviceSortEntity> deviceList = deviceDao.searchDevice(userId, filter, page, pageSize);
 		
 		SensorDao sensorDao = new SensorDao(em);
 		DatDecodeDao datDecodeDao = new DatDecodeDao(em);
 		CmdEncodeDao cmdEncodeDao = new CmdEncodeDao(em);
 		
+		List<String> snList = new ArrayList<String>();
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-		for(DeviceEntity device: deviceList) {
+		for(VDeviceSortEntity device: deviceList) {
+			
+			if (snList.contains(device.getDeviceSn())) {
+				continue;
+			} else {
+				snList.add(device.getDeviceSn());
+			}
+			
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("deviceId", device.getId());
 			map.put("deviceSn", device.getDeviceSn());
@@ -103,6 +118,7 @@ public class SearchDeviceLogic extends BaseZLogic {
 		//	}]
 		res.add("status", 1)
 			.add("msg","realtime.device.search ok")
+			.add("total", total)
 			.add("result", resultList);
 		
 		return true;

@@ -24,6 +24,9 @@ App({
       // return ["230119A306D3534958B3D29B", "4EFECC039DE248F288B64DE33C083AD9"];
       return wx.getStorageSync('auth');
     },
+    auth4test:function(){
+      return ["C7EBEB4D3DB64C72BD439BB11D41EA3E","72654A9980014591BC87548FB2F609BA"];
+    },
     url:"https://cloud.moqbus.com/open/api/",
     mqtt:{
       user:function(){

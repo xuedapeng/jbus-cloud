@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/uiconfig/uiconfig",
     "pages/logs/logs",
     "pages/login/login",
     "pages/history/history"
@@ -11,5 +12,24 @@
     "navigationBarTitleText": "moqbus物联",
     "navigationBarTextStyle": "black"
   },
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "tabBar": {
+    "color": "#a9b7b7",
+    "selectedColor": "#1296db",
+    "borderStyle": "white",
+    "list": [
+      {
+        "selectedIconPath": "img/device2.png",
+        "iconPath": "img/device1.png",
+        "pagePath": "pages/index/index",
+        "text": "设备"
+      },
+      {
+        "selectedIconPath": "img/config2.png",
+        "iconPath": "img/config1.png",
+        "pagePath": "pages/uiconfig/uiconfig",
+        "text": "组态"
+      }
+    ]
+  }
 }

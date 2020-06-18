@@ -32,7 +32,7 @@ public class GetHistoryLogic extends BaseZLogic {
 		Integer deviceId = Integer.valueOf(myParam.getDeviceId());
 		Integer sensorNo = Integer.valueOf(myParam.getSensorNo());
 		Date fromTime = myParam.getFromTime()==null?null:DateHelper.fromYmdhms(myParam.getFromTime());
-		Integer direction = myParam.getDirection().equals("-1")?-1:1;
+		Integer direction = myParam.getDirection().equals("1")?1:-1; // 默认值－1
 		Integer pageSize = Integer.valueOf(myParam.getPageSize());
 		
 		String  deviceSn = CommonLogic.getDeviceSnById(deviceId, em);

@@ -1,0 +1,77 @@
+<!--pages/uiconfig/uiconfig.wxml-->
+
+<view class="container" >
+
+  <view class="section" style="width:100%">
+    <view class="" style="padding-bottom:20px;text-align:center;display:flex;justify-content:space-between" >
+   
+     <view>
+      <view style="display:{{projectId=='0'?'none':'block'}}" bindtap="detail" data-project-id="0">
+          ←
+      </view>
+     </view>
+     <view>
+        组态应用
+      </view>
+      <view style="width:40px" bindtap="loadData">
+        <image src="../../img/refresh.png"  mode="scaleToFill" style="width:20px;height:20px" ></image>
+      </view>
+   </view>
+    
+    <scroll-view
+      scroll-y="true"
+      style="height:100%;"
+      bindscrolltoupper="upper"
+      bindscrolltolower="lower"
+      bindscroll="scroll"
+      scroll-top="{{scrollTop}}"
+      enable-back-to-top="true"
+      style="margin-top:-5px"
+    >
+    
+      <view wx:for="{{projectList}}" wx:key="projectId" style="border-bottom: 1px solid #e0e0e0;" >
+        <view bindtap="detail" data-project-id="{{item.projectId}}">
+          {{item.title}}
+       
+        
+
+              <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.deviceSnList}}" wx:key='id' wx:for-item="device" wx:for-index="sn">
+
+                <view style="display:inline-flex;align-items:center;">
+                  <icon type="{{device.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
+                  <view style="">  {{device.name}}({{sn}}) </view>
+                </view>
+              </view>
+            
+        </view>
+              <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.cover}}" wx:key='seq' wx:for-item="field" style="display:inline" >
+
+                <view style="display:{{field.nowrap=='true'?'inline':''}}">
+                </view>
+                {{field.name}}: {{field.data.val}} {{field.data.unit}} {{field.data.agoTime}}
+
+              </view>
+
+              <view style="height:10px">
+              </view>
+              <view style="" wx:for="{{item.coverCmd}}" wx:key='seq' wx:for-item="cmd" style="display:inline" >
+
+                <view style="display:{{cmd.nowrap=='true'?'inline':''}}">
+                </view>
+               
+                 <button style="display:inline" bindtap="sendCmd" class="button" type="primary" data-sn="{{cmd.deviceSn}}" data-cmd="{{cmd.cmd}}"> {{cmd.name}} </button> <view style="display:inline-flex">　</view><!-->全角空格 -->
+                 
+              </view>
+
+        <view style="height:10px">
+        </view>
+      </view>
+
+
+    </scroll-view>
+    
+    <view style="height:30px">
+    </view>
+  </view>
+
+</view>

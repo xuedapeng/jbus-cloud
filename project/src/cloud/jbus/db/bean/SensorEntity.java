@@ -15,6 +15,7 @@ public class SensorEntity extends BaseZEntity {
 	private Integer sensorNo;
 	private String sensorName;
 	private String memo;
+	private Integer status;
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
@@ -57,5 +58,15 @@ public class SensorEntity extends BaseZEntity {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
+	
 	
 }

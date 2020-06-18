@@ -15,14 +15,14 @@
    </view>
     
     <scroll-view
-      scroll-y=true
+      scroll-y="true"
       style="height:100%;"
       bindscrolltoupper="upper"
       bindscrolltolower="lower"
       bindscroll="scroll"
       scroll-into-view="{{toView}}"
       scroll-top="{{scrollTop}}"
-      enable-back-to-top=true
+      enable-back-to-top="true"
       style="margin-top:-5px"
     >
 
@@ -32,7 +32,7 @@
               <icon type="{{item.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
               <view style="">{{item.deviceName}}</view>
             </view>
-            <view style="margin-left:30px">
+            <!-- <view style="margin-left:30px">
               <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.realtimeVal}}" wx:for-index="sno" wx:for-item="sensor">
                 <view bindtap="detail" data-device-id="{{item.deviceId}}" data-status="{{item.status}}" data-sno="{{sno}}">
                   {{sno}}:
@@ -41,7 +41,7 @@
                   </view>
                 </view>
               </view>
-            </view>
+            </view> -->
         </view>
       </view>
     </scroll-view>

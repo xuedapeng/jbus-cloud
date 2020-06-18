@@ -27,6 +27,9 @@ var app = new Vue({
     viewsource:false,
     showimg:false,
     hexSend:true,
+    deviceTotalPage:1,
+    deviceCurrentPage:1,
+    devicePageSize:10
 
   },
   methods:{
@@ -83,6 +86,25 @@ var app = new Vue({
     clearList:function() {
       app.messageList = [];
       g_seq = 1;
+    },
+    devicePrev:function(){
+      if(app.deviceCurrentPage==1) {
+        return;
+      }
+
+      app.deviceCurrentPage--;
+      searchDevice();
+
+
+    },
+    deviceNext:function(){
+      if(app.deviceCurrentPage==app.deviceTotalPage) {
+        return;
+      }
+
+      app.deviceCurrentPage++;
+      searchDevice();
+
     }
   }
 });
@@ -342,7 +364,12 @@ function searchDevice() {
     }
 
     var param = {"method":"realtime.device.search",
-                "auth":[getStorage("appId"), getStorage("appToken")]};
+                "auth":[getStorage("appId"), getStorage("appToken")],
+                "data":{
+                    "page":app.deviceCurrentPage + "",
+                    "pageSize":app.devicePageSize + "",
+                }
+              };
 
     ajaxPost(G_RPC_URL, param,
       function(response){
@@ -351,6 +378,10 @@ function searchDevice() {
           layer.msg(response.msg,{icon:2,time:2000});
           return;
         }
+
+        // 分页设置
+        var total = response.total;
+        app.deviceTotalPage = Math.ceil(total/app.devicePageSize);
 
         var result = response.result;
 

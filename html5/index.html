@@ -34,7 +34,7 @@
 
 			<a href="index.html" class="logo navbar-logo f-l mr-10 hidden-xs" >
 				<img src="static/img/logo_white.svg" />
-				{{title}}</a>
+				{{nickName==''?title:nickName}}</a>
 			<a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
 
 		<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
@@ -103,6 +103,12 @@
 					</li>
 			</ul>
 		</dd>
+	</dl>
+	<dl id="menu-uiconfig" style="display:block">
+		<dt>
+			<i class="Hui-iconfont">&#xe6c0;</i>
+			<a data-href="app/uiconfigList.html" data-title="组态应用" href="javascript:void(0)">组态应用</a>
+		</dt>
 	</dl>
 </div>
 <div style="display:none">
@@ -243,8 +249,8 @@
 
 
 <script type="text/javascript" src="./app/common/constant.js?v=8"></script>
-<script type="text/javascript" src="./app/common/common.js?v=6"></script>
-<script type="text/javascript" src="./index.js?v=14"></script>
+<script type="text/javascript" src="./app/common/common.js?v=7"></script>
+<script type="text/javascript" src="./index.js?v=15"></script>
 
 <script>
 var _hmt = _hmt || [];

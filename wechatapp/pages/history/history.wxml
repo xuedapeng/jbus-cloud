@@ -3,12 +3,12 @@
 <!-- <view class="container"> -->
   <scroll-view
     class="container"
-      scroll-y=true
+      scroll-y="true" 
       style="height:100%;"
       bindscrolltoupper="upper"
       bindscrolltolower="lower"
       bindscroll="scroll"
-      enable-back-to-top=true
+      enable-back-to-top="true"
       style="margin-top:-5px"
   >
     <!-- <view> -->

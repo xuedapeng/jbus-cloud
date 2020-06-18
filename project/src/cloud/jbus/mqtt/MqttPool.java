@@ -33,7 +33,7 @@ public class MqttPool {
 	 private String mqttPassword;
 	
 	 int INIT_SIZE = 1;
-	 final long IDLE_SLEEP = 10*1000;// 休眠10秒；
+	 final long IDLE_SLEEP = 60*1000;// 休眠60秒；
 	
 	 MqttConnectOptions _connOpts = new MqttConnectOptions(); 
 	
@@ -87,7 +87,7 @@ public class MqttPool {
 
 					
 					try {
-						sleep(IDLE_SLEEP);
+						sleep(IDLE_SLEEP*3); // 3分钟
 					} catch (InterruptedException e) {
 						logger.error("", e);
 					}
@@ -115,6 +115,12 @@ public class MqttPool {
 				logger.error("", e);
 			}
 		});
+
+		try {
+			Thread.sleep(IDLE_SLEEP);
+		} catch (InterruptedException e) {
+			logger.error("", e);
+		}
 		
 		// 从失连列表中删除重连成功的对象
 		successList.forEach((E)->{

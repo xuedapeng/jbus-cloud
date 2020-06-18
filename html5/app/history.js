@@ -30,7 +30,7 @@ var app = new Vue({
     fromTime: function () {
 
       if (this.dateMode == "pick") {
-        return this.fromTimeDp+":00";
+        return this.fromTimeDp!=""?(this.fromTimeDp+":00"):"";
       }
 
       var  fromDate = new Date(Date.parse(new Date()) - 1000*60*60*24*(MAX_POS-this.fromPos));
@@ -44,7 +44,7 @@ var app = new Vue({
     toTime: function () {
 
       if (this.dateMode == "pick") {
-        return this.toTimeDp+":00";
+        return this.toTimeDp!=""?(this.toTimeDp+":00"):"";
       }
       var  toDate = new Date(Date.parse(new Date()) - 1000*60*60*24*(MAX_POS-this.toPos));
       return dateFormat(toDate, "yyyy-MM-dd HH:mm:ss");
@@ -85,7 +85,11 @@ var app = new Vue({
     refreshGraph:function() {
       console.log(app.fromTimeDp);
       console.log(app.toTimeDp);
-      app.iframeSrc = app.iframeSrcCalc;
+
+      var src = app.iframeSrcCalc;
+      if (src != '') {
+        app.iframeSrc = src + "&ts="+new Date().getTime();
+      }
     },
 
     resetPos:function(days) {
@@ -133,12 +137,15 @@ var app = new Vue({
       } else if (dateMode=='c') {
         app.dateMode = 'pick';
       } 
+      app.refreshGraph();
     },
     setQueryMode:function(queryMode) {
       if (queryMode=='g') {
         app.queryMode = 'graph';
+        app.setDateMode("s");
       } else if (queryMode=='d') {
         app.queryMode = 'detail';
+        app.setDateMode("c");
       } 
       app.refreshGraph();
     }
@@ -291,12 +298,17 @@ function setSlider() {
 function dtpStartBlur() {
   
   app.fromTimeDp = $("#datetimepicker_from").val().replaceAll("/","-");
+  if (app.fromTimeDp.indexOf("_") || app.fromTimeDp.indexOf("1899") ) {
+    app.fromTimeDp = "";
+  }
 
 }
 
 function dtpEndBlur() {
   
   app.toTimeDp = $("#datetimepicker_to").val().replaceAll("/","-");
-
+  if (app.toTimeDp.indexOf("_") || app.toTimeDp.indexOf("1899") ) {
+    app.toTimeDp = "";
+  }
 }
 

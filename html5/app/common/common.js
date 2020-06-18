@@ -46,7 +46,7 @@ function ajaxPost(url, param, callback, errorHandler){
           url     : url,
           data    : dataString,
           dataType: "json",
-          timeout : 12000,
+          timeout : 120000,
           success : function(response, ex){
             callback(response);
           },

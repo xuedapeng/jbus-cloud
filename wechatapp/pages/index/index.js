@@ -25,7 +25,7 @@ var page=Page({
     }
 
     this.loadData();
-    setInterval(this.updateRealtimeData, 1000 * 60); 
+    // setInterval(this.updateRealtimeData, 1000 * 60); 
   },
 
   loadData() {
@@ -92,7 +92,7 @@ var page=Page({
         console.log(page.data);
         
         // 查询实时数据 
-        page.updateRealtimeData();
+        // page.updateRealtimeData();
       }
     })
   },
@@ -296,12 +296,18 @@ var page=Page({
 
   checkAuth() {
     var auth = wx.getStorageSync('auth');
-    if (!auth) {
-      wx.navigateTo({
-        url: '../login/login',
-      })
-      return false;
+    if(!auth) {
+
+      wx.setStorageSync('auth', app.globalData.auth4test());
+      auth = wx.getStorageSync('auth');
+      console.log("auth:" + auth)
     }
+    // if (!auth) {
+    //   wx.navigateTo({
+    //     url: '../login/login',
+    //   })
+    //   return false;
+    // }
 
     return true;
   },
@@ -343,7 +349,7 @@ function getAgoTime(time) {
   var intv = (now - orgTime) / 1000;
   // return (time);
   if (intv > 24*60*60) {
-    return "(1天前)";
+    return "( + Math.floor(intv/(24*60*60)) + 天前)";
   }
   if (intv > 1*60*60) {
     return "(" + Math.floor(intv/(60*60)) + "小时前)";
