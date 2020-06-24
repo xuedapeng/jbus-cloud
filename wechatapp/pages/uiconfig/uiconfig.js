@@ -168,6 +168,8 @@ Page({
   },
 
   updateRealtimeData() {
+
+    this.data.fieldValues = {};
     for (var i in this.data.projectListTemp) {
 
       var pj = this.data.projectListTemp[i];
@@ -181,7 +183,6 @@ Page({
     setTimeout(this.updateAllData, 3000);
   },
   updateAllData() {
-
     for (var i in this.data.projectListTemp) {
 
       var pj = this.data.projectListTemp[i];
@@ -322,7 +323,7 @@ Page({
       return "(" + Math.floor(intv / (60 * 60)) + "小时前)";
     }
 
-    if (intv > 3 * 60) {
+    if (intv > 1 * 60) {
       return "(" + Math.floor(intv / (60)) + "分钟前)";
     }
 

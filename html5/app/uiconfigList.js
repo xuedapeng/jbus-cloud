@@ -322,7 +322,7 @@ function getAgoTime(time) {
     return "(" + Math.floor(intv/(60*60)) + "小时前)";
   }
 
-  if (intv > 3 * 60) {
+  if (intv > 1 * 60) {
     return "(" + Math.floor(intv / (60)) + "分钟前)";
   }
 

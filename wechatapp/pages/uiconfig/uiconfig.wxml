@@ -14,7 +14,7 @@
         组态应用
       </view>
       <view style="width:40px" bindtap="loadData">
-        <image src="../../img/refresh.png"  mode="scaleToFill" style="width:20px;height:20px" ></image>
+        <!-- <image src="../../img/refresh.png"  mode="scaleToFill" style="width:20px;height:20px" ></image> -->
       </view>
    </view>
     
@@ -32,7 +32,6 @@
       <view wx:for="{{projectList}}" wx:key="projectId" style="border-bottom: 1px solid #e0e0e0;" >
         <view bindtap="detail" data-project-id="{{item.projectId}}">
           {{item.title}}
-       
         
 
               <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.deviceSnList}}" wx:key='id' wx:for-item="device" wx:for-index="sn">
@@ -40,10 +39,12 @@
                 <view style="display:inline-flex;align-items:center;">
                   <icon type="{{device.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
                   <view style="">  {{device.name}}({{sn}}) </view>
+
+                 
                 </view>
               </view>
-            
         </view>
+        
               <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.cover}}" wx:key='seq' wx:for-item="field" style="display:inline" >
 
                 <view style="display:{{field.nowrap=='true'?'inline':''}}">
@@ -51,6 +52,11 @@
                 {{field.name}}: {{field.data.val}} {{field.data.unit}} {{field.data.agoTime}}
 
               </view>
+
+              <view style="height:1px">
+              </view>
+            
+              <button style="display:inline" bindtap="loadData" class="button" type="default" > 刷新 </button>
 
               <view style="height:10px">
               </view>
