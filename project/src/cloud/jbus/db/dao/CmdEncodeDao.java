@@ -44,7 +44,28 @@ public class CmdEncodeDao extends BaseZDao {
 		return new ArrayList<CmdEncodeEntity>();
 
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public CmdEncodeEntity findByCmdNo(Integer sensorId, Integer cmdNo) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("from CmdEncodeEntity");
+		queryString.append(" where sensorId=:sensorId");
+		queryString.append(" and cmdNo=:cmdNo");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("sensorId", sensorId);
+		query.setParameter("cmdNo", cmdNo);
+		
+		List<CmdEncodeEntity> list = (List<CmdEncodeEntity>)query.getResultList();
+		
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		
+		return null;
+
+	}
 	
 	
 }

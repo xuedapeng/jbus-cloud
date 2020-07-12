@@ -94,7 +94,7 @@ public class SearchDeviceLogic extends BaseZLogic {
 					Map<String, Object> mapEnc = new HashMap<String, Object>(); 
 					mapEnc.put("cmdNo", enc.getCmdNo());
 					mapEnc.put("cmdName", enc.getCmdName());
-					mapEnc.put("scriptText", enc.getScriptText());
+					mapEnc.put("scriptText", fillScript(enc.getScriptText()));
 					mapEnc.put("paramSchema", enc.getParamSchema());
 					mapEnc.put("includeCrc", enc.getIncludeCrc());
 					resultEncList.add(mapEnc);
@@ -122,6 +122,15 @@ public class SearchDeviceLogic extends BaseZLogic {
 			.add("result", resultList);
 		
 		return true;
+	}
+	
+	private String fillScript(String script) {
+		
+		if (!script.contains("function")) {
+			script = " function encodeCmd() {  	var cmd = '" + script + "'; 	return cmd; }";
+		}
+		
+		return script;
 	}
 
 	@Override

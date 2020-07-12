@@ -136,6 +136,18 @@ public class CommonLogic {
 		return sensor.getSensorName();
 		
 	}
+
+	public static Integer getSensorIdByNo(Integer deviceId, Integer sensorNo, EntityManager em) {
+		SensorDao dao = new SensorDao(em);
+		SensorEntity sensor = dao.findBySensorNo(deviceId, sensorNo);
+		
+		if (sensor == null) {
+			return null;
+		}
+		
+		return sensor.getId();
+		
+	}
 	
 	public  static Integer getDeviceIdBySn(String deviceSn) {
 		Integer[] deviceId = {null};
