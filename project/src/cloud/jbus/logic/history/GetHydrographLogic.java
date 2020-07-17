@@ -167,7 +167,7 @@ public class GetHydrographLogic extends BaseZLogic {
 	
 	// check decode
 	@SuppressWarnings("unchecked")
-	protected static Map<String, Map<String, String>> getFieldStyle(Integer deviceId, String sensorNo, ZSimpleJsonObject res, EntityManager em) throws Exception {
+	public static Map<String, Map<String, String>> getFieldStyle(Integer deviceId, String sensorNo, ZSimpleJsonObject res, EntityManager em)  {
 
 		DatDecodeDao decodeDao = new DatDecodeDao(em);
 		DatDecodeEntity decode = decodeDao.findByDeviceId(deviceId);

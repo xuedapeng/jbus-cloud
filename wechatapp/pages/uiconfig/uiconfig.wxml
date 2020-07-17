@@ -6,7 +6,7 @@
     <view class="" style="padding-bottom:20px;text-align:center;display:flex;justify-content:space-between" >
    
      <view>
-      <view style="display:{{projectId=='0'?'none':'block'}}" bindtap="detail" data-project-id="0">
+      <view style="display:{{projectId=='0'?'none':'block'}}" bindtap="back" >
           ←
       </view>
      </view>
