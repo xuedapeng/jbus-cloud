@@ -116,7 +116,7 @@ Page({
         wx.showToast({
           title: "正在加载，请稍候...",
           icon: 'none',
-          duration: 2000,
+          duration: 5000,
         });
       }
     });
@@ -246,7 +246,7 @@ Page({
     wx.showToast({
       title: "加载数据成功！",
       icon: 'none',
-      duration: 2000,
+      duration: 500,
     });
 
   },
@@ -335,6 +335,9 @@ Page({
   back(e) {
 
     var projectId = this.data.pageStack.pop();
+    if(this.data.pageStack.length == 0) {
+      this.data.pageStack.push("0");
+    }
     this.onLoad({projectId:projectId});
     this.onShow();
   }

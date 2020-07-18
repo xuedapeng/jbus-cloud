@@ -7,7 +7,7 @@
    
      <view>
       <view style="display:{{projectId=='0'?'none':'block'}}" bindtap="back" >
-          ←
+          ＜＜
       </view>
      </view>
      <view>
