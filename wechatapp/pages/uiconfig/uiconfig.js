@@ -125,7 +125,7 @@ Page({
   makeProjectList(result) {
     this.data.projectListTemp = result;
     this.updateOnlineStatus();
-    this.updateRealtimeData();
+    // this.updateRealtimeData(); // move to finish of updateOnlineStatus
   },
 
   updateOnlineStatus() {
@@ -171,6 +171,8 @@ Page({
         for (var key in page.data.deviceOnlineStatus) {
           page.data.deviceOnlineStatus[key] = result[key];
         }
+
+        page.updateRealtimeData();
       }
     });
   },

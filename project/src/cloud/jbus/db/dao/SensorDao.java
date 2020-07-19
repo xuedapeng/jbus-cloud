@@ -97,12 +97,16 @@ public class SensorDao extends BaseZDao {
 
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from SensorEntity");
-		queryString.append(" where deviceId=:deviceId");
-		queryString.append(" and id=:sensorId ");
+		queryString.append(" where id=:sensorId ");
+		if (deviceId != null) {
+			queryString.append(" and deviceId=:deviceId ");
+		}
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
-		query.setParameter("deviceId", deviceId);
 		query.setParameter("sensorId", sensorId);
+		if (deviceId != null) {
+			query.setParameter("deviceId", deviceId);
+		}
 		
 		
 		List<SensorEntity> list = (List<SensorEntity>)query.getResultList();

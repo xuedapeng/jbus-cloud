@@ -24,7 +24,7 @@
   }
 </style>
 
-<title>传感器列表</title>
+<title>指令列表</title>
 </head>
 <body>
 
@@ -36,7 +36,7 @@
           <tr class="text-c">
             <th  style="text-align:left" width="50px">编号</th>
             <th  style="text-align:left" width="150px">名称</th>
-            <th style="text-align:left" >备注</th>
+            <th style="text-align:left" >指令脚本</th>
             <th width="80px">
               操作
               <a v-on:click="toAddMode()" title="新增传感器">
@@ -52,16 +52,16 @@
 
           <tr class="text-c"  :style="'display:' +(isAddMode?'':'none')" >
             <td style="text-align:left">
-              <input v-model="newItem.sensorNo" name="" type="text" placeholder="" class="input-text  size-S" style="width:50px;"  />
+              <input v-model="newItem.cmdNo" name="" type="text" placeholder="" class="input-text  size-S" style="width:50px;"  />
             </td>
             <td style="text-align:left">
-              <input v-model="newItem.sensorName" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+              <input v-model="newItem.cmdName" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
             </td>
             <td style="text-align:left">
-              <input v-model="newItem.memo" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+              <input v-model="newItem.scriptText" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
             </td>
             <td>
-              <a title="确定" v-on:click="addSensor()">
+              <a title="确定" v-on:click="addCmd()">
                 <i class="Hui-iconfont" style="font-size:1.5em;color:green">&#xe6a7;</i>
               </a>
               <a title="取消" v-on:click="cancelAddMode()">
@@ -70,46 +70,46 @@
 
             </td>
           </tr>
-          <template v-for="item in sensorList">
+          <template v-for="item in cmdList">
 
             <tr class="text-c">
             <td style="text-align:left">
                 <div :style="'display:' + (item.isEdit?'block':'none')" >
-                  <input v-model="item.sensorNo" name="" type="text" placeholder="" class="input-text  size-S" style="width:50px;"  />
+                  <input v-model="item.cmdNo" name="" type="text" placeholder="" class="input-text  size-S" style="width:50px;"  />
                 </div>
                 <div :style="'display:' + (!item.isEdit?'block':'none')" >
-                  {{item.sensorNo}}
+                  {{item.cmdNo}}
                 </div>
             </td>
             <td style="text-align:left">
               <div :style="'display:' + (item.isEdit?'block':'none')" >
-                <input v-model="item.sensorName" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+                <input v-model="item.cmdName" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
               </div>
               <div :style="'display:' + (!item.isEdit?'block':'none')" >
-                <a v-on:click="openCmdList(item.sensorId,item.sensorName)">{{item.sensorName}}</a>
+                {{item.cmdName}}
               </div>
             </td>
             <td style="text-align:left">
               <div :style="'display:' + (item.isEdit?'block':'none')" >
-                <input v-model="item.memo" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+                <input v-model="item.scriptText" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
               </div>
               <div :style="'display:' + (!item.isEdit?'block':'none')" >
-                {{item.memo}}
+                {{item.scriptText}}
               </div>
             </td>
             <td>
               <div :style="'display:' + (!item.isEdit?'block':'none')" >
-                <a title="修改" v-on:click="toEditMode(item.sensorId)">
+                <a title="修改" v-on:click="toEditMode(item.cmdId)">
                   <i class="Hui-iconfont" style="font-size:1.5em;">&#xe6df;</i></a>
               </div>
               <div :style="'display:' + (item.isEdit?'block':'none')" >
-                <a title="确定" v-on:click="updateSensor(item.sensorId)">
+                <a title="确定" v-on:click="updateCmd(item.cmdId)">
                   <i class="Hui-iconfont" style="font-size:1.5em;color:green">&#xe6a7;</i>
                 </a>
-                <a title="删除" v-on:click="deleteSensor(item.sensorId)">
+                <a title="删除" v-on:click="deleteCmd(item.cmdId)">
                   <i class="Hui-iconfont" style="font-size:1.5em;color:red">&#xe6a1;</i>
                 </a>
-                <a title="取消" v-on:click="cancelEditMode(item.sensorId)">
+                <a title="取消" v-on:click="cancelEditMode(item.cmdId)">
                   <i class="Hui-iconfont" style="font-size:1.5em;">&#xe6a6;</i>
                 </a>
 
@@ -130,28 +130,6 @@
       </table>
 
 
-      <!-- modal-cmdList start -->
-      <div id="modal-cmdList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content radius">
-            <div class="modal-header" style="height:20px;margin-top:-15px;">
-                <h3 class="modal-title">指令列表 -
-                  {{sensorInfoForCmdModal.sensorName}}
-                </h3>
-                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
-            </div>
-            <div class="modal-body">
-              <iframe :src="'cmdList.html?sensorId=' + sensorInfoForCmdModal.sensorId" width="100%" height="300px" frameborder="0" ></iframe>
-
-            </div>
-            <div class="modal-footer">
-              <button class="btn" data-dismiss="modal" aria-hidden="true" >关闭</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- modal-cmdList end -->
     </div>
     <!-- app end -->
 
@@ -166,7 +144,7 @@
 
 <script type="text/javascript" src="common/constant.js?v=6"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="sensorList.js?v=80"></script>
+<script type="text/javascript" src="cmdList.js?v=2"></script>
 
 </body>
 </html>

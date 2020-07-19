@@ -24,8 +24,13 @@ public class CmdEncodeDao extends BaseZDao {
 		return this.em.find(CmdEncodeEntity.class, id);
 	}
 
-	@SuppressWarnings("unchecked")
+
 	public List<CmdEncodeEntity> findBySensorId(Integer sensorId) {
+		return findBySensorId(sensorId, null, null);
+		
+	}
+	@SuppressWarnings("unchecked")
+	public List<CmdEncodeEntity> findBySensorId(Integer sensorId, Integer page, Integer  pageSize) {
 
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from CmdEncodeEntity");
@@ -34,6 +39,11 @@ public class CmdEncodeDao extends BaseZDao {
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("sensorId", sensorId);
+
+		if (page != null && pageSize != null) {
+			query.setFirstResult((page-1)*pageSize);
+			query.setMaxResults(pageSize);
+		}
 		
 		List<CmdEncodeEntity> list = (List<CmdEncodeEntity>)query.getResultList();
 		
@@ -66,6 +76,45 @@ public class CmdEncodeDao extends BaseZDao {
 		return null;
 
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public CmdEncodeEntity findByCmdId(Integer sensorId, Integer cmdId) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("from CmdEncodeEntity");
+		queryString.append(" where sensorId=:sensorId");
+		queryString.append(" and id=:cmdId");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("sensorId", sensorId);
+		query.setParameter("cmdId", cmdId);
+		
+		List<CmdEncodeEntity> list = (List<CmdEncodeEntity>)query.getResultList();
+		
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		
+		return null;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public Long findTotal(Integer sensorId) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("select count(id) from CmdEncodeEntity");
+		queryString.append(" where sensorId=:sensorId");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("sensorId", sensorId);
+
+		List<Long> list = query.getResultList();
+		if(list != null && list.size()>0) {
+			return list.get(0);
+		}
+		return Long.valueOf(0);
+
+	}
 	
 }

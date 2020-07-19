@@ -13,6 +13,8 @@ var app = new Vue({
     itemCount:0,
     doneCount:0,
     elapsedtime:0,
+    valueMap:{},
+    styleMap:{}
 
   },
   methods:{
@@ -70,7 +72,7 @@ function loadData() {
       }
       makeProjectList(result);
 
-      layer.msg("正在加载，请稍候...",{icon:1,time:2000});
+      layer.msg("正在加载，请稍候...",{icon:1,time:5000});
 
     });
 }
@@ -81,7 +83,7 @@ function makeProjectList(result) {
   // app.projectList = dummyData().projectList;
   // app.fieldValues = dummyData().fieldValues;
   updateOnlineStatus();
-  updateRealtimeData();
+  // updateRealtimeData(); // move to  finish of updateOnlineStatus
 }
 
 function updateOnlineStatus() {
@@ -122,6 +124,7 @@ function getDeviceStatus() {
         app.deviceOnlineStatus[key] = result[key];
       }
 
+      updateRealtimeData();
     });
 }
 
@@ -154,37 +157,73 @@ function sendCommand(sn, cmd) {
 
 function updateRealtimeData() {
 
-  var count = 0;
-  for(var i in app.projectListTemp) {
+  app.fieldValues = {};
+  app.valueMap = {};
+  app.styleMap = {};
+  var page = app;
 
-    var pj = app.projectListTemp[i];
-    for (var j in pj.cover) {
-      var fd = pj.cover[j];
-      // if (!fd.data) {
-      //   fd.data = {"val":""};
-      // }
-      getRealtimeData(pj.seq, fd.seq, pj.deviceSnList[fd.deviceSn].id, fd.sensorNo, fd.field);
-      count++;
-      // alert(j);
-      // sleep(200);
+  console.log("updateRealtimeData:projectId="+page.projectId);
+  var param = {
+    "method": "uiconfig.data.get",
+    "data": { "projectId": page.projectId },
+    "auth": [getStorage("appId"), getStorage("appToken")]
+  };
+
+  ajaxPost(
+    G_RPC_URL,
+    param,
+    function(response) {
+      if (response.status < 0) {
+        layer.msg(response.msg,{icon:2,time:2000});
+        return;
+      }
+
+      page.valueMap = response.resultMap;
+      page.styleMap = response.styleMap;
+
+      for (var i in page.projectListTemp) {
+
+        var pj = page.projectListTemp[i];
+        for (var j in pj.cover) {
+          var fd = pj.cover[j];
+          getRealtimeData(pj.seq, fd.seq, fd.deviceSn, fd.sensorNo, fd.field);
+        }
+      }
+      updateAllData();
     }
-  }
-  app.itemCount = count;
-  // alert(count);
-  setTimeout("isDone()", 2000);
+  );
+
+  // var count = 0;
+  // for(var i in app.projectListTemp) {
+
+  //   var pj = app.projectListTemp[i];
+  //   for (var j in pj.cover) {
+  //     var fd = pj.cover[j];
+  //     // if (!fd.data) {
+  //     //   fd.data = {"val":""};
+  //     // }
+  //     getRealtimeData(pj.seq, fd.seq, pj.deviceSnList[fd.deviceSn].id, fd.sensorNo, fd.field);
+  //     count++;
+  //     // alert(j);
+  //     // sleep(200);
+  //   }
+  // }
+  // app.itemCount = count;
+  // // alert(count);
+  // setTimeout("isDone()", 2000);
 }
 
-function isDone() {
-  app.elapsedtime++;
-  if (app.itemCount == app.doneCount || app.elapsedtime>60) {
-    // alert(app.itemCount + "," + app.doneCount);
-    updateAllData();
-  } else {
+// function isDone() {
+//   app.elapsedtime++;
+//   if (app.itemCount == app.doneCount || app.elapsedtime>60) {
+//     // alert(app.itemCount + "," + app.doneCount);
+//     updateAllData();
+//   } else {
 
-    layer.msg("正在加载，请稍候...(" + app.doneCount + "/" + app.itemCount +") " + app.elapsedtime*2 + "s",{icon:1,time:2000});
-    setTimeout("isDone()", 2000);
-  }
-}
+//     layer.msg("正在加载，请稍候...(" + app.doneCount + "/" + app.itemCount +") " + app.elapsedtime*2 + "s",{icon:1,time:2000});
+//     setTimeout("isDone()", 2000);
+//   }
+// }
 
 function updateAllData() {
   
@@ -214,86 +253,97 @@ function updateAllData() {
   // var t = app.projectList
   app.projectList = app.projectListTemp;
 
-  layer.msg("加载数据成功！",{icon:1,time:1000});
+  layer.msg("加载数据成功！",{icon:1,time:500});
   app.lastLoadTime = dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss");
   console.log(JSON.stringify(app.projectList));
 
 }
 
-function getRealtimeData(p_seq, f_seq, deviceId, sensorNo, field) {
+function getRealtimeData(p_seq, f_seq, deviceSn, sensorNo, field) {
 
-  requestRealtimeVal(p_seq, f_seq, deviceId, sensorNo, field);
-}
-
-function requestRealtimeVal(p_seq, f_seq, deviceId, sensorNo, field) {
-
-  if (!checkAuth()) {
-    return;
+  var fvs = app.fieldValues;
+  var dv = getRealtimeValDisplay(p_seq, f_seq, deviceSn, sensorNo, field);
+  if (dv) {
+    if (!fvs[p_seq]) {
+      fvs[p_seq] = {};
+    }
+    fvs[p_seq][f_seq] = dv;
   }
 
-  var param = {"method":"history.data.query",
-              "auth":[getStorage("appId"), getStorage("appToken")],
-              "data": { "deviceId": deviceId + "", 
-                        "sensorNo": sensorNo + "", 
-                        "pageSize": "1" 
-                      }
-            };
+  app.fieldValues = fvs;
 
-  ajaxPost(G_RPC_URL, param,
-    function(response){
-
-      app.doneCount++;
-
-      if (response.status < 0) {
-        layer.msg(response.msg,{icon:2,time:2000});
-        return;
-      }
-
-      var result = response.result;
-
-      var fvs = app.fieldValues;
-      var dv = getRealtimeValDisplay(response,p_seq, f_seq, deviceId, sensorNo, field);
-      if (dv) {
-        if (!fvs[p_seq]) {
-          fvs[p_seq] = {};
-        }
-        fvs[p_seq][f_seq] = dv;
-        // console.log("p_seq="+p_seq);
-        // console.log("f_seq="+f_seq);
-        // console.log("fvs="+fvs[p_seq][f_seq].val);
-      }
-
-      app.fieldValues = fvs;
-
-    });
+  // requestRealtimeVal(p_seq, f_seq, deviceId, sensorNo, field);
 }
 
-function getRealtimeValDisplay(resdata,p_seq, f_seq, deviceId, sensorNo, field) {
+// function requestRealtimeVal(p_seq, f_seq, deviceId, sensorNo, field) {
+
+//   if (!checkAuth()) {
+//     return;
+//   }
+
+//   var param = {"method":"history.data.query",
+//               "auth":[getStorage("appId"), getStorage("appToken")],
+//               "data": { "deviceId": deviceId + "", 
+//                         "sensorNo": sensorNo + "", 
+//                         "pageSize": "1" 
+//                       }
+//             };
+
+//   ajaxPost(G_RPC_URL, param,
+//     function(response){
+
+//       app.doneCount++;
+
+//       if (response.status < 0) {
+//         layer.msg(response.msg,{icon:2,time:2000});
+//         return;
+//       }
+
+//       var result = response.result;
+
+//       var fvs = app.fieldValues;
+//       var dv = getRealtimeValDisplay(response,p_seq, f_seq, deviceId, sensorNo, field);
+//       if (dv) {
+//         if (!fvs[p_seq]) {
+//           fvs[p_seq] = {};
+//         }
+//         fvs[p_seq][f_seq] = dv;
+//         // console.log("p_seq="+p_seq);
+//         // console.log("f_seq="+f_seq);
+//         // console.log("fvs="+fvs[p_seq][f_seq].val);
+//       }
+
+//       app.fieldValues = fvs;
+
+//     });
+// }
+
+function getRealtimeValDisplay(p_seq, f_seq, deviceSn, sensorNo, field) {
   var display = [];
-  var fieldStyle = resdata.fieldStyle;
-  var result = resdata.result;
-  // log(pagedata, "result.time.length=" + result.time.length);
-  if (result.time.length == 0) {
+
+  console.log("styleMap="+JSON.stringify(app.styleMap));
+  console.log("deviceSn,sensorNo,field:"+deviceSn  +"," + sensorNo + "," + field);
+  var fieldStyle = app.styleMap[deviceSn][sensorNo][field];
+  var val = app.valueMap[deviceSn][sensorNo][field];
+  var time =  app.valueMap[deviceSn][sensorNo]["time"];
+  
+  if (!val) {
     return "";
   }
 
-  var len = Object.keys(fieldStyle).length;
-  for (var key in fieldStyle) {
-    if (key != field) {
-      continue;
-    }
-    var val = result[key][0];
+  if(fieldStyle) {
+    
     var item = {
-      "name": fieldStyle[key].display,
+      "name": fieldStyle.display,
       "val": val,
-      "unit": fieldStyle[key].unit,
-      "color":"black",
-      "agoTime": getAgoTime(result["time"][0])
+      "unit": fieldStyle.unit,
+      "color": "black",
+      "agoTime": getAgoTime(time)
     };
 
     // console.log("val="+item.val);
 
-    var range = fieldStyle[key].range;
+    var range = fieldStyle.range;
     if (range) {
       var minmax = range.split(",");
       if (val < minmax[0]) {

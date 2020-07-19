@@ -2,40 +2,39 @@
 var app = new Vue({
   el: '#app',
   data: {
-    deviceId:getQueryString("deviceId"),
-    sensorList:[],
-    orgSensorList:[],
+    sensorId:getQueryString("sensorId"),
+    cmdList:[],
+    orgCmdList:[],
     newItem:makeNewItem(),
     isAddMode:false,
     pageOption : {
           "pageTotal":1, //必填,总页数
-          "pageAmount":5, //每页多少条
+          "pageAmount":2, //每页多少条
           "dataTotal":1, //总共多少条数据
           "curPage":1, //初始页码,不填默认为1
           "pageSize": 5, //分页个数,不填默认为5
-        },
-    sensorInfoForCmdModal:{}
+        }
   },
   methods:{
-    toEditMode:function(sensorId) {
-      doToEditMode(sensorId);
+    toEditMode:function(cmdId) {
+      doToEditMode(cmdId);
     },
-    cancelEditMode:function(sensorId) {
-      doCancelEditMode(sensorId);
+    cancelEditMode:function(cmdId) {
+      doCancelEditMode(cmdId);
     },
-    toViewMode:function(sensorId) {
-      doToViewMode(sensorId);
+    toViewMode:function(cmdId) {
+      doToViewMode(cmdId);
     },
-    updateSensor:function(sensorId) {
-      doUpdateSensor(sensorId);
+    updateCmd:function(cmdId) {
+      doUpdateCmd(cmdId);
     },
-    deleteSensor:function(sensorId) {
+    deleteCmd:function(cmdId) {
 
-      if(!confirm("是否删除传感器？")) {
+      if(!confirm("是否删除指令？")) {
         return;
       }
 
-      doDeleteSensor(sensorId);
+      doDeleteCmd(cmdId);
     },
     toAddMode:function() {
       app.isAddMode = true;
@@ -44,16 +43,10 @@ var app = new Vue({
       app.newItem = makeNewItem();
       app.isAddMode = false;
     },
-    addSensor:function(){
-      doAddSensor();
-    },
-
-    openCmdList:function(sensorId, sensorName) {
-      
-      app.sensorInfoForCmdModal = {"sensorId":sensorId, "sensorName":sensorName};
-
-      $("#modal-cmdList").modal("show");
+    addCmd:function(){
+      doAddCmd();
     }
+
   }
 });
 
@@ -67,10 +60,10 @@ function loadData(silent) {
     return;
   }
 
-  var param = {"method":"sensor.list",
+  var param = {"method":"codec.cmd.list",
               "auth":[getStorage("appId"), getStorage("appToken")],
               "data":{
-                  "deviceId":app.deviceId,
+                  "sensorId":app.sensorId,
                   "page":app.pageOption.curPage+"",
                   "pageSize": app.pageOption.pageAmount+""}
               };
@@ -87,9 +80,9 @@ function loadData(silent) {
       var result = response.result;
 
 
-      makeSensorList(result);
+      makeCmdList(result);
       if (!silent) {
-        layer.msg("传感器查询成功！", {icon:1,time:1000});
+        layer.msg("指令查询成功！", {icon:1,time:1000});
       }
 
       var pageOption = app.pageOption;
@@ -103,7 +96,7 @@ function loadData(silent) {
 }
 
 
-function makeSensorList(result, seq) {
+function makeCmdList(result, seq) {
 
   var dList =[];
   var oList = [];
@@ -114,25 +107,25 @@ function makeSensorList(result, seq) {
     seq++;
     var item={};
     item.seq = seq;
-    item.sensorId = record['sensorId'];
-    item.sensorNo = record['sensorNo'];
-    item.sensorName = record['sensorName'];
-    item.memo = record['memo']?record['memo']:"";
+    item.cmdId = record['cmdId'];
+    item.cmdNo = record['cmdNo'];
+    item.cmdName = record['cmdName'];
+    item.scriptText = record['scriptText'];
     item.isEdit = false;
     dList[i] = item;
 
     var oitem={};
     oitem.seq = seq;
-    oitem.sensorId = record['sensorId'];
-    oitem.sensorNo = record['sensorNo'];
-    oitem.sensorName = record['sensorName'];
-    oitem.memo = record['memo']?record['memo']:"";
+    oitem.cmdId = record['cmdId'];
+    oitem.cmdNo = record['cmdNo'];
+    oitem.cmdName = record['cmdName'];
+    oitem.scriptText = record['scriptText'];
     oitem.isEdit = false;
     oList[i] = oitem;
   }
-  app.sensorList = dList;
-  app.orgSensorList = cloneSensorList(app.sensorList);
-  console.log("sensorList.length:" + app.sensorList.length);
+  app.cmdList = dList;
+  app.orgCmdList = cloneCmdList(app.cmdList);
+  console.log("cmdList.length:" + app.cmdList.length);
 
 }
 
@@ -164,9 +157,9 @@ function setPaginator() {
   return obj;
 }
 
-function doToEditMode(sensorId) {
+function doToEditMode(cmdId) {
 
-    var list = app.sensorList;
+    var list = app.cmdList;
 
     for(i in list) {
       if (list[i].isEdit) {
@@ -176,54 +169,54 @@ function doToEditMode(sensorId) {
     }
 
     for(i in list) {
-      if (list[i].sensorId == sensorId) {
+      if (list[i].cmdId == cmdId) {
         list[i].isEdit = true;
         break;
       }
     }
 
-    app.sensorList = list;
+    app.cmdList = list;
 }
 
-function doCancelEditMode(sensorId) {
+function doCancelEditMode(cmdId) {
 
-  var list = app.sensorList;
+  var list = app.cmdList;
   for(i in list) {
-    if (list[i].sensorId == sensorId) {
+    if (list[i].cmdId == cmdId) {
 
-        list = cloneSensorList(app.orgSensorList);
+        list = cloneCmdList(app.orgCmdList);
         list[i].isEdit = false;
         break;
     }
   }
 
-  app.sensorList = list;
+  app.cmdList = list;
 }
 
-function doToViewMode(sensorId) {
+function doToViewMode(cmdId) {
 
-  var list = app.sensorList;
+  var list = app.cmdList;
   for(i in list) {
       list[i].isEdit = false;
   }
-  app.sensorList = list;
+  app.cmdList = list;
 }
 
-function doUpdateSensor(sensorId) {
-  var sensor = getSelectedSensor(sensorId);
+function doUpdateCmd(cmdId) {
+  var cmd = getSelectedCmd(cmdId);
 
   if (!checkAuth()) {
     return;
   }
 
-  var param = {"method":"sensor.update",
+  var param = {"method":"codec.cmd.update",
               "auth":[getStorage("appId"), getStorage("appToken")],
               "data":{
-                  "deviceId":app.deviceId + "",
-                  "sensorId":sensor.sensorId+"",
-                  "sensorNo": sensor.sensorNo+"",
-                  "sensorName": sensor.sensorName,
-                  "memo": sensor.memo
+                  "sensorId":app.sensorId + "",
+                  "cmdId":cmd.cmdId+"",
+                  "cmdNo": cmd.cmdNo+"",
+                  "cmdName": cmd.cmdName,
+                  "scriptText": cmd.scriptText
                 }
               };
 
@@ -235,26 +228,26 @@ function doUpdateSensor(sensorId) {
         return;
       }
 
-      layer.msg("传感器修改成功！", {icon:1,time:1000});
-      sensor.isEdit = false;
-      app.orgSensorList = cloneSensorList(app.sensorList);
-      doToViewMode(sensor.sensorId);
+      layer.msg("指令修改成功！", {icon:1,time:1000});
+      cmd.isEdit = false;
+      app.orgCmdList = cloneCmdList(app.cmdList);
+      doToViewMode(cmd.cmdId);
 
     });
 }
 
-function doDeleteSensor(sensorId) {
-  var sensor = getSelectedSensor(sensorId);
+function doDeleteCmd(cmdId) {
+  var cmd = getSelectedCmd(cmdId);
 
   if (!checkAuth()) {
     return;
   }
 
-  var param = {"method":"sensor.delete",
+  var param = {"method":"codec.cmd.delete",
               "auth":[getStorage("appId"), getStorage("appToken")],
               "data":{
-                  "deviceId":app.deviceId + "",
-                  "sensorId":sensor.sensorId+""
+                  "sensorId":app.sensorId + "",
+                  "cmdId":cmd.cmdId+""
                 }
               };
 
@@ -266,28 +259,28 @@ function doDeleteSensor(sensorId) {
         return;
       }
 
-      layer.msg("传感器删除成功！", {icon:1,time:1000});
-      removeSensor(sensor.sensorId);
-      app.orgSensorList = cloneSensorList(app.sensorList);
-      doToViewMode(sensor.sensorId);
+      layer.msg("指令删除成功！", {icon:1,time:1000});
+      removeCmd(cmd.cmdId);
+      app.orgCmdList = cloneCmdList(app.cmdList);
+      doToViewMode(cmd.cmdId);
       setParentFrame();
 
     });
 
 }
 
-function doAddSensor() {
+function doAddCmd() {
   if (!checkAuth()) {
     return;
   }
 
-  var param = {"method":"sensor.add",
+  var param = {"method":"codec.cmd.add",
               "auth":[getStorage("appId"), getStorage("appToken")],
               "data":{
-                  "deviceId":app.deviceId + "",
-                  "sensorNo": app.newItem.sensorNo+"",
-                  "sensorName": app.newItem.sensorName,
-                  "memo": app.newItem.memo
+                  "sensorId":app.sensorId + "",
+                  "cmdNo": app.newItem.cmdNo+"",
+                  "cmdName": app.newItem.cmdName,
+                  "scriptText": app.newItem.scriptText
                 }
               };
 
@@ -299,30 +292,30 @@ function doAddSensor() {
         return;
       }
 
-      layer.msg("传感器添加成功！", {icon:1,time:1000});
+      layer.msg("指令添加成功！", {icon:1,time:1000});
 
-      var list = app.sensorList;
+      var list = app.cmdList;
       list.unshift({
-        "sensorId":response.sensorId,
-        "sensorNo":app.newItem.sensorNo,
-        "sensorName":app.newItem.sensorName,
-        "memo":app.newItem.memo,
+        "cmdId":response.cmdId,
+        "cmdNo":app.newItem.cmdNo,
+        "cmdName":app.newItem.cmdName,
+        "scriptText":app.newItem.scriptText,
         "isEdit":false
       });
-      app.sensorList = list;
-      app.orgSensorList = cloneSensorList(app.sensorList);
+      app.cmdList = list;
+      app.orgCmdList = cloneCmdList(app.cmdList);
       app.newItem = makeNewItem();
 
       setParentFrame();
     });
 }
 
-function getSelectedSensor(sensorId) {
+function getSelectedCmd(cmdId) {
 
-  var list = app.sensorList;
+  var list = app.cmdList;
 
   for(i in list) {
-    if (list[i].sensorId == sensorId) {
+    if (list[i].cmdId == cmdId) {
       return list[i];
     }
   }
@@ -330,29 +323,29 @@ function getSelectedSensor(sensorId) {
   return  null;
 }
 
-function removeSensor(sensorId) {
+function removeCmd(cmdId) {
 
-    var list = app.sensorList;
+    var list = app.cmdList;
 
     for(i in list) {
-      if (list[i].sensorId == sensorId) {
+      if (list[i].cmdId == cmdId) {
         list.splice(i, 1);
       }
     }
 
-    app.sensorList = list;
+    app.cmdList = list;
 }
 
-function cloneSensorList(srcList) {
+function cloneCmdList(srcList) {
   var destList = [];
   for (i in srcList) {
     var item = srcList[i];
     var dItem={};
     dItem.seq = item.seq;
-    dItem.sensorId = item.sensorId;
-    dItem.sensorNo = item.sensorNo;
-    dItem.sensorName = item.sensorName;
-    dItem.memo = item.memo;
+    dItem.cmdId = item.cmdId;
+    dItem.cmdNo = item.cmdNo;
+    dItem.cmdName = item.cmdName;
+    dItem.scriptText = item.scriptText;
     dItem.isEdit = item.isEdit;
     destList[i] = dItem;
   }
@@ -361,9 +354,9 @@ function cloneSensorList(srcList) {
 
 function makeNewItem() {
   var newItem = {
-      sensorNo:"",
-      sensorName:"",
-      memo:""
+      cmdNo:"",
+      cmdName:"",
+      scriptText:""
   }
 
   return newItem;
@@ -372,7 +365,7 @@ function makeNewItem() {
 
 // 设备列表刷新
 function setParentFrame() {
-  if (window.parent) {
-    window.parent.loadData(true);
-  }
+  // if (window.parent) {
+  //   window.parent.loadData(true);
+  // }
 }
