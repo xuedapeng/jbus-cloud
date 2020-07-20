@@ -49,7 +49,7 @@ var app = new Vue({
     },
 
     openCmdList:function(sensorId, sensorName) {
-      
+
       app.sensorInfoForCmdModal = {"sensorId":sensorId, "sensorName":sensorName};
 
       $("#modal-cmdList").modal("show");

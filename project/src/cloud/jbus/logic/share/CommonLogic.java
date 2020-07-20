@@ -1,15 +1,19 @@
 package cloud.jbus.logic.share;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 
 
 import cloud.jbus.common.constant.StatusConst;
+import cloud.jbus.common.helper.JsonHelper;
+import cloud.jbus.db.bean.DatDecodeEntity;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.bean.SensorEntity;
 import cloud.jbus.db.bean.UserEntity;
 import cloud.jbus.db.bean.UserRegEntity;
+import cloud.jbus.db.dao.DatDecodeDao;
 import cloud.jbus.db.dao.DeviceDao;
 import cloud.jbus.db.dao.SensorDao;
 import cloud.jbus.db.dao.UserDao;
@@ -188,5 +192,57 @@ public class CommonLogic {
 		}.run();;
 		
 		return userId[0];
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public static Map<String, Map<String, String>> getFieldStyle(Integer deviceId, String sensorNo, ZSimpleJsonObject res, EntityManager em)  {
+
+		DatDecodeDao decodeDao = new DatDecodeDao(em);
+		DatDecodeEntity decode = decodeDao.findByDeviceId(deviceId);
+		
+		//校验：decode存在
+		if (decode == null || decode.getResultSchema() == null) {
+			res.add("status", -21)
+				.add("msg", "解码器错误。");
+			return null;
+		}
+		
+		String resultSchema = decode.getResultSchema();
+		Map<String, Object> scheMap = JsonHelper.json2map(resultSchema);
+		
+		// 校验：resultSchema中sno存在
+		if (!scheMap.containsKey(sensorNo)) {
+			res.add("status", -22)
+				.add("msg", "解码器中缺少sno(" + sensorNo + ")");
+			return null;
+		}
+		
+
+		Map<String, Object> sch = (Map<String, Object>) scheMap.get(sensorNo);
+		if ("ref".equals(sch.get("type"))) {
+			String refSno = (String) sch.get("refsno");
+			
+			sch = (Map<String, Object>) scheMap.get(refSno);
+			if(sch == null) {
+
+				res.add("status", -22)
+					.add("msg", "解码器中缺少refsno(" + refSno + ")");
+				
+				return null;
+			}
+		}
+		
+		Map<String, Map<String, String>> fieldStyle = (Map<String, Map<String, String>>) sch.get("field");
+		String type = (String) sch.get("type");
+		
+		if (!"metric".equals(type) || fieldStyle == null){
+			res.add("status", -23)
+				.add("msg", "解码器模式错误");
+			
+			return null;
+		}
+		
+		return fieldStyle;
 	}
 }

@@ -43,6 +43,26 @@ doCheckResultSchema:function(jstr) {
 
         var item = schema[key];
         //  
+        if (item.type == "ref") {
+            var refSno = item.refsno;
+            if(!refSno) {
+                result.message = "refsno:缺失 (" + key + ")";
+                return result;
+            }
+
+            if(refSno==key || !schema[refSno]) {
+                result.message = "refsno:不存在 (" + key + ")";
+                return result;
+            }
+
+            var refItem = schema[refSno];
+            if (!refItem.type || refItem.type!="metric") {
+                result.message = "refsno：必须为实体(" + key + "," + refSno + ")";
+                return result;
+            }
+
+            continue;
+        }
         if (!item.type || item.type!="metric") {
             result.message = "type='metric'固定(" + key + ")";
             return result;
@@ -125,40 +145,58 @@ doCheckSampleCases:function(jstr, jschema) {
             continue;
         }
 
-        if (!item["output"]["sno"]) {
-            result.message =  "output.sno 必须项目缺失(index=" + i +  ")";
-            return result;
-        }
-        if (!item["output"]["data"]) {
-            result.message =  "output.data 必须项目缺失(index=" + i +  ")";
-            return result;
-        }
-
-        var sno = item["output"]["sno"];
-        var data = item["output"]["data"];
-        if (!schema[sno]) {
-            result.message =  "output.sno:" + sno + " 在schema中未定义(index=" + i +  ")";
-            return result;
+        // 一次接收多个传感器数据
+        var outputList = [];
+        if (item["output"][1]) {
+            outputList = item["output"];
+        } else {
+            outputList[0] = item["output"];
         }
 
-        var hasField = false;
-        for (key in data) {
-            hasField = true;
-            if (!schema[sno]["field"][key]) {
-                result.message =  "output.data field: " + key + " 在schema中未定义(index=" + i +  ")";
+        for(var j=0;j<outputList.length;j++) {
+            var outputItem = outputList[j];
+
+
+            if (!outputItem["sno"]) {
+                result.message =  "output.sno 必须项目缺失(index=" + i +  ", " + j + ")";
                 return result;
             }
-
-            if (isNaN(data[key])) {
-                result.message =  "output.data: " + key + " 必须是数字类型的值(index=" + i +  ")";
+            if (!outputItem["data"]) {
+                result.message =  "output.data 必须项目缺失(index=" + i +  ", " + j + ")";
                 return result;
             }
-        }
+    
+            var sno = outputItem["sno"];
+            var data = outputItem["data"];
+            if (!schema[sno]) {
+                result.message =  "output.sno:" + sno + " 在schema中未定义(index=" + i +  ", " + j + ")";
+                return result;
+            }
+    
+            var hasField = false;
+            for (key in data) {
+                hasField = true;
+                
+                if(schema[sno]["type"]=="ref") {
+                    sno = schema[sno]["refsno"];
+                }
 
-
-        if (!hasField) {
-            result.message =  "output.data 必须项目缺失(index=" + i +  ")";
-            return result;
+                if (!schema[sno]["field"][key]) {
+                    result.message =  "output.data field: " + key + " 在schema中未定义(index=" + i +  ", " + j + ")";
+                    return result;
+                }
+    
+                if (isNaN(data[key])) {
+                    result.message =  "output.data: " + key + " 必须是数字类型的值(index=" + i +  ", " + j + ")";
+                    return result;
+                }
+            }
+    
+    
+            if (!hasField) {
+                result.message =  "output.data 必须项目缺失(index=" + i +  ", " + j + ")";
+                return result;
+            }
         }
 
 

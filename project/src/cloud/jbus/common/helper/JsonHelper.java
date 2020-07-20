@@ -18,6 +18,15 @@ public class JsonHelper {
 
 		return new Gson().toJson(list);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static String obj2json(Object obj) {
+		if (obj instanceof List) {
+			return list2json((List<Object>)obj);
+		} else {
+			return map2json((Map<String, Object>)obj);
+		}
+	}
 
 	public static Map<String, Object> json2map(String json) {
 
@@ -37,6 +46,14 @@ public class JsonHelper {
         List<Object> list = gson.fromJson(json, type);
         
         return list;
+	}
+
+	public static Object json2obj(String json) {
+		if(json.trim().startsWith("[")) {
+			return json2list(json);
+		} else {
+			return json2map(json);
+		}
 	}
 	
 }

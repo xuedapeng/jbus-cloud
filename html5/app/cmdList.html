@@ -35,7 +35,7 @@
         <thead>
           <tr class="text-c">
             <th  style="text-align:left" width="50px">编号</th>
-            <th  style="text-align:left" width="150px">名称</th>
+            <th  style="text-align:left" width="80px">名称</th>
             <th style="text-align:left" >指令脚本</th>
             <th width="80px">
               操作
@@ -55,10 +55,10 @@
               <input v-model="newItem.cmdNo" name="" type="text" placeholder="" class="input-text  size-S" style="width:50px;"  />
             </td>
             <td style="text-align:left">
-              <input v-model="newItem.cmdName" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+              <input v-model="newItem.cmdName" name="" type="text" placeholder="" class="input-text  size-S" style="width:80px" />
             </td>
             <td style="text-align:left">
-              <input v-model="newItem.scriptText" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+              <input v-model="newItem.scriptText" name="" type="text" placeholder="" class="input-text  size-S" style="width:220px" />
             </td>
             <td>
               <a title="确定" v-on:click="addCmd()">
@@ -83,7 +83,7 @@
             </td>
             <td style="text-align:left">
               <div :style="'display:' + (item.isEdit?'block':'none')" >
-                <input v-model="item.cmdName" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+                <input v-model="item.cmdName" name="" type="text" placeholder="" class="input-text  size-S" style="width:80px" />
               </div>
               <div :style="'display:' + (!item.isEdit?'block':'none')" >
                 {{item.cmdName}}
@@ -91,7 +91,7 @@
             </td>
             <td style="text-align:left">
               <div :style="'display:' + (item.isEdit?'block':'none')" >
-                <input v-model="item.scriptText" name="" type="text" placeholder="" class="input-text  size-S" style="width:150px" />
+                <input v-model="item.scriptText" name="" type="text" placeholder="" class="input-text  size-S" style="width:220px" />
               </div>
               <div :style="'display:' + (!item.isEdit?'block':'none')" >
                 {{item.scriptText}}
@@ -144,7 +144,7 @@
 
 <script type="text/javascript" src="common/constant.js?v=6"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="cmdList.js?v=2"></script>
+<script type="text/javascript" src="cmdList.js?v=4"></script>
 
 </body>
 </html>

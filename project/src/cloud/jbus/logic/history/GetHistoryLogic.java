@@ -37,7 +37,7 @@ public class GetHistoryLogic extends BaseZLogic {
 		
 		String  deviceSn = CommonLogic.getDeviceSnById(deviceId, em);
 		
-		Map<String, Map<String, String>> fieldStyle = GetHydrographLogic.getFieldStyle(deviceId, myParam.getSensorNo(), res, em);
+		Map<String, Map<String, String>> fieldStyle = CommonLogic.getFieldStyle(deviceId, myParam.getSensorNo(), res, em);
 		if (fieldStyle == null) {
 			return false;
 		}

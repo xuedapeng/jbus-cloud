@@ -1,5 +1,6 @@
 package cloud.jbus.logic.share.codec;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -40,6 +41,21 @@ public class DecodeValidator {
 
 			Map<String, Object> item = (Map<String, Object>)schema.get(key);
 			// 2. type=metric
+			// 2.1 type=ref
+			if("ref".equals(item.get("type"))) {
+				String refSno = (String) item.get("refsno");
+				if (key.equals(refSno) || !schema.containsKey(refSno)) {
+					return String.format("%s: refsno=%s不存在 (%s)", title, refSno, key);
+				}
+
+				// refsno 为实体，不能是引用
+				Map<String, Object> refItem = (Map<String, Object>)schema.get(refSno);
+				if (!"metric".equals(refItem.get("type"))) {
+					return String.format("%s: refsno=%s 必须是实体定义(%s)", title, refSno, key);
+				}
+				
+				continue;
+			}
 			if (!"metric".equals(item.get("type"))) {
 				return String.format("%s: type='metric'固定(%s)", title, key);
 			}
@@ -115,36 +131,50 @@ public class DecodeValidator {
 				continue;
 			}
 			
-			Map<String, Object> outputMap = (Map<String, Object>)output;
-			Object  sno = outputMap.get("sno");
-			Object data = outputMap.get("data");
-			if (sno == null) {
-				return String.format("%s: output.sno 必须项目缺失(index=%d)", title, i);
-			}
-			if (data == null) {
-				return String.format("%s: output.data 必须项目缺失(index=%d)", title, i);
+			// 一次接收多个传感器数据
+			List<Map<String, Object>> outputList = new ArrayList<Map<String, Object>>();
+			if(output instanceof List) {
+				outputList = (List<Map<String, Object>>)output;
+			} else {
+				outputList.add((Map<String, Object>)output);
 			}
 			
-			String snoStr = String.valueOf(((Double)sno).intValue());
-			if(!schema.containsKey(snoStr)) {
-				return String.format("%s: output.sno:%s 在schema中未定义(index=%d)", title, snoStr, i);
-			}
-			
-			Map<String, Object> dataMap =  (Map<String, Object>)data;
-			if (dataMap.size() == 0){
-				return String.format("%s: output.data 必须项目缺失(index=%d)", title, i);
-			}
-			for(String key: dataMap.keySet()) {
-				Map<String, Object> schemaSno = (Map<String, Object>)schema.get(snoStr);
-				if (!((Map<String, Object>)schemaSno.get("field")).containsKey(key)) {
-					return String.format("%s: output.data field: %s 在schema中未定义(index=%d)", title, key, i);
+			for(Map<String, Object> outputMap: outputList) {
+				
+				Object  sno = outputMap.get("sno");
+				Object data = outputMap.get("data");
+				if (sno == null) {
+					return String.format("%s: output.sno 必须项目缺失(index=%d)", title, i);
+				}
+				if (data == null) {
+					return String.format("%s: output.data 必须项目缺失(index=%d)", title, i);
 				}
 				
-				if ((dataMap.get(key)) instanceof String) {
-					return String.format("%s: output.data: %s 必须是数字类型的值(index=%d)", title, key, i);
+				String snoStr = String.valueOf(((Double)sno).intValue());
+				if(!schema.containsKey(snoStr)) {
+					return String.format("%s: output.sno:%s 在schema中未定义(index=%d)", title, snoStr, i);
 				}
+				
+				Map<String, Object> dataMap =  (Map<String, Object>)data;
+				if (dataMap.size() == 0){
+					return String.format("%s: output.data 必须项目缺失(index=%d)", title, i);
+				}
+
+				Map<String, Object> schemaSno = (Map<String, Object>)schema.get(snoStr);
+				if ("ref".equals(schemaSno.get("type"))) {
+					schemaSno = (Map<String, Object>)schema.get(schemaSno.get("refsno"));
+				}
+				for(String key: dataMap.keySet()) {
+					if (!((Map<String, Object>)schemaSno.get("field")).containsKey(key)) {
+						return String.format("%s: output.data field: %s 在schema中未定义(index=%d)", title, key, i);
+					}
+					
+					if ((dataMap.get(key)) instanceof String) {
+						return String.format("%s: output.data: %s 必须是数字类型的值(index=%d)", title, key, i);
+					}
+				}
+				
 			}
-			
 		}
 		
 		return null;
@@ -172,13 +202,14 @@ public class DecodeValidator {
 				} else {
 					return String.format("%s: \n期待: %s \n实际：%s \n(caseIdx=%d)", 
 							title, 
-							JsonHelper.map2json((Map<String, Object>)expected), 
+							JsonHelper.obj2json(expected), 
 							"null", i);
 				}
 			}
 			
-			String expectedStr = JsonHelper.map2json((Map<String, Object>)expected);
-			String actualStr = JsonHelper.map2json(JsonHelper.json2map(actual));
+			String expectedStr = JsonHelper.obj2json(expected);
+					
+			String actualStr = JsonHelper.obj2json(JsonHelper.json2obj(actual));
 			
 			if (!actualStr.equals(expectedStr)) {
 				return String.format("%s: \n期待: %s \n实际：%s \n(caseIdx=%d)", 
@@ -239,7 +270,7 @@ public class DecodeValidator {
 		
 		NashornSandbox _nashornSandbox = NashornSandboxes.create();
 		
-		_nashornSandbox.setMaxCPUTime(100);
+		_nashornSandbox.setMaxCPUTime(500);
 		_nashornSandbox.setMaxMemory(10*1024*1024);
 		_nashornSandbox.allowNoBraces(false);
 		_nashornSandbox.setMaxPreparedStatements(30); // because preparing scripts for execution is expensive

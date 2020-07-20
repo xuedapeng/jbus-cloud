@@ -42,7 +42,7 @@ public class GetHydrographLogic extends BaseZLogic {
 		
 		System.out.println(myParam.dumpParams());
 		
-		Map<String, Map<String, String>> fieldStyle = getFieldStyle(deviceId, myParam.getSensorNo(), res, em);
+		Map<String, Map<String, String>> fieldStyle = CommonLogic.getFieldStyle(deviceId, myParam.getSensorNo(), res, em);
 		if (fieldStyle == null) {
 			return false;
 		}
@@ -165,40 +165,5 @@ public class GetHydrographLogic extends BaseZLogic {
 		
 	}
 	
-	// check decode
-	@SuppressWarnings("unchecked")
-	public static Map<String, Map<String, String>> getFieldStyle(Integer deviceId, String sensorNo, ZSimpleJsonObject res, EntityManager em)  {
-
-		DatDecodeDao decodeDao = new DatDecodeDao(em);
-		DatDecodeEntity decode = decodeDao.findByDeviceId(deviceId);
-		
-		//校验：decode存在
-		if (decode == null || decode.getResultSchema() == null) {
-			res.add("status", -21)
-				.add("msg", "解码器错误。");
-			return null;
-		}
-		
-		String resultSchema = decode.getResultSchema();
-		Map<String, Object> scheMap = JsonHelper.json2map(resultSchema);
-		
-		// 校验：resultSchema中sno存在
-		if (!scheMap.containsKey(sensorNo)) {
-			res.add("status", -22)
-				.add("msg", "解码器中缺少sno(" + sensorNo + ")");
-			return null;
-		}
-		
-		Map<String, Map<String, String>> fieldStyle = (Map<String, Map<String, String>>) ((Map<String, Object>)scheMap.get(sensorNo.toString())).get("field");
-		String type = (String) ((Map<String, Object>)scheMap.get(sensorNo.toString())).get("type");
-		
-		if (!"metric".equals(type) || fieldStyle == null){
-			res.add("status", -23)
-				.add("msg", "解码器模式错误");
-			return null;
-		}
-		
-		return fieldStyle;
-	}
 
 }

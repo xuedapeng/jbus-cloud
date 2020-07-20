@@ -86,7 +86,7 @@ public class GetLastDataLogic extends BaseZLogic {
 			snoMap.forEach((sno, fdList)->{
 
 				Map<String, Map<String, String>> fieldStyle = 
-						GetHydrographLogic.getFieldStyle(deviceId[0], sno, res, em);
+						CommonLogic.getFieldStyle(deviceId[0], sno, res, em);
 				
 				fieldStyleMap.get(sn).put(sno, fieldStyle);
 				

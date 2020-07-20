@@ -13,7 +13,6 @@ import cloud.jbus.db.dao.CmdEncodeDao;
 import cloud.jbus.db.dao.SensorDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.codec.param.CmdListLogicParam;
-import cloud.jbus.logic.device.param.SensorListLogicParam;
 import cloud.jbus.logic.share.ParamValidator;
 import cloud.jbus.logic.share.annotation.Action;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
