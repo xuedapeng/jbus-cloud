@@ -47,10 +47,15 @@
               <th style="text-align:left;" >
                 command
               </th>
-              <th width="80px">
-                {{lastLoadTimeShort}}
+              <th width="60px">
+
+
+                <!-- {{lastLoadTimeShort}} -->
                 <a onclick="loadData()" :title="'刷新('+lastLoadTime + ')'">
                   <i class="Hui-iconfont" style="font-size:1em">&#xe68f;</i>
+                </a>
+                <a @click="showEditMode()" >
+                  <img  height="13px" :src="'../static/img/config'+ (editMode?'2.png':'1.png')" />
                 </a>
               </th>
           </tr>
@@ -119,13 +124,55 @@
                 </ul>
                 </td>
                 <td>
+                  
 
+                <a :id="'11'+item.projectId" 
+                :data-href="'app/uiconfigEdit.html?projectId='+item.projectId" 
+                :data-title="'修改组态配置（' + item.projectId + '）'" 
+                :href="'javascript:Hui_admin_tab(document.getElementById(' + '11'+ item.projectId + '))'" 
+                :style="'display:'+ (editMode?'inline':'none')"
+                title="修改组态配置">
+                   <i class="Hui-iconfont" style="font-size:1.5em">&#xe60c;</i>
+               </a>
                 </td>
             </tr>
 
           </template>
+
+
         </tbody>
       </table>
+
+      <table class="table table-hover table-sort table-responsive">
+        <thead>
+          <tr class="text-c">
+              <th style="text-align:left;" width="30px">
+                
+              </th>
+              <th style="text-align:left;" width="100px">
+                
+              </th>
+              <th style="text-align:left;" >
+                
+              </th>
+              <th style="text-align:left;" >
+                
+              </th>
+              <th width="60px">
+
+                <a :id="'10'+projectId" 
+										:data-href="'app/uiconfigEdit.html?pid='+projectId" 
+										:data-title="'添加组态配置（' + projectId + '）'" 
+										:href="'javascript:Hui_admin_tab(document.getElementById(' + '10'+ projectId + '))'" 
+                    :style="'display:'+ (editMode?'inline':'none')"
+                    title="添加组态配置">
+                    <i class="Hui-iconfont" style="font-size:1.5em">&#xe600;</i>
+								</a>
+              </th>
+          </tr>
+        </thead>
+      </table>
+      
     </div>
 
 
@@ -150,13 +197,13 @@
 
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
-<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js?v=1"></script>
 <script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
 
 
 <script type="text/javascript" src="common/constant.js?v=11"></script>
 <script type="text/javascript" src="common/common.js?v=11"></script>
-<script type="text/javascript" src="uiconfigList.js?v=95"></script>
+<script type="text/javascript" src="uiconfigList.js?v=105"></script>
 
 
 

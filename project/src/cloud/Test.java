@@ -9,15 +9,11 @@ public class Test {
 
 	public static void main(String[] args) {
 		
-		Map<String, Object> m = new HashMap<String, Object>();
+		String s = "\n\n\n\n\n\n\n[\n    ,\n,\n]        \"sensorNo\": \"21\",\n        \"field\"\n        \"cmd\": \"21: 2\"\n    }\n]\n\n\n\n\n\n";
 		
-		m.put("1", 2);
+		s = s.replaceAll("^\n+\\[", "[").replaceAll("\\]\n+$", "]");
 		
-		System.out.println((Integer)m.get("1"));
-		System.out.println((Integer)m.get("2"));
-		System.out.println((Integer)m.get(null));
-
-
+		System.out.println(s);
 	}
 
 }

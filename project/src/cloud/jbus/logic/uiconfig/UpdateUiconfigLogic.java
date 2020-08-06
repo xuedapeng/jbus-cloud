@@ -1,5 +1,6 @@
 package cloud.jbus.logic.uiconfig;
 
+
 import javax.persistence.EntityManager;
 
 import cloud.jbus.common.constant.StatusConst;
@@ -7,31 +8,43 @@ import cloud.jbus.db.bean.UiconfigEntity;
 import cloud.jbus.db.dao.UiconfigDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
-import cloud.jbus.logic.uiconfig.param.GetUiconfigLogicParam;
+import cloud.jbus.logic.uiconfig.param.UpdateUiconfigLogicParam;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
 
 /*
- * 删除组态配置
+ * 更新组态配置
  */
-@Action(method="uiconfig.project.get")
-public class GetUiconfigLogic extends BaseZLogic {
+@Action(method="uiconfig.project.update")
+public class UpdateUiconfigLogic extends BaseZLogic {
 
 	@Override
 	protected boolean execute(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 
-		GetUiconfigLogicParam myParam = (GetUiconfigLogicParam)logicParam;
+		UpdateUiconfigLogicParam myParam = (UpdateUiconfigLogicParam)logicParam;
 		Integer projectId = Integer.valueOf(myParam.getProjectId());
+		String title = myParam.getTitle();
+		String cover = myParam.getCover().trim();
+		Integer sort = Integer.valueOf(myParam.getSort());
 
 		UiconfigDao dao = new UiconfigDao(em);
 		
 		UiconfigEntity uiconfig = dao.findById(projectId);
 		
+		uiconfig.setTitle(title);
+		uiconfig.setCover(cover);
+		uiconfig.setSort(sort);
+		
+		String snList = AddUiconfigLogic.getSnListFromCover(cover);
+		if (!AddUiconfigLogic.checkDeviceOwner(this.getLoginUserId(myParam.getSecretId()), res, em, snList)) {
+			return false;
+		}
+		uiconfig.setDeviceSnList(snList);
+		
+		dao.save(uiconfig);
+		
 		res.add("status", 1)
-			.add("msg", "获取组态成功")
-			.add("title", uiconfig.getTitle())
-			.add("sort", uiconfig.getSort())
-			.add("cover", uiconfig.getCover());
+			.add("msg", "更新组态成功");
 		
 		return true;
 	}
@@ -44,13 +57,12 @@ public class GetUiconfigLogic extends BaseZLogic {
 		}
 		
 		// 组态所有者
-		GetUiconfigLogicParam myParam = (GetUiconfigLogicParam)logicParam;
+		UpdateUiconfigLogicParam myParam = (UpdateUiconfigLogicParam)logicParam;
 		Integer projectId = Integer.valueOf(myParam.getProjectId());
 		
 		
 		UiconfigEntity uiconfig = new UiconfigDao(em).findById(projectId);
 		if (uiconfig == null 
-				|| !uiconfig.getStatus().equals(StatusConst.STATUS_NORMAL)
 				|| !uiconfig.getOwnerId().equals(this.getLoginUserId(myParam.getSecretId()))) {
 
 			res.add("status", -11)
@@ -66,11 +78,19 @@ public class GetUiconfigLogic extends BaseZLogic {
 	protected boolean validate(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 		
 		String[][] matrix = new String[][]{
-			{"projectId", "1", "0", "1"}
+			{"projectId", "1", "0", "1"},
+			{"title", "1", "100", "0"},
+			{"cover", "1", "100000", "0"},
+			{"sort", "0", "0", "1"}
 			
 		};
 
 		if (!checkParam(logicParam, res, matrix)) {
+			return false;
+		}
+
+		UpdateUiconfigLogicParam myParam = (UpdateUiconfigLogicParam)logicParam;
+		if (!AddUiconfigLogic.checkCover(myParam.getCover(), res)) {
 			return false;
 		}
 		

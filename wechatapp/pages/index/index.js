@@ -1,12 +1,12 @@
 //index.js
 //获取应用实例
 const app = getApp(); 
-import mqtt from '../../utils/mqtt.js';
+// import mqtt from '../../utils/mqtt.js';
 import dateFormat from '../../utils/util.js';
 
 var page=Page({
   data: {
-    scrollTop: 10,
+    scrollTop: 10, 
     deviceList: [],
     mqttClientStatus: null, 
     mqttStatusTopics:[],
@@ -47,7 +47,7 @@ var page=Page({
         // 设置在线状态
         page.getDeviceStatus();
         // 订阅设备连线事件
-        page.subscribeDeviceStatus();
+        // page.subscribeDeviceStatus();
       }
     })
   },

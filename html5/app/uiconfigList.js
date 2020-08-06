@@ -14,7 +14,8 @@ var app = new Vue({
     doneCount:0,
     elapsedtime:0,
     valueMap:{},
-    styleMap:{}
+    styleMap:{},
+    editMode:false,
 
   },
   methods:{
@@ -27,6 +28,16 @@ var app = new Vue({
     showGraph:function(deviceId, sno, field) {
       this.graphSrc = "hydrograph.html?field=" + field + "&deviceId=" + deviceId + "&sensorNo=" + sno + "&showTitle=yes&height=200" + "&ts="+new Date().getTime();
       $("#modal-graph").modal("show");
+    },
+    showEditMode:function() {
+      this.editMode = !this.editMode;
+    },
+    addUiconfig:function() {
+        alert("addUiconfig");
+    },
+    updateUiconfig:function(projectId) {
+      
+      alert("updateUiconfig");
     }
   },
   computed:{
@@ -162,7 +173,7 @@ function updateRealtimeData() {
   app.styleMap = {};
   var page = app;
 
-  console.log("updateRealtimeData:projectId="+page.projectId);
+  // console.log("updateRealtimeData:projectId="+page.projectId);
   var param = {
     "method": "uiconfig.data.get",
     "data": { "projectId": page.projectId },
@@ -241,9 +252,14 @@ function updateAllData() {
       // console.log(pj.seq + "," + fd.seq);
       if (app.fieldValues[pj.seq]&&app.fieldValues[pj.seq][fd.seq]){
         fd.data = app.fieldValues[pj.seq][fd.seq];
-        
-          if (fd.valuePtn && fd.valuePtn[fd.data.val + ""]) {
-            fd.data.val = fd.valuePtn[fd.data.val + ""];
+
+          if(fd.valuePtn) {
+
+            if (fd.valuePtn[fd.data.val + ""]) {
+              fd.data.val = fd.valuePtn[fd.data.val + ""];
+            } else if (fd.valuePtn["default"]) {
+              fd.data.val = fd.valuePtn["default"] + "(" + fd.data.val + ")";
+            }
           }
             
         // console.log(fd.data.val);
@@ -255,7 +271,7 @@ function updateAllData() {
 
   layer.msg("加载数据成功！",{icon:1,time:500});
   app.lastLoadTime = dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss");
-  console.log(JSON.stringify(app.projectList));
+  // console.log(JSON.stringify(app.projectList));
 
 }
 
@@ -321,8 +337,14 @@ function getRealtimeData(p_seq, f_seq, deviceSn, sensorNo, field) {
 function getRealtimeValDisplay(p_seq, f_seq, deviceSn, sensorNo, field) {
   var display = [];
 
-  console.log("styleMap="+JSON.stringify(app.styleMap));
-  console.log("deviceSn,sensorNo,field:"+deviceSn  +"," + sensorNo + "," + field);
+  if(!app.styleMap[deviceSn] 
+    || !app.styleMap[deviceSn][sensorNo] 
+    || !app.styleMap[deviceSn][sensorNo][field]) {
+
+      console.log("数据不存在！"+ deviceSn + "." + sensorNo + "." + field);
+      return;
+    }
+
   var fieldStyle = app.styleMap[deviceSn][sensorNo][field];
   var val = app.valueMap[deviceSn][sensorNo][field];
   var time =  app.valueMap[deviceSn][sensorNo]["time"];

@@ -9,11 +9,27 @@ Page({
    */
   data: {
     account: wx.getStorageSync('account'),
-    password: ''
+    password: '',
+    accountMap:{},
+    isShowAccountList:false,
   },
 
   onLoad() {
     // wx.clearStorageSync();
+  },
+
+  onShow(){
+    
+    this.setData({
+      account: wx.getStorageSync('account')
+    });
+
+    var accountMap = wx.getStorageSync('accountMap');
+    if (accountMap) {
+      accountMap = JSON.parse(accountMap);
+      this.setData({"accountMap":accountMap});
+    }
+    console.log("accountMap:"+JSON.stringify(this.data.accountMap));
   },
 
   accountInput(event) {
@@ -29,8 +45,25 @@ Page({
 
   },
 
+  showAccountList(){
+    this.setData({"isShowAccountList":!this.data.isShowAccountList});
+  },
+
+  changeAccount(e) {
+    var accountInfo = this.data.accountMap[e.currentTarget.dataset.account];
+    wx.setStorageSync('auth', accountInfo.auth);
+    wx.setStorageSync('mqtt.user', accountInfo["mqtt.user"]);
+    wx.setStorageSync('mqtt.pwd', accountInfo["mqtt.pwd"]);
+    wx.setStorageSync('account', accountInfo.account);
+    wx.setStorageSync('nickName', accountInfo.nickName);
+
+    wx.navigateBack({
+          
+    })
+  },
+
   login() {
-    wx.clearStorageSync();
+    // wx.clearStorageSync();
     var page = this;
     if (this.data.account == '' || this.data.password == '') {
       wx.showToast({
@@ -68,6 +101,30 @@ Page({
         wx.setStorageSync('mqtt.user', res.data.emqUser);
         wx.setStorageSync('mqtt.pwd', res.data.secretKey);
         wx.setStorageSync('account', page.data.account);
+        wx.setStorageSync('nickName', res.data.nickName);
+
+        // 账号切换
+        var accountMap = wx.getStorageSync('accountMap');
+        console.log("accountMap2:"+accountMap);
+        if (!accountMap) {
+          accountMap = {};
+        } else {
+          accountMap = JSON.parse(accountMap);
+        }
+
+        console.log("accountMap3:"+ JSON.stringify(accountMap));
+
+        accountMap[page.data.account] = {
+          "auth":[res.data.secretId, res.data.secretKey],
+          "mqtt.user": res.data.emqUser,
+          "mqtt.pwd": res.data.secretKey,
+          "account":page.data.account,
+          "nickName": res.data.nickName
+        }
+        wx.setStorageSync('accountMap', JSON.stringify(accountMap));
+        page.data.accountMap = accountMap;
+
+        console.log("accountMap4:"+JSON.stringify(page.data.accountMap));
 
         wx.navigateBack({
           

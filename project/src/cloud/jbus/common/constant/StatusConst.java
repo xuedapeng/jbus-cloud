@@ -5,6 +5,7 @@ public class StatusConst {
 	
 	public static final int STATUS_NORMAL = 1;
 	public static final int STATUS_STOP = 9;
+	public static final int STATUS_DEL = -1;
 	
 
 	public static final int CODE_NOT_CONFIRMED = 1;

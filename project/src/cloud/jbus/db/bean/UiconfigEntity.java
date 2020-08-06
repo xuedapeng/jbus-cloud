@@ -13,6 +13,7 @@ import javax.persistence.Table;
 public class UiconfigEntity extends BaseZEntity {
 
 	private Integer id;
+	private Integer pid;
 	private String title;
 	private String deviceSnList;
 	private String cover;
@@ -21,6 +22,7 @@ public class UiconfigEntity extends BaseZEntity {
 	private Date htmlTime;
 	private Integer ownerId;
 	private Integer status;
+	private Integer sort;
 	
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -112,6 +114,26 @@ public class UiconfigEntity extends BaseZEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+
+	public Integer getPid() {
+		return pid;
+	}
+
+
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+
+
+	public Integer getSort() {
+		return sort;
+	}
+
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
 	}
 	
 	

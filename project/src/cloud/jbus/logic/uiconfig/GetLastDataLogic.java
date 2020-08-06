@@ -227,7 +227,7 @@ public class GetLastDataLogic extends BaseZLogic {
 		
 		coverList.forEach((E)->{
 			Map<String, String> m = (Map<String, String>)E;
-			if (!"cmd".equals(m.get("type"))) {
+			if (m.get("type") == null || "dat".equals(m.get("type"))) {
 
 				String sn = m.get("deviceSn");
 				String sno = m.get("sensorNo");

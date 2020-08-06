@@ -14,5 +14,22 @@
    <button bindtap="login" class="button" type="primary" >登录</button>
   </view>
 
+ <view style="height:20px">
+ 
+ </view>
+ <view style="height:20px;text-align:center" bindtap="showAccountList">
+    切换账号
+ </view>
+ <view style="height:1px">
+ 
+ </view>
+  <view style="display:{{isShowAccountList?'block':'none'}}">
+      <view wx:for="{{accountMap}}" wx:key="account" style="height:40px; margin-top:15px; border-bottom: 1px solid #e0e0e0;" >
+        <view bindtap="changeAccount" data-account="{{item.account}}">
+          {{item.account}}({{item.nickName}})
+        </view>
+      </view>
+  </view>
+
 </view>
 </view>

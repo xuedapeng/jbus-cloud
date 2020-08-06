@@ -1,5 +1,7 @@
 package cloud.jbus.logic.uiconfig;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import cloud.jbus.common.constant.StatusConst;
@@ -7,31 +9,30 @@ import cloud.jbus.db.bean.UiconfigEntity;
 import cloud.jbus.db.dao.UiconfigDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
-import cloud.jbus.logic.uiconfig.param.GetUiconfigLogicParam;
+import cloud.jbus.logic.uiconfig.param.DeleteUiconfigLogicParam;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
 
 /*
  * 删除组态配置
  */
-@Action(method="uiconfig.project.get")
-public class GetUiconfigLogic extends BaseZLogic {
+@Action(method="uiconfig.project.delete")
+public class DeleteUiconfigLogic extends BaseZLogic {
 
 	@Override
 	protected boolean execute(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 
-		GetUiconfigLogicParam myParam = (GetUiconfigLogicParam)logicParam;
+		DeleteUiconfigLogicParam myParam = (DeleteUiconfigLogicParam)logicParam;
 		Integer projectId = Integer.valueOf(myParam.getProjectId());
 
 		UiconfigDao dao = new UiconfigDao(em);
 		
 		UiconfigEntity uiconfig = dao.findById(projectId);
+		uiconfig.setStatus(StatusConst.STATUS_DEL);
+		dao.save(uiconfig);
 		
 		res.add("status", 1)
-			.add("msg", "获取组态成功")
-			.add("title", uiconfig.getTitle())
-			.add("sort", uiconfig.getSort())
-			.add("cover", uiconfig.getCover());
+			.add("msg", "删除组态成功");
 		
 		return true;
 	}
@@ -44,13 +45,12 @@ public class GetUiconfigLogic extends BaseZLogic {
 		}
 		
 		// 组态所有者
-		GetUiconfigLogicParam myParam = (GetUiconfigLogicParam)logicParam;
+		DeleteUiconfigLogicParam myParam = (DeleteUiconfigLogicParam)logicParam;
 		Integer projectId = Integer.valueOf(myParam.getProjectId());
 		
 		
 		UiconfigEntity uiconfig = new UiconfigDao(em).findById(projectId);
 		if (uiconfig == null 
-				|| !uiconfig.getStatus().equals(StatusConst.STATUS_NORMAL)
 				|| !uiconfig.getOwnerId().equals(this.getLoginUserId(myParam.getSecretId()))) {
 
 			res.add("status", -11)
@@ -72,6 +72,19 @@ public class GetUiconfigLogic extends BaseZLogic {
 
 		if (!checkParam(logicParam, res, matrix)) {
 			return false;
+		}
+
+		DeleteUiconfigLogicParam myParam = (DeleteUiconfigLogicParam)logicParam;
+		Integer projectId = Integer.valueOf(myParam.getProjectId());
+		// 是否有子项目
+		List<UiconfigEntity> list = new UiconfigDao(em).findList(this.getLoginUserId(myParam.getSecretId()), projectId);
+		if (list != null && !list.isEmpty()) {
+
+			res.add("status", -11)
+				.add("msg", "projectId 有子项目，不能删除");
+			
+			return false;
+			
 		}
 		
 		return true;

@@ -106,11 +106,14 @@ function creatIframe(href,titleName){
 		
 	show_nav.find('li').removeClass("active");	
 	show_nav.append('<li class="active"><span data-href="'+href+'">'+titleName+'</span><i></i><em></em></li>');
+	
+	console.log("creatIframe: oUl.length=" + show_nav.find('li').length);
+
 	if('function'==typeof $('#min_title_list li').contextMenu){
 		$("#min_title_list li").contextMenu('Huiadminmenu', {
 			bindings: {
 				'closethis': function(t) {
-					var $t = $(t);				
+					var $t = $(t);
 					if($t.find("i")){
 						$t.find("i").trigger("click");
 					}
@@ -120,7 +123,7 @@ function creatIframe(href,titleName){
 				},
 			}
 		});
-	}else {
+	} else {
 		
 	}	
 	var $tabNavitem = topWindow.find(".acrossTab li");
@@ -294,11 +297,17 @@ $(function(){
 	tabNavallwidth();
 	
 	$('#js-tabNav-next').click(function(){
+		
+		var topWindow = $(window.parent.document);
+		oUl = topWindow.find("#min_title_list");
+
 		num==oUl.find('li').length-1?num=oUl.find('li').length-1:num++;
+		console.log("num:"+num);
 		toNavPos();
 	});
 	$('#js-tabNav-prev').click(function(){
 		num==0?num=0:num--;
+		console.log("num:"+num);
 		toNavPos();
 	});
 	

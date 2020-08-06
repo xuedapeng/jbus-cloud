@@ -237,8 +237,12 @@ Page({
         if (this.data.fieldValues[pj.seq] && this.data.fieldValues[pj.seq][fd.seq]) {
           fd.data = this.data.fieldValues[pj.seq][fd.seq];
 
-          if (fd.valuePtn && fd.valuePtn[fd.data.val + ""]) {
-            fd.data.val = fd.valuePtn[fd.data.val + ""];
+          if(fd.valuePtn) {
+            if (fd.valuePtn[fd.data.val + ""]) {
+              fd.data.val = fd.valuePtn[fd.data.val + ""];
+            } else if(fd.valuePtn["default"]) {
+              fd.data.val = fd.valuePtn["default"] + "(" + fd.data.val + ")";
+            }
           }
         }
       }

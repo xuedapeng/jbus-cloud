@@ -2,9 +2,12 @@ package cloud.jbus.logic.uiconfig.param;
 
 import cloud.jbus.logic.BaseZLogicParam;
 
-public class GetUiconfigLogicParam extends BaseZLogicParam {
+public class DeleteUiconfigLogicParam extends BaseZLogicParam {
 
 	private String projectId;
+	
+
+	
 
 	public String getProjectId() {
 		return projectId;
