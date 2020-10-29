@@ -18,14 +18,33 @@ var app = new Vue({
     sensorName:'',
     fieldStyle:{},
     showTitle:getQueryString("showTitle")=='no'?'none':'block',
+    prevEnable:false,
+    nextEnable:true,
 
   },
   methods:{
     query:function(){
       loadData();
     },
+    prev:function(){
+      if (!app.prevEnable) {
+        return;
+      }
+      var baseTime = app.dataList[0][1];
+      doPrev(baseTime);
+      
+    },
+    next:function(){
+      if (!app.nextEnable) {
+        return;
+      }
+      var baseTime = app.dataList[app.dataList.length-1][1];
+      doNext(baseTime);
+
+    }
   }
 });
+
 
 
 loadData();
@@ -90,8 +109,110 @@ function loadData() {
     });
 }
 
+function doPrev(baseTime) {
 
-function makeDataList(result) {
+  if (!checkAuth()) {
+    return;
+  }
+
+  var param = {"method":"history.data.query",
+              "auth":[getStorage("appId"), getStorage("appToken")],
+              "data":{"deviceId":app.deviceId,
+                      "sensorNo":app.sensorNo,
+                      "direction":-app.direction+"",
+                      "fromTime": baseTime,
+                      "pageSize":app.pageSize+"",
+                      }
+            };
+
+
+  ajaxPost(G_RPC_URL, param,
+    function(response){
+
+      if (response.status < 0) {
+        layer.msg(response.msg,{icon:2,time:2000});
+        return;
+      }
+
+      app.deviceSn = response.deviceSn;
+      app.deviceName = response.deviceName;
+      app.sensorName = response.sensorName;
+      app.fieldStyle = response.fieldStyle;
+
+      var result = response.result;
+
+      if(result['time'].length == 0) {
+        alert("没有更多数据");
+        // layer.msg("没有更多数据",{icon:2,time:2000});
+        return;
+      }
+
+      makeDataList(result, true);
+
+      if(app.dataList.length < app.pageSize) {
+        app.prevEnable = false;
+        app.nextEnable = true;
+      } else {
+        app.prevEnable = true;
+        app.nextEnable = true;
+      }
+
+      // app.dataList.reverse();
+
+    });
+}
+
+function doNext(baseTime) {
+
+  if (!checkAuth()) {
+    return;
+  }
+
+
+  var param = {"method":"history.data.query",
+              "auth":[getStorage("appId"), getStorage("appToken")],
+              "data":{"deviceId":app.deviceId,
+                      "sensorNo":app.sensorNo,
+                      "direction":app.direction+"",
+                      "fromTime": baseTime,
+                      "pageSize":app.pageSize+"",
+                      }
+            };
+
+
+  ajaxPost(G_RPC_URL, param,
+    function(response){
+
+      if (response.status < 0) {
+        layer.msg(response.msg,{icon:2,time:2000});
+        return;
+      }
+
+      app.deviceSn = response.deviceSn;
+      app.deviceName = response.deviceName;
+      app.sensorName = response.sensorName;
+      app.fieldStyle = response.fieldStyle;
+
+      var result = response.result;
+      if(result['time'].length == 0) {
+        alert("没有更多数据");
+        // layer.msg("没有更多数据",{icon:2,time:2000});
+        return;
+      }
+      makeDataList(result);
+
+      if(app.dataList.length < app.pageSize) {
+        app.prevEnable = true;
+        app.nextEnable = false;
+      } else {
+        app.prevEnable = true;
+        app.nextEnable = true;
+      }
+
+    });
+}
+
+function makeDataList(result, reverse) {
 
   var tList =[];
   var fList =[];
@@ -104,13 +225,18 @@ function makeDataList(result) {
 
   for (var i=0;i<result["time"].length;i++) {
     var item = [];
-    item[0] = i+1;
+    item[0] = reverse?result["time"].length-i:i+1;
     item[1] = result["time"][i];
     for(var j=0; j<fList.length; j++) {
       item[j+2] = result[fList[j]][i];
     }
 
-    dList.push(item);
+    if(reverse) {
+
+      dList.unshift(item);
+    } else {
+      dList.push(item);
+    }
 
   }
 

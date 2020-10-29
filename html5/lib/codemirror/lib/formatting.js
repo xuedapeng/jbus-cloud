@@ -35,8 +35,12 @@ var formatJson = function(json, options) {
   json = json.replace(reg, '\r\n$1\r\n');
   
   // add newline after comma
-  reg = /(\,)/g;
+  reg = /(\"\,)/g;
   json = json.replace(reg, '$1\r\n');
+
+  // add newline after ]+comma
+  reg = /(\,\")/g;
+  json = json.replace(reg, '\,\r\n\"');
   
   // remove multiple newlines
   reg = /(\r\n\r\n)/g;
@@ -54,8 +58,8 @@ var formatJson = function(json, options) {
     json = json.replace(reg, ':[');
   }
   if (options.spaceAfterColon) {      
-    reg = /\:/g;
-    json = json.replace(reg, ': ');
+    reg = /\"\:/g;
+    json = json.replace(reg, '": ');
   }
 
   $.each(json.split('\r\n'), function(index, node) {

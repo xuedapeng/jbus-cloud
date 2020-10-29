@@ -1,0 +1,1264 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<script src="../static/js/vue.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="../lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="../static/h-ui.admin/css/style.css" />
+<style>
+  #box {
+      width: 100px;
+      height: 100px;
+      background-color:black;
+      position: absolute;
+      border:0px solid #f00;
+  }
+  #father {
+    width: 800px;
+    height: 600px;
+    background-color:#030;
+    position: relative;
+    top:-5px;
+    left:-5px;
+    overflow:hidden;
+    text-align: center;
+  }
+
+
+  img {
+    width: 100%;
+    height: 100%;
+    cursor: move;
+  }
+  #scale { 
+    width: 10px; 
+    height: 10px; 
+    overflow: hidden; 
+    cursor: se-resize; 
+    position: absolute; 
+    right: 0; 
+    bottom: 0; 
+    background-color: rgb(122, 191, 238); 
+  }
+
+  .outBg {
+    background-color: white;
+    position:absolute;
+    z-index: 10;
+    border:0px solid #000;
+    
+  }
+
+  .boardGrid {
+    background-color: white;
+    position:absolute;
+    z-index: 1;
+    border:0px solid #000;
+    color:white
+    
+  }
+
+  a.toolBtnEnabled {
+    text-decoration:none;
+    color:white;
+    cursor: pointer;
+  }
+  a.toolBtnEnabled:hover {
+    color:#0f0
+  }
+
+  .label_left {
+    margin-top:-31px;margin-left:0px;
+  }
+  .label_right {
+    margin-top:-31px;margin-left:18px;
+  }
+  .label_top {
+    margin-top:-47px;margin-left:0px;
+  }
+  .label_bottom {
+    margin-top:-15px;margin-left:0px;
+  }
+</style>
+
+<title>组态图形</title>
+</head>
+<body>
+
+<div id="app" class="page-container" style="margin-top:0px">
+  <div id="topBg" class="outBg">
+    
+  </div>
+
+          <div id="leftBg" class="outBg" >
+            
+          </div>
+
+          <div id="father"  >
+            <div id="box" :style="'height:'+imgHeight +'px;width:'+imgWidth + 'px;'">
+              <img id="img" :src="imgsrc"/>
+              <div id="scale" style="display: none;"></div>
+            </div>
+
+            <div id="toolbtn" style="z-index:11;position:absolute;">
+
+              <a onclick="zoomIn()" class="toolBtnEnabled" title="放大">
+                <i class="Hui-iconfont" style="font-size:1.5em">&#xe604;</i>
+              </a>
+              
+              <br/>
+              <a onclick="zoomOut()" class="toolBtnEnabled" title="缩小">
+                <i class="Hui-iconfont" style="font-size:1.5em">&#xe631;</i>
+              </a>
+              <br/>
+              <a onclick="zoomReset()" class="toolBtnEnabled" title="复原">
+                <i class="Hui-iconfont" style="font-size:1.5em">&#xe6c9;</i>
+              </a>
+              <br/>
+              <a @click="setBoardGridFlag()" class="toolBtnEnabled" title="网格">
+                <i class="Hui-iconfont" style="font-size:1.5em">&#xe6c0;</i>
+              </a>
+            </div>
+          </div>
+
+
+          <div  id="rightBg" class="outBg" >
+             
+            
+          </div>
+          <div id="bottomBg" class="outBg">
+            
+          </div>
+
+
+  <!-- 锚点 start --> 
+  <template v-for="(values, key) in anchor" >
+    <div :id="'ele_'+key" style="position:absolute;" :title="anchorValues[key]" :set="val = dataMap[anchorMap[key][0].sn][anchorMap[key][0].sno][anchorMap[key][0].field]" >
+
+      <div @click="showDetail(key)">
+        <label :style="'font-size: 2em;color:' + (app.anchorColor[val]?app.anchorColor[val]:app.anchorColor['default']) ">●</label>
+        
+        <div :class="'label_'+values.wrap" :style="'color:'+ app.labelColor + ';font-weight:bold;' + (values.color=='none'?'display:none;':'') + (values.wrap=='left'?('margin-left:-'+values.width):'')">
+          {{values.label}}   
+          
+          <label :style="'color:'+app.valueColor" >
+            {{val}}
+          </label>
+        </div>
+       
+      </div> 
+    </div>
+  </template>  
+  <!-- 锚点 end -->
+
+  <template v-for="(item,index) in boardLat" >
+    <div :id="'h_' + item" class="boardGrid" :style="showBoardGrid==false?'display:none':''" :title="'行'+item">
+
+      {{item<10?('&nbsp;&nbsp;'+item):item}} 
+      <hr style="margin-top:-12px;margin-left:20px"  />
+    </div>
+  </template> 
+  <template v-for="(item,index) in boardLng" >
+
+    <div :id="'v_n_'+item" class="boardGrid" :style="showBoardGrid==false?'display:none':''">
+      {{item}}
+    </div>
+    <div :id="'v_'+item" class="boardGrid" :style="showBoardGrid==false?'display:none':''" :title="'列'+item">
+      
+      <!-- <hr :id="'hrv_'+item" style="width:1px;margin-left:5px;"  /> -->
+    </div>
+    
+  </template><!-- 棋盘网格 -->
+
+  <!-- modal-detail start -->
+  <div id="modal-detail" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content radius">
+        <div class="modal-header" style="height:20px;margin-top:-15px;">
+            <h3 class="modal-title">点位信息</h3>
+            <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+        </div>
+        <div class="modal-body">
+          <table style="border-top:0px solid #ccc">
+            
+
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true" >关闭</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- modal-detail end -->
+
+</div> <!-- app end -->
+
+
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+
+
+<script type="text/javascript" src="common/constant.js?v=7"></script>
+<script type="text/javascript" src="common/common.js?v=9"></script>
+<!-- <script type="text/javascript" src="uiconfigGraph.js?v=1"></script> -->
+<!-- <script type="text/javascript" src="uiconfigGraphMouse.js?v=1"></script> -->
+
+</body>
+
+
+<script type="text/javascript">
+
+
+    
+    var app = new Vue({
+      el: '#app',
+      data: {
+        config:dummyConfig(),
+        dataMap: dummyData().resultMap,
+        styleMap: dummyData().styleMap,
+        valuePtn: {},
+        imgsrc:"",
+        imgWidth:0,
+        imgHeight:0,
+        anchor:{},
+        boardLat:0,
+        boardLng:0,
+        centerlat:0,
+        centerLng:0,
+        showBoardGrid:false,
+        anchorColor:"",
+        labelColor:"",
+        valueColor:"",
+      },
+      computed: {
+        anchorMap:function() {
+          var map = {};
+          for(var item of app.config) {
+            if(!item.type || item.type=='dat') {
+
+              if (!map[item.anchor]) {
+                map[item.anchor] = [];
+              }
+
+              var mapItem = {"sn":item.deviceSn, "sno":item.sensorNo, "field":item.field};
+              if(item.keyfield && item.keyfield=='yes') {
+                mapItem["keyfield"] = true;
+                map[item.anchor].unshift(mapItem);
+              } else {
+                mapItem["keyfield"] = false;
+                map[item.anchor].push(mapItem);
+              }
+                
+            }
+          }
+
+          return map;
+        },
+        anchorValues:function(){
+          var map = {};
+          for(var item of app.config) {
+            if(!item.type || item.type=='dat') {
+
+              if (!map[item.anchor]) {
+                map[item.anchor] = "";
+              }
+              map[item.anchor] += (map[item.anchor]==""?"":"\n")
+                + app.styleMap[item.deviceSn][item.sensorNo][item.field]["display"] + ": "
+                + app.dataMap[item.deviceSn][item.sensorNo][item.field] 
+                + app.dataMap[item.deviceSn][item.sensorNo]["agoTime"]
+                ;
+
+                
+            }
+          }
+
+          return map;
+
+        }
+      },
+      methods:{
+        init(){
+          for(var item of app.config) {
+
+              if(item.type == "pos") {
+                app.imgsrc = item.imgsrc;
+                app.imgWidth = item.imgsize[0];
+                app.imgHeight = item.imgsize[1];
+                app.anchor = item.anchor;
+                app.boardLat = item.board[0];
+                app.boardLng = item.board[1];
+                app.centerLat = item.center[0];
+                app.centerLng = item.center[1];
+                app.anchorColor =item.anchorColor,
+                app.labelColor = item.labelColor,
+                app.valueColor = item.valueColor
+              }
+
+              if(item.type == "valuePtn") {
+                app.valuePtn = item.pattern;
+              }
+          }
+
+          formatDataMap();
+        },
+        setBoardGridFlag(){
+
+          app.showBoardGrid = !app.showBoardGrid;
+          
+          if(app.showBoardGrid) {
+            setBoardGrid();
+          }
+        },
+        showDetail(){
+          $("#modal-detail").modal("show");
+        }
+
+      }
+    });
+
+
+  // box是装图片的容器,fa是图片移动缩放的范围,scale是控制缩放的小图标
+      var box = document.getElementById("box");
+      var fa = document.getElementById('father');
+      var scale = document.getElementById("scale");
+      var topBg = document.getElementById("topBg");
+      var bottomBg = document.getElementById("bottomBg");
+      var leftBg = document.getElementById("leftBg");
+      var rightBg = document.getElementById("rightBg");
+      var img = document.getElementById("img");
+      var toolbtn = document.getElementById("toolbtn");
+
+      window.onload = function() {
+        initPage();
+
+        // debug
+        console.log("anchorMap:" + JSON.stringify(app.anchorMap));
+      }
+
+      
+      $(window).resize(function() {
+        setBg();
+        setChess();
+      });
+
+      function initPage() {
+
+        app.init();
+        setBg();
+        setImgPos();
+
+        setTimeout("setBoardGrid()",1000);
+        setTimeout("setChess()",500);
+      }
+
+      function setImgPos() {
+        var faW = $(fa).width();
+        var faH = $(fa).height();
+        var imgW = app.imgWidth;
+        var imgH = app.imgHeight;
+
+        // if(imgW>faW) {
+        //   // imgH = faW*imgH/imgW;
+        //   // imgW = faW;
+        //   $(box).css("left",0+"px");
+        //   $(box).css("top",(faH-imgH)/2);
+        // }
+
+        // if(imgH > faH) {
+        //   // imgW = faH*imgW/imgH;
+        //   // imgH = faH;
+        //   $(box).css("left",(faW-imgW)/2);
+        //   $(box).css("top",0+"px");
+        // }
+
+        var gridW = imgW/app.boardLng;
+        var gridH = imgH/app.boardLat;
+        var boxTop = $(box).offset().top;
+        var boxLeft = $(box).offset().left;
+
+
+        var orgCenterLat = faH/2/gridH;
+        var orgCenterLng = faW/2/gridW;
+
+
+        var shiftLat = (orgCenterLat - app.centerLat)*gridH;
+        var shiftLng = (orgCenterLng - app.centerLng)*gridW;
+
+        $(box).css("left",shiftLng);
+        $(box).css("top", shiftLat);
+
+
+
+        // app.imgWidth = imgW;
+        // app.imgHeight = imgH;
+
+
+      }
+
+      function zoomReset() {
+        // if(app.showBoardGrid) {
+        //   return;
+        // }
+
+        window.location.href = window.location.href;
+        // initPage();
+      }
+
+      function zoom(times) {
+
+        // if(app.showBoardGrid) {
+        //   return;
+        // }
+
+        var w = $(box).width();
+        var h = $(box).height();
+        var t = $(box).css("top").replace("px","");
+        var l = $(box).css("left").replace("px","");
+
+        var fa_w = $(fa).width();
+        var fa_h = $(fa).height();
+        // var oscLeft = Math.abs(fa_w/2-l);
+        // var oscTop = Math.abs(fa_h/2-t);
+
+        var newW = w*times;
+        var newH = h*times;
+        var newT = t-(newH-h)*(1/2);
+        var newL = l-(newW-w)*(1/2);
+
+
+        $(box).width(newW+"px");
+        $(box).height(newH+"px");
+        $(box).css("top",newT+"px");
+        $(box).css("left",newL+"px");
+        
+
+        setBg();
+        setChess();
+        setBoardGrid();
+
+      }
+      function zoomIn() {
+        var ZOOMIN_TIMES = 1.2;
+        zoom(ZOOMIN_TIMES);
+
+      }
+
+      function zoomOut() {
+        var ZOOMOUT_TIMES = 0.833333;
+
+        zoom(ZOOMOUT_TIMES);
+      }
+
+      function setBoardGrid() {
+
+
+
+        var boxWidth = $(box).width();
+        var boxHeight = $(box).height();
+
+        var gridW = boxWidth/app.boardLng;
+        var gridH = boxHeight/app.boardLat;
+        var boxTop = $(box).offset().top;
+        var boxLeft = $(box).offset().left;
+
+        for(var i=1;i<=app.boardLat;i++) {
+          var hr = document.getElementById("h_"+i);
+
+          $(hr).css("left", ((boxLeft-5)<15?15:(boxLeft-5))+"px");
+          $(hr).css("top", boxTop+i*gridH-10+"px");
+          $(hr).width(boxWidth+5);
+          $(hr).height(0);
+        }
+
+        for(var i=1;i<=app.boardLng;i++) {
+          var vr = document.getElementById("v_"+i);
+          $(vr).css("left", (boxLeft+i*gridW)+"px");
+          $(vr).css("top", (boxTop<15?35:(boxTop+20))+"px");
+          $(vr).width(0.1);
+          $(vr).height(boxHeight);
+        }
+
+        for(var i=1;i<=app.boardLng;i++) {
+          var vnr = document.getElementById("v_n_"+i);
+          $(vnr).css("left", (boxLeft+i*gridW-5)+"px");
+          $(vnr).css("top", boxTop<15?15:boxTop+"px");
+          $(vnr).width(20);
+          $(vnr).height(0);
+        }
+        setBg();
+      }
+
+      function setChess() {
+
+          var imgW = $(box).width();
+          var imgH = $(box).height();
+          var imgTop = $(box).offset().top;
+          var imgLeft = $(box).offset().left;
+          var gridW = imgW/app.boardLng;
+          var gridH = imgH/app.boardLat;
+
+          console.log("app.anchor:" + JSON.stringify(app.anchor));
+          for(var key in app.anchor) {
+            var chessPos = app.anchor[key].pos;
+            console.log("chessPos:" + JSON.stringify(chessPos));
+
+            var chessTop = imgTop + chessPos[0]*gridH-20;
+            var chessLeft = imgLeft + chessPos[1]*gridW-10;
+            var ele =  document.getElementById("ele_"+key);
+            $(ele).css("top",chessTop);
+            $(ele).css("left",chessLeft);
+
+            console.log("ele_"+key+": " + chessTop + ", " + chessLeft);
+
+          }
+
+      }
+
+      function setBg() {
+
+        $(fa).width($(window).width()-25+'px');
+        $(fa).height($(window).height()-25+'px');
+
+        $(topBg).css("left",0+'px');
+        $(topBg).css("top",0+'px');
+        $(topBg).width($(window).width()+'px');
+        $(topBg).height(($(fa).offset().top)+'px');
+
+        $(bottomBg).css("left",0+'px');
+        $(bottomBg).css("top",($(fa).height() + $(fa).offset().top)+'px');
+        $(bottomBg).width($(window).width()+'px');
+
+        $(bottomBg).height(($(window).height()-$(fa).height() - $(fa).offset().top)+'px');
+        
+        var imgBtm = $(img).height() + $(img).offset().top;
+        var btmBgBtm = $(bottomBg).height() + $(bottomBg).offset().top;
+        
+        if (imgBtm > btmBgBtm) {
+          $(bottomBg).height(imgBtm-$(bottomBg).offset().top + "px");
+        }
+
+        $(leftBg).css("left",0+"px");
+        $(leftBg).css("top",$(topBg).height() + "px");
+        $(leftBg).width($(fa).offset().left + "px");
+        $(leftBg).height($(fa).height());
+
+
+        $(rightBg).css("left",$(fa).offset().left + $(fa).width()+"px");
+        $(rightBg).css("top", $(topBg).height() + "px");
+        $(rightBg).width($(window).width() - $(rightBg).offset().left + "px");
+        $(rightBg).height($(fa).height());
+
+        var imgRight = $(img).width() + $(img).offset().left;
+        var rightBgRight = $(rightBg).width() + $(rightBg).offset().left;
+        
+        console.log("imgRight="+imgRight + ", rightBgRight=" + rightBgRight);
+        if (imgRight > rightBgRight) {
+          $(rightBg).width(imgRight-$(rightBg).offset().left + "px");
+        }
+
+        if ($(topBg).width()< $(rightBg).offset().left+$(rightBg).width()) {
+          $(topBg).width($(rightBg).offset().left+$(rightBg).width())
+
+        }
+        $(bottomBg).width($(topBg).width());
+
+        // 工具栏
+        $(toolbtn).css("left", ($(fa).width()-25)+"px");
+
+      }
+
+      // 图片移动效果
+      box.onmousedown=function(ev) {
+
+        // if(app.showBoardGrid) {
+        //   return;
+        // }
+
+          var oEvent = ev; 
+          // 浏览器有一些图片的默认事件,这里要阻止
+          oEvent.preventDefault();
+          var disX = oEvent.clientX - box.offsetLeft;
+          var disY = oEvent.clientY - box.offsetTop;
+
+          var orgShowBoardGrid = app.showBoardGrid;
+          app.showBoardGrid = false;
+
+          fa.onmousemove=function (ev) {
+              oEvent = ev;
+              oEvent.preventDefault();
+              var x = oEvent.clientX -disX;
+              var y = oEvent.clientY -disY;
+
+              // 图形移动的边界判断
+              // x = x <= 0 ? 0 : x;
+              // x = x >= fa.offsetWidth-box.offsetWidth ? fa.offsetWidth-box.offsetWidth : x;
+              // y = y <= 0 ? 0 : y;
+              // y = y >= fa.offsetHeight-box.offsetHeight ? fa.offsetHeight-box.offsetHeight : y;
+              box.style.left = x + 'px';
+              box.style.top = y + 'px';
+
+              setBg();
+              setChess();
+              
+
+          }
+          // 图形移出父盒子取消移动事件,防止移动过快触发鼠标移出事件,导致鼠标弹起事件失效
+          fa.onmouseleave = function () {
+            fa.onmousemove=null;
+            fa.onmouseup=null;
+          }
+          // 鼠标弹起后停止移动
+          fa.onmouseup=function() {
+             fa.onmousemove=null;
+             fa.onmouseup=null;
+             setBoardGrid();
+
+             app.showBoardGrid = orgShowBoardGrid;
+
+          } 
+      }
+      // 图片缩放效果
+      scale.onmousedown = function (e) {
+        // 阻止冒泡,避免缩放时触发移动事件
+        e.stopPropagation();
+        e.preventDefault();
+        var pos = {
+          'w': box.offsetWidth,
+          'h': box.offsetHeight,
+          'x': e.clientX,
+          'y': e.clientY
+        };
+        fa.onmousemove = function (ev) {
+          ev.preventDefault();
+          // 设置图片的最小缩放为30*30
+          var w = Math.max(30, ev.clientX - pos.x + pos.w)
+          var h = Math.max(30,ev.clientY - pos.y + pos.h)
+          // console.log(w,h)
+
+          // 设置图片的最大宽高
+          w = w >= fa.offsetWidth-box.offsetLeft ? fa.offsetWidth-box.offsetLeft : w
+          h = h >= fa.offsetHeight-box.offsetTop ? fa.offsetHeight-box.offsetTop : h
+          box.style.width = w + 'px';
+          box.style.height = h + 'px';
+          // console.log(box.offsetWidth,box.offsetHeight)
+          setChess();
+
+        }
+        fa.onmouseleave = function () {
+          fa.onmousemove=null;
+          fa.onmouseup=null;
+        }
+        fa.onmouseup=function() {
+          fa.onmousemove=null;
+          fa.onmouseup=null;
+
+        } 
+      }
+      
+
+  function formatDataMap() {
+    for(var cfgItem of app.config) {
+      if(!cfgItem.type || cfgItem.type == "dat") {
+        var deviceSn = cfgItem.deviceSn;
+        var sensorNo = cfgItem.sensorNo;
+        var field = cfgItem.field;
+        var valuePtn = cfgItem.valuePtn;
+        if (valuePtn && valuePtn.refptn) {
+          valuePtn = app.valuePtn[valuePtn.refptn];
+        }
+
+        var val = app.dataMap[deviceSn][sensorNo][field]+"";
+        if(valuePtn) {
+
+          if (valuePtn[val]) {
+              val = valuePtn[val];
+            } else if (valuePtn["default"]) {
+              val = valuePtn["default"] + "(" + val + ")";
+            }
+        }
+
+        app.dataMap[deviceSn][sensorNo][field] = val;
+        app.dataMap[deviceSn][sensorNo]["agoTime"] = getAgoTime(app.dataMap[deviceSn][sensorNo]["time"]);
+      }
+    }
+  }
+
+
+  function getAgoTime(time) {
+    // time = "2019-06-04 10:52";
+    time = time.replace(/[-]/g,"/");
+    var now = new Date();
+    var orgTime = Date.parse(time);
+    var intv = (now - orgTime) / 1000;
+    // return (time);
+    if (intv > 24*60*60) {
+      return "(" + Math.floor(intv/(24*60*60)) + "天前)";
+    }
+    if (intv > 1*60*60) {
+      return "(" + Math.floor(intv/(60*60)) + "小时前)";
+    }
+
+    if (intv > 1 * 60) {
+      return "(" + Math.floor(intv / (60)) + "分钟前)";
+    }
+
+    return "";
+  }
+
+  function dummyConfig() {
+      var config = [ 
+            {
+                "type": "pos",
+                "imgsrc": "../upload/20200811002.jpeg",
+                "imgsize": [
+                    700,1234
+                ],
+                "board": [
+                    40,20
+                ],
+                "center": [
+                    14,13
+                ],
+                "anchorColor":{"关":"#f00","开":"#0f0","default":"grey"},
+                "labelColor":"#fff",
+                "valueColor":"#fff",
+                "anchor": {
+                    "A4": {
+                        "label": "A4",
+                        "pos": [
+                            17.45,11.9
+                        ],
+                        "wrap": "right"
+                    },
+                    "B3": {
+                        "label": "B3",
+                        "pos": [
+                            11.4,10.6
+                        ],
+                        "wrap": "right"
+                    },
+                    "B4": {
+                        "label": "B4",
+                        "pos": [
+                            16.4,11.7
+                        ],
+                        "wrap": "right"
+                    },
+                    "AC": {
+                        "label": "AC",
+                        "pos": [
+                            15.2,11.4
+                        ],
+                        "wrap": "right"
+                    },
+                    "AF": {
+                        "label": "AF",
+                        "pos": [
+                            12.2,10.7
+                        ],
+                        "wrap": "right"
+                    },
+                    "C6": {
+                        "label": "C6",
+                        "pos": [
+                            9.5,10.9
+                        ],
+                        "wrap": "top"
+                    },
+                    "BA": {
+                        "label": "BA",
+                        "pos": [
+                            10.6,10.4
+                        ],
+                        "wrap": "left",
+                        "width": "40px",
+                    },
+                    "C4": {
+                        "label": "C4",
+                        "pos": [
+                            14.1,11.1
+                        ],
+                        "wrap": "right"
+                    },
+                    "B6": {
+                        "label": "B6",
+                        "pos": [
+                            13.1,10.9
+                        ],
+                        "wrap": "right"
+                    },
+                    "B7": {
+                        "label": "B7",
+                        "pos": [
+                            9.3,11.95
+                        ],
+                        "wrap": "bottom"
+                    }
+                }
+            },
+            {
+                "type": "valuePtn",
+                "pattern": {
+                    "sw": {
+                        "0": "关",
+                        "1": "开",
+                        "3": "开阀超时",
+                        "4": "关阀超时",
+                        "170": "指令错误",
+                        "187": "数据头错误",
+                        "255": "校验码错误",
+                        "default": "未知状态"
+                    }
+                }
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "61",
+                "field": "sw",
+                "name": "电动阀A4(61)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"A4",
+                "keyfield":"yes"
+
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "141",
+                "field": "sw",
+                "name": "电动阀B3(141)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"B3",
+                "keyfield":"yes"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "151",
+                "field": "sw",
+                "name": "电动阀B4(151)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"B4"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "221",
+                "field": "sw",
+                "name": "电动阀AC(221)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"AC"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "251",
+                "field": "sw",
+                "name": "电动阀AF(251)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"AF"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "261",
+                "field": "sw",
+                "name": "电动阀C6(261)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"C6"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "271",
+                "field": "sw",
+                "name": "电动阀BA(271)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"BA"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "281",
+                "field": "sw",
+                "name": "电动阀C4(281)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"C4"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "321",
+                "field": "sw",
+                "name": "电动阀B6(321)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"B6"
+            },
+            {
+                "deviceSn": "3DF5C433",
+                "sensorNo": "351",
+                "field": "sw",
+                "name": "电动阀B7(351)",
+                "valuePtn": {
+                    "refptn": "sw"
+                },
+                "anchor":"B7"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀A4(61)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "61:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "61:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "61:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀B3(141)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "141:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "141:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "141:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀B4(151)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "151:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "151:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "151:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀AC(221)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "221:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "221:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "221:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀AF(251)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "251:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "251:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "251:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀C6(261)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "261:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "261:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "261:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀BA(271)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "271:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "271:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "271:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀C4(281)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "281:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "281:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "281:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀B6(321)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "321:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "321:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "321:1",
+                "name": "查",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "name": "电动阀B7(351)=开",
+                "deviceSn": "3DF5C433",
+                "cmd": "351:2"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "351:3",
+                "name": "关",
+                "nowrap": "true"
+            },
+            {
+                "type": "cmd",
+                "deviceSn": "3DF5C433",
+                "cmd": "351:1",
+                "name": "查",
+                "nowrap": "true"
+            }
+        ];
+
+        return config;
+    }
+
+    function dummyData() {
+      var data = {
+                  "msg": "查找成功",
+                  "resultMap": {
+                    "3DF5C433": {
+                      "221": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:33:15"
+                      },
+                      "321": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:35:47"
+                      },
+                      "61": {
+                        "sw": "0",
+                        "time": "2020-08-04 17:27:53"
+                      },
+                      "281": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:31:01"
+                      },
+                      "271": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:31:11"
+                      },
+                      "151": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:30:53"
+                      },
+                      "261": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:36:59"
+                      },
+                      "141": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:30:52"
+                      },
+                      "251": {
+                        "sw": "1",
+                        "time": "2020-07-31 19:33:51"
+                      },
+                      "351": {
+                        "sw": "1",
+                        "time": "2020-08-04 13:35:22"
+                      }
+                    }
+                  },
+                  "styleMap": {
+                    "3DF5C433": {
+                      "221": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "321": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "61": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "281": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "271": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "151": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "261": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "141": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "251": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      },
+                      "351": {
+                        "sw": {
+                          "display": "阀门状态",
+                          "format": "#",
+                          "unit": " "
+                        }
+                      }
+                    }
+                  },
+                  "status": 1
+                }
+
+      return data;
+    }
+        
+
+  </script>
+</html>

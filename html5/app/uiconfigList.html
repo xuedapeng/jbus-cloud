@@ -55,7 +55,9 @@
                   <i class="Hui-iconfont" style="font-size:1em">&#xe68f;</i>
                 </a>
                 <a @click="showEditMode()" >
-                  <img  height="13px" :src="'../static/img/config'+ (editMode?'2.png':'1.png')" />
+                  <!-- <img  height="13px" :src="'../static/img/config'+ (editMode?'2.png':'1.png')" /> -->
+
+                  <i class="Hui-iconfont" :style="'font-size:1em;color:'+(editMode?'black':'grey')">&#xe63c;</i>
                 </a>
               </th>
           </tr>
@@ -72,7 +74,7 @@
                         :data-href="'app/uiconfigList.html?projectId='+item.projectId" 
                         :data-title="'组态（' + item.title + '）'" 
                         :href="'javascript:Hui_admin_tab(document.getElementById(' + '91' + item.projectId + '))'" 
-                        title="组态">
+                        :title="'组态'+item.projectId">
 
 
                         {{item.title}}
@@ -125,15 +127,22 @@
                 </td>
                 <td>
                   
+                <a :id="'12'+item.projectId" 
+                :data-href="'app/uiconfigGraph.html?projectId='+item.projectId" 
+                :data-title="'组态地图（' + item.title + '）'" 
+                :href="'javascript:Hui_admin_tab(document.getElementById(' + '12'+ item.projectId + '))'"   title="地图方式">
+                    <i class="Hui-iconfont" style="font-size:1.5em">&#xe6c9;</i>
+                </a>
 
                 <a :id="'11'+item.projectId" 
                 :data-href="'app/uiconfigEdit.html?projectId='+item.projectId" 
-                :data-title="'修改组态配置（' + item.projectId + '）'" 
+                :data-title="'修改组态配置（'+ item.title + '）'" 
                 :href="'javascript:Hui_admin_tab(document.getElementById(' + '11'+ item.projectId + '))'" 
                 :style="'display:'+ (editMode?'inline':'none')"
                 title="修改组态配置">
                    <i class="Hui-iconfont" style="font-size:1.5em">&#xe60c;</i>
                </a>
+               
                 </td>
             </tr>
 

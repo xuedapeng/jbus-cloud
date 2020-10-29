@@ -18,6 +18,7 @@ public class ScheduleEntity extends BaseZEntity {
 	private String datPtn;
 	private Integer interval;
 	private Integer status;
+	private Integer delay = 1;
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
@@ -77,5 +78,15 @@ public class ScheduleEntity extends BaseZEntity {
 	public void setInterval(Integer interval) {
 		this.interval = interval;
 	}
+
+	public Integer getDelay() {
+		return delay;
+	}
+
+	public void setDelay(Integer delay) {
+		this.delay = delay;
+	}
+	
+	
 
 }

@@ -46,7 +46,7 @@ public class SendCmdLogic extends BaseZLogic {
 		SendCmdLogicParam myParam = (SendCmdLogicParam)logicParam;
 		
 		String deviceSn = myParam.getDeviceSn();
-		String cmd = myParam.getCmd();
+		String cmd = myParam.getCmd().replaceAll(" ", "").replaceAll("	", ""); // 消除空白和tab
 		
 		Integer deviceId = CommonLogic.getDeviceIdBySn(deviceSn);
 		

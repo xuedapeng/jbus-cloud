@@ -18,7 +18,6 @@ import cloud.jbus.db.bean.UiconfigEntity;
 import cloud.jbus.db.dao.LastDataDao;
 import cloud.jbus.db.dao.UiconfigDao;
 import cloud.jbus.logic.BaseZLogic;
-import cloud.jbus.logic.history.GetHydrographLogic;
 import cloud.jbus.logic.share.CommonLogic;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.uiconfig.param.GetLastDataLogicParam;
@@ -42,9 +41,18 @@ public class GetLastDataLogic extends BaseZLogic {
 
 		GetLastDataLogicParam myParam = (GetLastDataLogicParam)logicParam;
 		Integer projectId = StringUtils.isEmpty(myParam.getProjectId())?null:Integer.valueOf(myParam.getProjectId());
-
-		List<UiconfigEntity> configList = new UiconfigDao(em).findList(
-				this.getLoginUserId(myParam.getSecretId()), projectId);
+		boolean childs = (StringUtils.isEmpty(myParam.getChilds())||myParam.getChilds().equals("yes"))?true:false;
+		
+		List<UiconfigEntity> configList = new ArrayList<UiconfigEntity>();
+		
+		UiconfigDao cfgdao = new UiconfigDao(em);
+		if (childs) {
+			configList = cfgdao.findList(
+					this.getLoginUserId(myParam.getSecretId()), projectId);
+		} else {
+			UiconfigEntity config = cfgdao.findById(projectId);
+			configList.add(config);
+		}
 		
 		if (configList.isEmpty()) {
 

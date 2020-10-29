@@ -12,7 +12,7 @@ import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
 
 /*
- * 删除组态配置
+ * 获取组态配置
  */
 @Action(method="uiconfig.project.get")
 public class GetUiconfigLogic extends BaseZLogic {

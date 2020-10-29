@@ -158,7 +158,7 @@ sup {
 <body>
 <h1>Moqbus 开发文档</h1>
 
-<h2>一、快速体验</h2>
+<h2 id="c1">一、快速体验</h2>
 
 <ol>
 <li><p>注册帐号</p>
@@ -222,7 +222,7 @@ sup {
 </ol>
 
 
-<h2>二、设备接入</h2>
+<h2 id="c2">二、设备接入</h2>
 
 <ol>
 <li><p>选择网关设备</p>
@@ -250,13 +250,16 @@ sup {
 
 <p>  格式：</p>
 
-<pre><code>      REG:[设备编号],[通讯密码];
+<pre><code>  REG[设备编号],[通讯密码];
+  或
+  REG:[设备编号],[通讯密码];
 </code></pre>
 
 <p>  例：</p>
 
-<pre><code>      REG:F4D5B96E,56F6D85F52;
-</code></pre></li>
+<pre><code>  REGF4D5B96E,56F6D85F52;
+  或
+  REG:F4D5B96E,56F6D85F52;</code></pre></li>
 </ul>
 </li>
 <li><p>收发测试</p>
@@ -271,7 +274,7 @@ sup {
 </ol>
 
 
-<h2>三、应用开发</h2>
+<h2 id="c3">三、应用开发</h2>
 
 <ol>
 <li><p>查看开发密钥</p>

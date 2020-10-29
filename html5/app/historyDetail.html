@@ -21,6 +21,24 @@
   td {
     padding:5px 5px 5px 0px
   }
+
+  a.toolBtnDisabled {
+    text-decoration:none;
+    color:grey;
+    cursor: auto;
+    font-size: 1.2em;
+    font-weight:bold;
+  }
+  a.toolBtnEnabled {
+    text-decoration:none;
+    color:#5a98de;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight:bold;
+  }
+  a.toolBtnEnabled:hover {
+    color:black
+  }
 </style>
 
 <title>监测数据图表</title>
@@ -28,7 +46,6 @@
 <body>
 
 <div id="app" class="page-container">
-
     <table border="0" :style="'margin-top:-20px;display:'+showTitle">
       <tr>
         <td >
@@ -44,8 +61,13 @@
         </td>
       </tr>
     </table>
-    <div class="mt-20" style="margin-top:0px">
-
+    <div class="mt-20" style="margin-top:-20px">
+      <div> 
+        <a @click="prev()" :class="prevEnable?'toolBtnEnabled':'toolBtnDisabled'" >&lt;</a>
+        &nbsp;&nbsp;&nbsp;
+        <a @click="next()" :class="nextEnable?'toolBtnEnabled':'toolBtnDisabled'">&gt;</a>
+        
+      </div>
       <table class="table table-border  table-bg table-hover table-sort table-responsive">
         <thead>
           <tr class="text-c">
@@ -68,6 +90,13 @@
           </template>
         </tbody>
       </table>
+
+      <div> 
+        <a @click="prev()" :class="prevEnable?'toolBtnEnabled':'toolBtnDisabled'" >&lt;</a>
+        &nbsp;&nbsp;&nbsp;
+        <a @click="next()" :class="nextEnable?'toolBtnEnabled':'toolBtnDisabled'">&gt;</a>
+        
+      </div>
       <!-- {{dataList.length==0?'没有找到符合条件的数据':''}} -->
     </div>
 </div>
@@ -80,6 +109,6 @@
 
 <script type="text/javascript" src="common/constant.js?v=7"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="historyDetail.js?v=6"></script>
+<script type="text/javascript" src="historyDetail.js?v=20"></script>
 </body>
 </html>

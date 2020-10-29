@@ -114,7 +114,7 @@ public class AddUiconfigLogic extends BaseZLogic {
 	@SuppressWarnings("unchecked")
 	public static boolean checkCover(String cover, ZSimpleJsonObject res) {
 		
-		cover = cover.replaceAll("^\n+\\[", "[").replaceAll("\\]\n+$", "]");
+		cover = cover.replaceAll("^[\n|\t| ]+\\[", "[").replaceAll("\\][\n|\t| ]+$", "]");
 		
 		if (!(cover.startsWith("[") && cover.endsWith("]"))) {
 
