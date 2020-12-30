@@ -35,7 +35,7 @@ var page=Page({
       data: {
         "method": "device.list",
         "auth": app.globalData.auth(),
-        "data": { "page": "1", "pageSize": "20" }
+        "data": { "page": "1", "pageSize": "256" }
       },
       method: "POST",
       header: {

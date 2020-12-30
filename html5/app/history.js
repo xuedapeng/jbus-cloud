@@ -24,6 +24,9 @@ var app = new Vue({
     dateMode:'slide', // pick, slide
     fromTimeDp:"",
     toTimeDp:"",
+    deviceTotalPage:1,
+    deviceCurrentPage:1,
+    devicePageSize:10
 
   },
   computed: {
@@ -148,6 +151,25 @@ var app = new Vue({
         app.setDateMode("c");
       } 
       app.refreshGraph();
+    },
+    devicePrev:function(){
+      if(app.deviceCurrentPage==1) {
+        return;
+      }
+
+      app.deviceCurrentPage--;
+      searchDevice();
+
+
+    },
+    deviceNext:function(){
+      if(app.deviceCurrentPage==app.deviceTotalPage) {
+        return;
+      }
+
+      app.deviceCurrentPage++;
+      searchDevice();
+
     }
   }
 });
@@ -188,7 +210,12 @@ function searchDevice() {
     }
 
     var param = {"method":"realtime.device.search",
-                "auth":[getStorage("appId"), getStorage("appToken")]};
+                "auth":[getStorage("appId"), getStorage("appToken")],
+                "data":{
+                    "page":app.deviceCurrentPage + "",
+                    "pageSize":app.devicePageSize + "",
+                }
+              };
 
     ajaxPost(G_RPC_URL, param,
       function(response){
@@ -197,6 +224,10 @@ function searchDevice() {
           layer.msg(response.msg,{icon:2,time:2000});
           return;
         }
+
+        // 分页设置
+        var total = response.total;
+        app.deviceTotalPage = Math.ceil(total/app.devicePageSize);
 
         var result = response.result;
 
@@ -298,7 +329,7 @@ function setSlider() {
 function dtpStartBlur() {
   
   app.fromTimeDp = $("#datetimepicker_from").val().replaceAll("/","-");
-  if (app.fromTimeDp.indexOf("_") || app.fromTimeDp.indexOf("1899") ) {
+  if (app.fromTimeDp.indexOf("_")>-1 || app.fromTimeDp.indexOf("1899")>-1 ) {
     app.fromTimeDp = "";
   }
 
@@ -307,7 +338,7 @@ function dtpStartBlur() {
 function dtpEndBlur() {
   
   app.toTimeDp = $("#datetimepicker_to").val().replaceAll("/","-");
-  if (app.toTimeDp.indexOf("_") || app.toTimeDp.indexOf("1899") ) {
+  if (app.toTimeDp.indexOf("_")>-1 || app.toTimeDp.indexOf("1899")>-1 ) {
     app.toTimeDp = "";
   }
 }

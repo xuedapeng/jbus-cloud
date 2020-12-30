@@ -11,6 +11,7 @@ public class DeviceCloneLogicParam extends BaseZLogicParam  implements IPrivileg
 	}
 	
 	private String fromDeviceId;
+	private String fromDeviceSn;
 	private String deviceId;
 	
 	public String getFromDeviceId() {
@@ -24,6 +25,12 @@ public class DeviceCloneLogicParam extends BaseZLogicParam  implements IPrivileg
 	}
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
+	}
+	public String getFromDeviceSn() {
+		return fromDeviceSn;
+	}
+	public void setFromDeviceSn(String fromDeviceSn) {
+		this.fromDeviceSn = fromDeviceSn;
 	}
 	
 	

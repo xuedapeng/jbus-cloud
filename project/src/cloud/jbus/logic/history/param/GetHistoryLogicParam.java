@@ -1,10 +1,15 @@
 package cloud.jbus.logic.history.param;
 
 import cloud.jbus.logic.BaseZLogicParam;
+import cloud.jbus.logic.device.param.IPrivilegedParam;
+import cloud.jbus.logic.share.annotation.Privilege;
 
-public class GetHistoryLogicParam extends BaseZLogicParam {
+
+@Privilege("view")
+public class GetHistoryLogicParam extends BaseZLogicParam  implements IPrivilegedParam {
 
 	private String deviceId;
+	private String deviceSn; // 可选
 	private String sensorNo;
 	private String fromTime;
 	private String pageSize;
@@ -39,6 +44,12 @@ public class GetHistoryLogicParam extends BaseZLogicParam {
 	}
 	public void setDirection(String direction) {
 		this.direction = direction;
+	}
+	public String getDeviceSn() {
+		return deviceSn;
+	}
+	public void setDeviceSn(String deviceSn) {
+		this.deviceSn = deviceSn;
 	}
 	
 	

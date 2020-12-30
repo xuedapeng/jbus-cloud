@@ -17,6 +17,7 @@ var app = new Vue({
     selectedDevice:null,
     prefix_realtime:"realtime_",
     prefix_datDecode:"datDecode_",
+    timestamp:0
   },
   methods:{
     showSecretKey:function(sn, key, deviceId){
@@ -42,9 +43,19 @@ var app = new Vue({
       // open action when loadContactData succeed
     },
 
-    openSensorList:function(deviceId) {
+    openCloneDevice:function(deviceId){
       app.selectedDeviceId = deviceId;
       app.selectedDevice = getSelectedDevice(deviceId)
+      app_clone_device.deviceId = deviceId;
+      app_clone_device.fromDeviceId = '';
+      app_clone_device.fromDeviceSn = '';
+
+      $("#modal-cloneDevice").modal("show");
+    },
+    openSensorList:function(deviceId) {
+      app.selectedDeviceId = deviceId;
+      app.selectedDevice = getSelectedDevice(deviceId);
+      app.timestamp = new Date().getTime();
       $("#modal-sensorList").modal("show");
     },
     openScheduleList:function(deviceId) {
@@ -377,6 +388,12 @@ function getActions(type, id) {
         }
       },
       {
+        name:'导入配置',
+        onClick:function() {
+          app.openCloneDevice(id);
+        }
+      },
+      {
         name:'报警设置',
         onClick:function() {
           app.openEditContact(id);
@@ -506,3 +523,55 @@ var app_schedule_list = new Vue({
 
   }
 });
+
+
+var app_clone_device = new Vue({
+  el: '#modal-cloneDevice',
+  data: {
+    deviceId:'',
+    fromDeviceId:'',
+    fromDeviceSn:'',
+  },
+  methods:{
+
+  }
+});
+
+
+function doCloneDevice() {
+
+  if (!checkAuth()) {
+    return;
+  }
+
+  var param = {"method":"device.clone",
+              "auth":[getStorage("appId"), getStorage("appToken")],
+              "data":{
+                "deviceId":app_clone_device.deviceId+'',
+                "fromDeviceId":app_clone_device.fromDeviceId+'',
+                "fromDeviceSn":app_clone_device.fromDeviceSn
+
+              }
+            };
+
+  ajaxPost(G_RPC_URL, param,
+    function(response){
+
+      if (response.status < 0) {
+        layer.msg(response.msg,{icon:2,time:2000});
+        return;
+      }
+
+      layer.msg("导入配置成功！", {icon:1,time:2000});
+
+      setTimeout('hideCloneDevice()', 2000);
+
+    });
+}
+
+
+function hideCloneDevice() {
+  $("#modal-cloneDevice").modal("hide");
+  loadData();
+
+}

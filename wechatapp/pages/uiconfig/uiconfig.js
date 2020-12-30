@@ -249,6 +249,8 @@ Page({
     }
     this.setData({ "projectList": this.data.projectListTemp });
 
+    // console.log(JSON.stringify(this.data.projectListTemp));
+
     wx.showToast({
       title: "加载数据成功！",
       icon: 'none',
@@ -335,6 +337,18 @@ Page({
     var projectId = e.currentTarget.dataset.projectId;
     this.onLoad({projectId:projectId});
     this.onShow();
+   
+  },
+
+  showGraph(e) {
+   
+    var deviceSn = e.currentTarget.dataset.deviceSn;
+    var sno = e.currentTarget.dataset.sensorNo;
+    var field = e.currentTarget.dataset.field;
+    // console.log(e.currentTarget.dataset.deviceId);
+    wx.navigateTo({
+      url: '../history/history?deviceSn='+deviceSn + '&sno=' + sno + '&field=' + field
+    })
    
   },
 

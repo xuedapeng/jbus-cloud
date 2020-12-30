@@ -83,13 +83,15 @@ Page({
     ec: {
       onInit: initChart 
     },
-    deviceId:'',
+    deviceSn:'',
     sensorNo: '',
+    field:'',
 
   },
   onLoad(q) {
-    this.data.deviceId = q.deviceId;
+    this.data.deviceSn = q.deviceSn;
     this.data.sensorNo = q.sno; 
+    this.data.field = q.field;
     this.loadData();
   },
 
@@ -110,7 +112,7 @@ Page({
       data: {
         "method": "hydrograph.data.query",
         "auth": app.globalData.auth(),
-        "data": { deviceId: page.data.deviceId + '', sensorNo: page.data.sensorNo + '', fromTime: fromTime, toTime: toTime}
+        "data": { deviceSn: page.data.deviceSn + '', sensorNo: page.data.sensorNo + '', fromTime: fromTime, toTime: toTime}
       },
       method: "POST",
       header: {
@@ -139,7 +141,7 @@ Page({
     var deviceSn = data.deviceSn;
     var sensorName = data.sensorName;
     var sensorNo = data.sensorNo;
-    ecOption.title.text = "　　" + deviceName + '(' + deviceSn + ')' + '　' + sensorName + '(' + sensorNo + ')';
+    ecOption.title.text = "　　" + deviceName + '(' + deviceSn + ')' + '\n　　' + sensorName + '(' + sensorNo + ')';
 
     ecOption.xAxis.data = data.result.time;
     for (var i in ecOption.xAxis.data) {
@@ -149,6 +151,7 @@ Page({
     ecOption.series=[];
     ecOption.legend.data = [];
     for(let k in data.fieldStyle) {
+      if(k!=this.data.field) continue;
       var sData = data.result[k];
       var name = data.fieldStyle[k].display + '(' + data.fieldStyle[k].unit + ')'
       ecOption.legend.data.push(name);

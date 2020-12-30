@@ -76,9 +76,19 @@ public class GetHydrographLogic extends BaseZLogic {
 	protected boolean validate(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 		GetHydrographLogicParam myParam = (GetHydrographLogicParam)logicParam;
 		String deviceId = myParam.getDeviceId();
+		String deviceSn = myParam.getDeviceSn();
 		String sensorNo = myParam.getSensorNo();
 		String fromTime = myParam.getFromTime();
 		String toTime = myParam.getToTime();
+		
+		// attachDeviceId
+		if(StringUtils.isEmpty(deviceId)) {
+			if(StringUtils.isNotEmpty(deviceSn)) {
+				deviceId = String.valueOf(CommonLogic.getDeviceIdBySn(deviceSn));
+				myParam.setDeviceId(deviceId);
+			}
+		}
+		
 		
 		String result = ValidateHelper.notEmptyCheck(
 				"deviceId",deviceId, 
@@ -115,12 +125,6 @@ public class GetHydrographLogic extends BaseZLogic {
 		
 		return true;
 	}
-
-//	@Override
-//   protected boolean auth(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em){
-//		// todo: no auth for test
-//		return true;
-//	}
 	
 
 	/*

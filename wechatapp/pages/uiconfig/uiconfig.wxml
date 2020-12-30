@@ -30,26 +30,28 @@
     >
     
       <view wx:for="{{projectList}}" wx:key="projectId" style="border-bottom: 1px solid #e0e0e0;" >
-        <view bindtap="detail" data-project-id="{{item.projectId}}">
-          {{item.title}}
-        
+              <view bindtap="detail" data-project-id="{{item.projectId}}">
+                {{item.title}}
+              
 
-              <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.deviceSnList}}" wx:key='id' wx:for-item="device" wx:for-index="sn">
+                    <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.deviceSnList}}" wx:key='id' wx:for-item="device" wx:for-index="sn">
 
-                <view style="display:inline-flex;align-items:center;">
-                  <icon type="{{device.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
-                  <view style="">  {{device.name}}({{sn}}) </view>
+                      <view style="display:inline-flex;align-items:center;">
+                        <icon type="{{device.status=='on'?'success':'warn'}}" size="20" style="padding-right:10px"/>
+                        <view style="">  {{device.name}}({{sn}}) </view>
 
-                 
-                </view>
+                      
+                      </view>
+                    </view>
               </view>
-        </view>
         
               <view style="margin-bottom:10px;margin-top:10px;" wx:for="{{item.cover}}" wx:key='seq' wx:for-item="field" style="display:inline" >
 
-                <view style="display:{{field.nowrap=='true'?'inline':''}}">
+                <view style="display:{{false?'inline':''}}">
                 </view>
+                <view bindtap="showGraph" data-device-sn="{{field.deviceSn}}" data-sensor-no="{{field.sensorNo}}" data-field="{{field.field}}" >
                 {{field.name}}: {{field.data.val}} {{field.data.unit}} {{field.data.agoTime}}
+                </view>
 
               </view>
 

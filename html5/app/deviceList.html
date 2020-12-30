@@ -154,7 +154,7 @@
       				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
     			</div>
     			<div class="modal-body">
-            <iframe :src="'sensorList.html?deviceId=' + selectedDeviceId" width="100%" height="340px" frameborder="0" ></iframe>
+            <iframe :src="'sensorList.html?deviceId=' + selectedDeviceId + '&ts=' + timestamp" width="100%" height="340px" frameborder="0" ></iframe>
 
     			</div>
     			<!-- <div class="modal-footer">
@@ -288,6 +288,43 @@
 		</div>
 	</div><!-- modal-editContact end -->
 	
+	<!-- modal-cloneDevice start -->
+	<div id="modal-cloneDevice" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content radius">
+				<div class="modal-header" style="height:20px;margin-top:-15px;">
+						<h3 class="modal-title">导入配置 -
+				{{app.selectedDevice!=null?app.selectedDevice.deviceName:""}}
+				({{app.selectedDevice!=null?app.selectedDevice.deviceSn:""}})</h3>
+						<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+				</div>
+				<div class="modal-body">
+					<table style="border-top:0px solid #ccc">
+						<tr>
+							<td width="100px" valign="top">
+								元设备ID：
+							</td>
+							<td>
+								<input v-model="fromDeviceId" name="" type="text" placeholder="" class="input-text  size-M" style="width:50px" />
+							</td>
+						</tr>
+						<tr>
+							<td width="100px" valign="top">
+								元设备编号：
+							</td>
+							<td>
+								<input v-model="fromDeviceSn" name="" type="text" placeholder="" class="input-text  size-M" style="width:150px" />
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" onclick="doCloneDevice()" >确定</button>
+					<button class="btn" data-dismiss="modal" aria-hidden="true" >取消</button>
+				</div>
+			</div>
+		</div>
+	</div><!-- modal-cloneDevice end -->
     <!-- modal-scheduleList start -->
 	<div id="modal-scheduleList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -321,7 +358,7 @@
 
 <script type="text/javascript" src="common/constant.js?v=9"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="deviceList.js?v=108"></script>
+<script type="text/javascript" src="deviceList.js?v=109"></script>
 
 </body>
 </html>

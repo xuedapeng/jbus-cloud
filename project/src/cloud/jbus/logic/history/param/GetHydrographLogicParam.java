@@ -8,6 +8,7 @@ import cloud.jbus.logic.share.annotation.Privilege;
 public class GetHydrographLogicParam extends BaseZLogicParam implements IPrivilegedParam {
 
 	private String deviceId;
+	private String deviceSn; // 可选
 	private String sensorNo;
 	private String fromTime;
 	private String toTime;
@@ -36,6 +37,12 @@ public class GetHydrographLogicParam extends BaseZLogicParam implements IPrivile
 	}
 	public void setToTime(String toTime) {
 		this.toTime = toTime;
+	}
+	public String getDeviceSn() {
+		return deviceSn;
+	}
+	public void setDeviceSn(String deviceSn) {
+		this.deviceSn = deviceSn;
 	}
 	
 	

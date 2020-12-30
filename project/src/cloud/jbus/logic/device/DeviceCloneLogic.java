@@ -17,6 +17,7 @@ import cloud.jbus.db.dao.DeviceDao;
 import cloud.jbus.db.dao.ScheduleDao;
 import cloud.jbus.db.dao.SensorDao;
 import cloud.jbus.logic.BaseZLogic;
+import cloud.jbus.logic.share.CommonLogic;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.device.param.DeviceCloneLogicParam;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
@@ -32,6 +33,7 @@ public class DeviceCloneLogic extends BaseZLogic {
 		DeviceCloneLogicParam myParam = (DeviceCloneLogicParam)logicParam;
 		
 		Integer deviceId = toInt(myParam.getDeviceId());
+		String deviceSn = CommonLogic.getDeviceSnById(deviceId, em);
 		Integer fromDeviceId = toInt(myParam.getFromDeviceId());
 		
 		SensorDao sensorDao = new SensorDao(em);
@@ -39,6 +41,14 @@ public class DeviceCloneLogic extends BaseZLogic {
 		ScheduleDao schDao = new ScheduleDao(em);
 		
 		// check 
+		if(!myParam.getFromDeviceSn().equals(CommonLogic.getDeviceSnById(fromDeviceId,em))) {
+
+			res.add("status", -13)
+				.add("msg", "fromDeviceId/Sn not match.");
+			
+			return false;
+		}
+		
 		if(!sensorDao.findByDeviceId(deviceId, 1, 1).isEmpty()) {
 
 			res.add("status", -11)
@@ -85,7 +95,7 @@ public class DeviceCloneLogic extends BaseZLogic {
 		for(ScheduleEntity fromSch: schList) {
 			ScheduleEntity sch = new ScheduleEntity();
 			sch.setDeviceId(deviceId);
-			sch.setDeviceSn(fromSch.getDeviceSn());
+			sch.setDeviceSn(deviceSn);
 			sch.setCmdHex(fromSch.getCmdHex());
 			sch.setDatPtn(fromSch.getDatPtn());
 			sch.setInterval(fromSch.getInterval());
@@ -109,6 +119,7 @@ public class DeviceCloneLogic extends BaseZLogic {
 
 		String[][] matrix = new String[][]{
 			{"fromDeviceId", "1", "0", "1"},
+			{"fromDeviceSn", "1", "8", "0"},
 			{"deviceId", "1", "0", "1"}
 		};
 		
@@ -117,6 +128,14 @@ public class DeviceCloneLogic extends BaseZLogic {
 		if (StringUtils.isNotEmpty(result)) {
 			res.add("status", IResponseObject.RSP_CD_ERR_PARAM)
 				.add("msg", "参数错误：" + result);
+			
+			return false;
+		}
+		
+		if(myParam.getDeviceId().equals(myParam.getFromDeviceId())) {
+
+			res.add("status", IResponseObject.RSP_CD_ERR_PARAM)
+				.add("msg", "deviceId 与 fromDeviceId 不能相同。");
 			
 			return false;
 		}

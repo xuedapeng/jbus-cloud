@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
+
 import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.DateHelper;
 import cloud.jbus.logic.BaseZLogic;
@@ -75,6 +77,17 @@ public class GetHistoryLogic extends BaseZLogic {
 	protected boolean validate(ZLogicParam logicParam, ZSimpleJsonObject res, EntityManager em) throws Exception {
 		
 		GetHistoryLogicParam myParam = (GetHistoryLogicParam)logicParam;
+
+		String deviceId = myParam.getDeviceId();
+		String deviceSn = myParam.getDeviceSn();
+		
+		// attachDeviceId
+		if(StringUtils.isEmpty(deviceId)) {
+			if(StringUtils.isNotEmpty(deviceSn)) {
+				deviceId = String.valueOf(CommonLogic.getDeviceIdBySn(deviceSn));
+				myParam.setDeviceId(deviceId);
+			}
+		}
 		
 		if (myParam.getPageSize() == null) {
 			myParam.setPageSize(String.valueOf(StatusConst.DEFAULT_PAGE_SIZE));

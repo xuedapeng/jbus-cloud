@@ -51,6 +51,15 @@
               {{item.deviceName}}（{{item.deviceSn}}）
               <label  style="font-size:1.5em" :class="item.status + 'line'"> </label>
           </template>
+          <span class="label label-default radius" :style="'display:'+(deviceTotalPage>1?'inline':'none')">
+              <label :style="'color:'+(deviceCurrentPage==1?'grey':'black')+';cursor:'+(deviceCurrentPage==1?'auto':'pointer')" v-on:click="devicePrev()" >
+                &lt;
+              </label>
+              {{deviceCurrentPage}}/{{deviceTotalPage}} 
+              <label :style="'color:'+(deviceCurrentPage==deviceTotalPage?'grey':'black')+';cursor:'+(deviceCurrentPage==deviceTotalPage?'auto':'pointer')"  v-on:click="deviceNext()">
+                &gt;
+              </label>
+          </span>
         </div>
       </td>
     </tr>
@@ -128,6 +137,6 @@
 
 <script type="text/javascript" src="common/constant.js?v=7"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="history.js"></script>
+<script type="text/javascript" src="history.js?v=2"></script>
 </body>
 </html>
