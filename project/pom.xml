@@ -44,11 +44,11 @@
   <!-- local repos -->
 
   <!-- https://github.com/xuedapeng/jbiz-core/releases/tag/1.1.1 -->
-  	<dependency>
+	<dependency>
 	    <groupId>jbiz</groupId>
 	    <artifactId>jbiz-core</artifactId>
-	    <version>1.1.1</version>
-	</dependency>
+	    <version>1.1.3</version>
+	</dependency> 
   <!-- http://central.maven.org/maven2/net/sf/json-lib/json-lib/2.2.3/ -->
   	<dependency>
 	    <groupId>net.sf.json-lib</groupId>
@@ -306,6 +306,9 @@
 	    <version>1.1</version>
 	    <scope>provided</scope>
 	</dependency>
+	
+	<!-- jbiz-core end -->
+	
     <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
 	<dependency>
 	    <groupId>org.mongodb</groupId>

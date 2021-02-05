@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.StringUtils;
 
+import cloud.jbus.common.helper.JsonHelper;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.bean.UiconfigEntity;
 import cloud.jbus.db.dao.DeviceDao;
@@ -16,7 +17,6 @@ import cloud.jbus.db.dao.UiconfigDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.uiconfig.param.GetUiconfigsOfPidLogicParam;
-import fw.jbiz.common.helper.JsonHelper;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
 

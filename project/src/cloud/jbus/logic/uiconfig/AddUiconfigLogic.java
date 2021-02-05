@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 
 import cloud.jbus.common.constant.StatusConst;
+import cloud.jbus.common.helper.JsonHelper;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.bean.UiconfigEntity;
 import cloud.jbus.db.dao.DeviceDao;
@@ -16,7 +17,6 @@ import cloud.jbus.db.dao.UiconfigDao;
 import cloud.jbus.logic.BaseZLogic;
 import cloud.jbus.logic.share.annotation.Action;
 import cloud.jbus.logic.uiconfig.param.AddUiconfigLogicParam;
-import fw.jbiz.common.helper.JsonHelper;
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
 import fw.jbiz.logic.interfaces.IResponseObject;
@@ -201,6 +201,10 @@ public class AddUiconfigLogic extends BaseZLogic {
 	}
 	
 	public static boolean checkDeviceOwner(Integer userId, ZSimpleJsonObject res, EntityManager em, String snList) {
+		
+		if(StringUtils.isEmpty(snList)) {
+			return true;
+		}
 		
 		DeviceDao dao = new DeviceDao(em);
 		
