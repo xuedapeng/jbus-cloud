@@ -1,11 +1,15 @@
 package cloud.jbus.db.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.bean.UserEntity;
 
 
@@ -16,7 +20,28 @@ public class UserDao extends BaseZDao {
 	public UserDao(EntityManager _em) {
 		super(_em);
 	}
-	
+
+	public UserEntity findByUserId(Integer userId) {
+		
+		logger.info(String.format("UserDao.findByUserId(%s) start.", userId));
+		
+		String queryString = "from UserEntity where id =:userId ";
+		
+
+		Query query = getEntityManager().createQuery(queryString);
+
+		query.setParameter("userId", userId);
+		
+		@SuppressWarnings("unchecked")
+		List<UserEntity> list = query.getResultList();
+		
+		if (!list.isEmpty()) {
+			return list.get(0);
+		} else {
+			return null;
+		}
+			
+	}
 	
 	public UserEntity findByAccount(String account) {
 		
@@ -50,6 +75,7 @@ public class UserDao extends BaseZDao {
 
 		query.setParameter("secretId", secretId);
 		
+		@SuppressWarnings("unchecked")
 		List<UserEntity> list = query.getResultList();
 		
 		if (!list.isEmpty()) {
@@ -61,15 +87,48 @@ public class UserDao extends BaseZDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<UserEntity> findUserList() {
+	public List<UserEntity> findUserList(String keyword, Integer page, Integer  pageSize) {
 
-		String queryString = "from UserEntity";
+		String queryString = "from UserEntity  ";
+		if(StringUtils.isNotEmpty(keyword)) {
+			queryString += " where account like concat('%',:keyword ,'%')"
+					+ " or nickName like concat('%',:keyword ,'%')"
+					+ " order by id asc";
+		}
 		
 
 		Query query = getEntityManager().createQuery(queryString);
 
-		return (List<UserEntity>)query.getResultList();
+		if(StringUtils.isNotEmpty(keyword)) {
+			query.setParameter("keyword", keyword);
+		}
+		query.setFirstResult((page-1)*pageSize);
+		query.setMaxResults(pageSize);
+
+		List<UserEntity> list = (List<UserEntity>)query.getResultList();
 		
+		if(list != null && list.size() > 0){
+			return list;
+		}
 		
+		return new ArrayList<UserEntity>();
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public Long findTotal() {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("select count(id) from UserEntity");
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
+
+		List<Long> list = query.getResultList();
+		if(list != null && list.size()>0) {
+			return list.get(0);
+		}
+		return Long.valueOf(0);
+
+	}
+	
 }

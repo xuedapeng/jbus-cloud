@@ -20,6 +20,7 @@ public class UserEntity extends BaseZEntity {
 	private String nickName;
 	private String email;
 	private Integer status;
+	private Integer sysAdmin;
 	
 	
 	
@@ -120,5 +121,17 @@ public class UserEntity extends BaseZEntity {
 	}
 
 
+
+	public Integer getSysAdmin() {
+		return sysAdmin;
+	}
+
+
+
+	public void setSysAdmin(Integer sysAdmin) {
+		this.sysAdmin = sysAdmin;
+	}
+
+	
 	
 }

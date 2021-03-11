@@ -3,7 +3,7 @@ package cloud.jbus.logic.device.param;
 import cloud.jbus.logic.BaseZLogicParam;
 import cloud.jbus.logic.share.annotation.Privilege;
 
-@Privilege("owner")
+@Privilege("admin")
 public class DeviceDeleteLogicParam extends BaseZLogicParam implements IPrivilegedParam {
 
 	public DeviceDeleteLogicParam() {

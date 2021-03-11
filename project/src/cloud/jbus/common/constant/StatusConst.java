@@ -20,5 +20,11 @@ public class StatusConst {
 	public static final int MAX_SENSOR_AMOUNT = 255;
 	public static final int MAX_SCHEDULE_AMOUNT = 255;
 	public static final int MAX_CMD_AMOUNT = 255;
+
+	public static final Integer SYS_ADMIN_YES = 1;
+	public static final Integer SYS_ADMIN_NO = 0;
+	
+	public static final String PWD_DEFAULT = "123456";
+	
 	
 }

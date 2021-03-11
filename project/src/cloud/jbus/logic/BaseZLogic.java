@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 
+import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.ValidateHelper;
 import cloud.jbus.db.bean.UserEntity;
 import cloud.jbus.db.dao.UserDao;
@@ -133,7 +134,15 @@ public abstract class BaseZLogic extends ZLogic {
 			return DevicePrivilege.canView(deviceId, userId, em);
 		}
 		
+		if ("admin".equals(priAnnotation.value())) {
+			return isAdmin();
+		}
+		
 		return false;
+	}
+	
+	protected boolean isAdmin() {
+		return StatusConst.SYS_ADMIN_YES.equals(_loginUser.getSysAdmin());
 	}
 	
 	protected Integer toInt(String s) {
