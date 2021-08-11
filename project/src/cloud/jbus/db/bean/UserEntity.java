@@ -1,5 +1,7 @@
 package cloud.jbus.db.bean;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class UserEntity extends BaseZEntity {
 	private String email;
 	private Integer status;
 	private Integer sysAdmin;
+	private Date createTime;
 	
 	
 	
@@ -130,6 +133,18 @@ public class UserEntity extends BaseZEntity {
 
 	public void setSysAdmin(Integer sysAdmin) {
 		this.sysAdmin = sysAdmin;
+	}
+
+
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	

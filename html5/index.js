@@ -11,6 +11,7 @@ $(function(){
 });
 
 
+
 var app = new Vue({
   el: '#app',
   data: {
@@ -18,6 +19,8 @@ var app = new Vue({
 		nickName:getStorage("nickName"),
     secretId:getStorage("appId"),
     mqttUser:getStorage("emqUser"),
+    sysAdmin:getStorage("sysAdmin")==1?true:false,
+    adminMode:getStorage("sysAdmin")==1?true:false,
     secretKey:'******',
     secretKeyShow:'显示',
     secretKeyUpdate:'',
@@ -58,6 +61,10 @@ var app = new Vue({
         doUpdateSecretKey();
       }
     },
+
+    gotoAdminMode:function(){
+      app.adminMode = !app.adminMode;
+    }
 	}
 });
 

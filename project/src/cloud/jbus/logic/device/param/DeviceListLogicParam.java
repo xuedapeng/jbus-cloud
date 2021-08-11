@@ -10,6 +10,7 @@ public class DeviceListLogicParam extends BaseZLogicParam {
 
 	private String page;
 	private String pageSize;
+	private String category;
 	
 	public String getPage() {
 		return page;
@@ -23,7 +24,13 @@ public class DeviceListLogicParam extends BaseZLogicParam {
 	public void setPageSize(String pageSize) {
 		this.pageSize = pageSize;
 	}
-
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
 	
 	
 }

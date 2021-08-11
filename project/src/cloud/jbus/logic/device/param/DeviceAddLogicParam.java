@@ -13,6 +13,7 @@ public class DeviceAddLogicParam extends BaseZLogicParam {
 	private String latitude;
 	private Integer crcMode;
 	private String memo;
+	private String category;
 	
 	
 	public String getDeviceName() {
@@ -44,6 +45,12 @@ public class DeviceAddLogicParam extends BaseZLogicParam {
 	}
 	public void setMemo(String memo) {
 		this.memo = memo;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	
 	

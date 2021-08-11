@@ -92,10 +92,9 @@ public class UserDao extends BaseZDao {
 		String queryString = "from UserEntity  ";
 		if(StringUtils.isNotEmpty(keyword)) {
 			queryString += " where account like concat('%',:keyword ,'%')"
-					+ " or nickName like concat('%',:keyword ,'%')"
-					+ " order by id asc";
+					+ " or nickName like concat('%',:keyword ,'%')";
 		}
-		
+		queryString += " order by id desc";
 
 		Query query = getEntityManager().createQuery(queryString);
 
@@ -113,16 +112,27 @@ public class UserDao extends BaseZDao {
 		
 		return new ArrayList<UserEntity>();
 	}
-	
+
+	public Long findTotal() {
+		return findTotal(null);
+	}
 
 	@SuppressWarnings("unchecked")
-	public Long findTotal() {
+	public Long findTotal(String keyword) {
 
-		StringBuffer queryString = new StringBuffer();
-		queryString.append("select count(id) from UserEntity");
+		String queryString = "select count(id) from UserEntity";
+
+		if(StringUtils.isNotEmpty(keyword)) {
+			queryString += " where account like concat('%',:keyword ,'%')"
+					+ " or nickName like concat('%',:keyword ,'%')";
+		}
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 
+		if(StringUtils.isNotEmpty(keyword)) {
+			query.setParameter("keyword", keyword);
+		}
+		
 		List<Long> list = query.getResultList();
 		if(list != null && list.size()>0) {
 			return list.get(0);

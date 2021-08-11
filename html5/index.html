@@ -34,7 +34,7 @@
 
 			<a href="index.html" class="logo navbar-logo f-l mr-10 hidden-xs" >
 				<img src="static/img/logo_white.svg" />
-				{{nickName==''?title:nickName}}</a>
+				{{adminMode?(title+' 系统管理'):(nickName==''?title:nickName)}}</a>
 			<a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
 
 		<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
@@ -45,6 +45,9 @@
 						<ul class="dropDown-menu menu radius box-shadow">
 							<li><a @click="logout">退出</a></li>
 							<li><a @click="updatePwd">帐号</a></li>
+							<template v-if="sysAdmin" >
+								<li><a @click="gotoAdminMode()">{{adminMode?'退出':''}}系统管理</a></li>
+							</template>
 					</ul>
 				</li>
 
@@ -54,7 +57,17 @@
 </div>
 </header>
 <aside class="Hui-aside">
-	<div class="menu_dropdown bk_2">
+	
+	<div class="menu_dropdown bk_2" :style="'display:'+(adminMode?'block':'none')">
+		<dl id="menu-article"></dl>
+			<dt>
+				<i class="Hui-iconfont">&#xe60d;</i>
+				<a data-href="app/userList.html" data-title="用户管理" href="javascript:void(0)">用户管理</a>
+			</dt>
+		</dl>
+
+	</div>
+	<div class="menu_dropdown bk_2" :style="'display:'+(adminMode?'none':'block')">
 		<dl id="menu-article">
 			<dt>
 				<i class="Hui-iconfont">&#xe708;</i>
@@ -123,8 +136,8 @@
 		<div class="Hui-tabNav-wp">
 			<ul id="min_title_list" class="acrossTab cl">
 				<li class="active">
-					<span title="Dashboard" data-href="app/deviceList.html">
-						设备管理
+					<span title="Dashboard" :data-href="adminMode?'app/userList.html':'app/deviceList.html'">
+						{{adminMode?'用户管理':'设备管理'}}
 						<!-- a href=""><img style="width:14px;height:14px;margin-bottom:2px" src="static/img/reload_48.ico"</a -->
 					</span>
 					<em></em></li>
@@ -142,7 +155,8 @@
 	<div id="iframe_box" class="Hui-article">
 		<div class="show_iframe">
 			<div style="display:none" class="loading"></div>
-			<iframe scrolling="yes" frameborder="0" src="app/deviceList.html"></iframe>
+
+			<iframe scrolling="yes" frameborder="0" :src="adminMode?'app/userList.html':'app/deviceList.html'"></iframe>
 	</div>
 </div>
 </section>
@@ -257,7 +271,7 @@
 
 <script type="text/javascript" src="./app/common/constant.js?v=8"></script>
 <script type="text/javascript" src="./app/common/common.js?v=7"></script>
-<script type="text/javascript" src="./index.js?v=15"></script>
+<script type="text/javascript" src="./index.js?v=17"></script>
 
 <script>
 var _hmt = _hmt || [];

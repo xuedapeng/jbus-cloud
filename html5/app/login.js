@@ -46,6 +46,7 @@ function _login(account, password) {
       setStorage("nickName", response.nickName);
       setStorage("emqUser", response.emqUser);
       setStorage("emqPwd", response.emqPwd);
+      setStorage("sysAdmin", response.sysAdmin);
 
       window.location.href = "../index.html";
   });

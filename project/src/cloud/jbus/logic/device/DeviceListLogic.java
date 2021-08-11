@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fw.jbiz.ext.json.ZSimpleJsonObject;
 import fw.jbiz.logic.ZLogicParam;
 import cloud.jbus.common.helper.NumericHelper;
@@ -30,11 +32,12 @@ public class DeviceListLogic extends BaseZLogic {
 		Integer page = Integer.valueOf(myParam.getPage());
 		Integer pageSize = Integer.valueOf(myParam.getPageSize());
 		Integer userId = getLoginUserId(myParam.getSecretId());
+		String category = myParam.getCategory();
 		
 		DeviceDao dao = new DeviceDao(em);
-		Long total = dao.findTotal(userId);
+		Long total = dao.findTotal(userId, category);
 		
-		List<DeviceEntity> deviceList = dao.findByPage(userId, page, pageSize);
+		List<DeviceEntity> deviceList = dao.findByPage(userId, page, pageSize, category);
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 
 		SensorDao sensorDao = new SensorDao(em);
@@ -50,6 +53,7 @@ public class DeviceListLogic extends BaseZLogic {
 			map.put("crcMode", E.getCrcMode());
 			map.put("memo", E.getMemo());
 			map.put("secretKey", HexHelper.bytesToHexStringNoBlank(E.getSecretKey().getBytes()));
+			map.put("category", StringUtils.isEmpty(E.getCategory())?"":E.getCategory());
 			
 			map.put("sensorAmount", sensorDao.findTotal(E.getId()));
 			map.put("sensorList", 
@@ -63,11 +67,14 @@ public class DeviceListLogic extends BaseZLogic {
 			
 			resultList.add(map);
 		});
+
+		List<String> catList = dao.findCategory(userId);
 		
 		res.add("status", 1)
 			.add("msg", "device.list ok.")
 			.add("total", total)
-			.add("result", resultList);
+			.add("result", resultList)
+			.add("catList", catList);
 		
 		return true;
 	}

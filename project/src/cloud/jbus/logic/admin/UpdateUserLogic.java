@@ -78,6 +78,8 @@ public class UpdateUserLogic extends BaseZLogic {
 		
 
 		UpdateUserLogicParam myParam = (UpdateUserLogicParam)logicParam;
+		myParam.setAccount(StringUtils.trim(myParam.getAccount()));
+		myParam.setNickName(StringUtils.trim(myParam.getNickName()));
 		
 		String[][] matrix = new String[][]{
 			{"userId", "1", "0", "1"},

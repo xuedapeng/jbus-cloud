@@ -116,6 +116,10 @@ function byte2hexStr(byte)
 /* Convert byte arry to HEX string */
 function byteArray2hexStr(byteArray)
 {
+
+  if(byteArray.length==0) {
+      return '';
+  }
   var str = "";
   for (var i=0; i<(byteArray.length-1); i++)
   {

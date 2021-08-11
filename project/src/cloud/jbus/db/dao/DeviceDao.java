@@ -25,8 +25,13 @@ public class DeviceDao extends BaseZDao {
 		return this.em.find(DeviceEntity.class, id);
 	}
 	
-	@SuppressWarnings("unchecked")
+
 	public List<DeviceEntity> findByPage(Integer userId, Integer page, Integer  pageSize) {
+		return findByPage(userId, page, pageSize, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<DeviceEntity> findByPage(Integer userId, Integer page, Integer  pageSize, String category) {
 
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("from DeviceEntity");
@@ -34,12 +39,20 @@ public class DeviceDao extends BaseZDao {
 		if (userId != null) {
 			queryString.append(" and ownerId=:userId");
 		}
+		if(StringUtils.isNotEmpty(category)) {
+			queryString.append(" and category like concat('%',:category,'%')");
+		}
 		queryString.append(" order by id desc");
 		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		if (userId != null) {
 			query.setParameter("userId", userId);
 		}
+		if(StringUtils.isNotEmpty(category)) {
+			query.setParameter("category", category);
+		}
+		
+		
 		query.setFirstResult((page-1)*pageSize);
 		query.setMaxResults(pageSize);
 		
@@ -83,18 +96,28 @@ public class DeviceDao extends BaseZDao {
 		return new ArrayList<DeviceEntity>();
 
 	}
-	
+
+	public Long findTotal(Integer userId) {
+		return findTotal(userId, null);
+	}
 	
 	@SuppressWarnings("unchecked")
-	public Long findTotal(Integer userId) {
+	public Long findTotal(Integer userId, String category) {
 
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("select count(id) from DeviceEntity");
 		queryString.append(" where ownerId=:userId");
 		queryString.append(" and status=1");
 		
+		if(StringUtils.isNotEmpty(category)) {
+			queryString.append(" and category like concat('%',:category,'%')");
+		}
+		
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("userId", userId);
+		if(StringUtils.isNotEmpty(category)) {
+			query.setParameter("category", category);
+		}
 
 		List<Long> list = query.getResultList();
 		if(list != null && list.size()>0) {
@@ -125,5 +148,27 @@ public class DeviceDao extends BaseZDao {
 
 	}
 	
-	
+
+	@SuppressWarnings("unchecked")
+	public List<String> findCategory(Integer userId) {
+
+		StringBuffer queryString = new StringBuffer();
+		queryString.append("select category from DeviceEntity ");
+		queryString.append(" where ownerId=:userId ");
+		queryString.append(" and category is not null ");
+		queryString.append(" group by category ");
+
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("userId", userId);
+
+		List<String> list = query.getResultList();
+
+		if(list != null && list.size() > 0){
+			return list;
+		}
+		
+		return new ArrayList<String>();
+		
+		
+	}
 }

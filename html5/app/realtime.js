@@ -15,7 +15,8 @@ var app = new Vue({
     mqttClient:null,
     mqttClientStatus:null,
     mqttStatusTopics:[],
-    mqttTopic:"",
+    mqttTopic:{"dat":"","cmd":""},
+    isFwcmd:true,
     myDeviceInfo:[],// result
     mySensorInfo:[],
     myCmdEncodeInfo:[],
@@ -216,14 +217,26 @@ function reSubscribe() {
     return;
   }
 
-  if (app.mqttTopic.length > 0) {
-    app.mqttClient.unsubscribe(app.mqttTopic);
-    console.log("unsubscribe:"+ app.mqttTopic);
+  if (app.mqttTopic.dat.length > 0) {
+    app.mqttClient.unsubscribe(app.mqttTopic.dat);
+    console.log("unsubscribe:"+ app.mqttTopic.dat);
   }
-  app.mqttTopic = "TC/DAT/"+app.selectedDeviceInfo.deviceSn;
+  app.mqttTopic.dat = "TC/DAT/"+app.selectedDeviceInfo.deviceSn;
 
-  app.mqttClient.subscribe(app.mqttTopic);//订阅主题
-  console.log("subscribe:"+ app.mqttTopic);
+  app.mqttClient.subscribe(app.mqttTopic.dat);//订阅主题
+  console.log("subscribe:"+ app.mqttTopic.dat);
+
+  if(app.isFwcmd) {
+    if (app.mqttTopic.cmd.length > 0) {
+      app.mqttClient.unsubscribe(app.mqttTopic.cmd);
+      console.log("unsubscribe:"+ app.mqttTopic.cmd);
+    }
+    app.mqttTopic.cmd = "TC/CMD/"+app.selectedDeviceInfo.deviceSn;
+  
+    app.mqttClient.subscribe(app.mqttTopic.cmd);//订阅主题
+    console.log("subscribe:"+ app.mqttTopic.cmd);
+
+  }
 }
 
 function onConnectionLost(responseObject) {
@@ -241,7 +254,11 @@ function onConnectionLost(responseObject) {
 
 }
 function onMessageArrived(message) {
-  console.log("receive:"+ app.mqttTopic + "->" + byteArray2hexStr(message.payloadBytes));
+  console.log("receive:"+ message.destinationName + "->" + byteArray2hexStr(message.payloadBytes));
+
+  if(message.payloadBytes.length == 0) {
+    return ;
+  }
 
   var source = byteArray2hexStr(message.payloadBytes);
   var parsed = source;
@@ -261,7 +278,12 @@ function onMessageArrived(message) {
     // }
   }
   // var parsed = eval(script);
-  addMessage(parsed, source,"received");
+  var type = "received(UP)";
+  if(message.destinationName.indexOf("CMD")>0) {
+    type = "received(DOWN)";
+    parsed = "null";
+  }
+  addMessage(parsed, source,type);
   // if (g_seq==1) {
   //   $('#table_rows').append(rowsStr);
   // } else {
@@ -320,6 +342,19 @@ function sendMessage() {
         return;
       }
 
+      // fw cmd
+      var sendTopic = "TC/CMD/";
+      if(msgHexStr.indexOf("FW-")==0) {
+        app.isFwcmd = true;
+        var funcInfo = msgHexStr.split(" ")[0]; 
+        msgHexStr = msgHexStr.replace(funcInfo, "");
+        funcInfo = funcInfo.replace("FW-","")+"-";
+        sendTopic = "TC/FWCMD/"+funcInfo
+
+      } else {
+        // app.isFwcmd = false;
+      }
+
       if (app.selectedCmdEncodeInfo.includeCrc==0) {
         msgHexStr = msgHexStr + " " + CRC.ToModbusCRC16(msgHexStr);
       }
@@ -328,7 +363,7 @@ function sendMessage() {
       var source = byteArray2hexStr(msgByte);
       // [0x01,0x03,0x00,0x00,0x00,0x02,0xc4,0x0b];
       message = new Paho.MQTT.Message(msgByte);
-  		message.destinationName = "TC/CMD/" + app.selectedDeviceInfo.deviceSn;
+  		message.destinationName = sendTopic + app.selectedDeviceInfo.deviceSn;
       app.mqttClient.send(message);
       console.log("send:"+ message.destinationName + "->" + source);
 

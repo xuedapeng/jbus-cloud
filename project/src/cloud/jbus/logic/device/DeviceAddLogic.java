@@ -2,6 +2,8 @@ package cloud.jbus.logic.device;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
+
 import cloud.jbus.common.constant.StatusConst;
 import cloud.jbus.common.helper.GuidHelper;
 import cloud.jbus.db.bean.DeviceEntity;
@@ -32,6 +34,8 @@ public class DeviceAddLogic extends BaseZLogic {
 		device.setLatitude(myParam.getLatitude());
 		device.setMemo(myParam.getMemo());
 		device.setStatus(StatusConst.STATUS_NORMAL);
+		
+		device.setCategory(StringUtils.isEmpty(myParam.getCategory())?null:myParam.getCategory());
 		
 		DeviceDao dao = new DeviceDao(em);
 		dao.save(device);

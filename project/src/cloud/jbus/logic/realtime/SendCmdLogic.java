@@ -59,9 +59,15 @@ public class SendCmdLogic extends BaseZLogic {
 
 			// 单条指令
 			cmd = getDirectiveCmd(deviceId, cmd, em); // 引用转换
+			String topic = JbusConst.TOPIC_PREFIX_CMD;
+			if(cmd.startsWith("FW-")) {
+				int firstBlank = cmd.indexOf(" ");
+				topic = JbusConst.TOPIC_PREFIX_FWCMD + cmd.substring(3, firstBlank) + "-";
+				cmd = cmd.substring(firstBlank+1);
+			}
 			
 			byte[] data = HexHelper.hexStringToBytes(cmd);
-			MqttProxy.publish(JbusConst.TOPIC_PREFIX_CMD + deviceSn, data);
+			MqttProxy.publish(topic + deviceSn, data);
 		}
 			
 		res.add("status", 1)
@@ -86,9 +92,15 @@ public class SendCmdLogic extends BaseZLogic {
 						for(String cmd: cmds) {
 							
 							cmd = getDirectiveCmd(deviceId, cmd, em); // 引用转换
+							String topic = JbusConst.TOPIC_PREFIX_CMD;
+							if(cmd.startsWith("FW-")) {
+								int firstBlank = cmd.indexOf(" ");
+								topic = JbusConst.TOPIC_PREFIX_FWCMD + cmd.substring(3, firstBlank) + "-";
+								cmd = cmd.substring(firstBlank+1);
+							}
 							
 							byte[] data = HexHelper.hexStringToBytes(cmd);
-							MqttProxy.publish(JbusConst.TOPIC_PREFIX_CMD + deviceSn, data);
+							MqttProxy.publish(topic + deviceSn, data);
 							try {
 								Thread.sleep(interval);
 							} catch (InterruptedException e) {

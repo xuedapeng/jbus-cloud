@@ -1,5 +1,7 @@
 package cloud.jbus.logic.admin;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +39,7 @@ public class AddUserLogic extends BaseZLogic {
 		user.setSecretKey(GuidHelper.genUUID());
 		user.setStatus(StatusConst.STATUS_NORMAL);
 		user.setSysAdmin(StatusConst.SYS_ADMIN_NO);
+		user.setCreateTime(new Date());
 		
 		dao.save(user);
 		
@@ -52,6 +55,8 @@ public class AddUserLogic extends BaseZLogic {
 		
 
 		AddUserLogicParam myParam = (AddUserLogicParam)logicParam;
+		myParam.setAccount(StringUtils.trim(myParam.getAccount()));
+		myParam.setNickName(StringUtils.trim(myParam.getNickName()));
 		
 		String[][] matrix = new String[][]{
 			{"account", "1", "50", "0"},

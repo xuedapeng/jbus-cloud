@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 
+import cloud.jbus.common.helper.DateHelper;
 import cloud.jbus.common.helper.ValidateHelper;
 import cloud.jbus.db.bean.UserEntity;
 import cloud.jbus.db.dao.UserDao;
@@ -29,6 +30,7 @@ public class ListUserLogic extends BaseZLogic {
 		ListUserLogicParam myParam = (ListUserLogicParam)logicParam;
 		
 		UserDao dao = new UserDao(em);
+		Long total = dao.findTotal(myParam.getKeyword());
 		List<UserEntity> userList = dao.findUserList(
 				myParam.getKeyword(), 
 				toInt(myParam.getPage()), 
@@ -40,7 +42,9 @@ public class ListUserLogic extends BaseZLogic {
 			map.put("userId", E.getId());
 			map.put("account", E.getAccount());
 			map.put("nickName", E.getNickName());
+			map.put("sysAdmin", E.getSysAdmin());
 			map.put("status", E.getStatus());
+			map.put("createTime", DateHelper.toYmdhms(E.getCreateTime()));
 			
 			resultList.add(map);
 			
@@ -48,6 +52,7 @@ public class ListUserLogic extends BaseZLogic {
 		
 		res.add("status", 1)
 			.add("msg", "用户查询成功！")
+			.add("total", total)
 			.add("result", resultList);
 		
 		return true;

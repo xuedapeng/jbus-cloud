@@ -2,6 +2,8 @@ package cloud.jbus.logic.device;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
+
 import cloud.jbus.common.helper.NumericHelper;
 import cloud.jbus.db.bean.DeviceEntity;
 import cloud.jbus.db.dao.DeviceDao;
@@ -50,7 +52,8 @@ public class DeviceUpdateLogic extends BaseZLogic {
 		if(myParam.getDeviceSecretKey() != null) {
 			device.setSecretKey(myParam.getDeviceSecretKey());
 		}
-		
+
+		device.setCategory(StringUtils.isEmpty(myParam.getCategory())?null:myParam.getCategory());
 		
 		dao.save(device);
 		

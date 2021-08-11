@@ -23,6 +23,8 @@
   td {
     padding:5px 5px 5px 0px;
   }
+  .selbtn-unselected{background-color: #8a8a8a; color:#fff;cursor:pointer}
+  .selbtn-selected{background-color: #5a98de; color:#fff;}
 </style>
 
 <title>会话</title>
@@ -39,6 +41,12 @@
             <th  style="text-align:left" width="80px">设备编号</th>
             <th  style="text-align:left" width="150px">设备名称</th>
             <th  style="text-align:center" width="50px">传感器</th>
+            <th  style="text-align:left" width="150px">
+				
+				<a onclick="app_category.openCategory()" :title="category">
+					分类标签 {{category==''?'':(':'+category)}}
+				  </a>
+			</th>
             <th style="text-align:left">备注</th>
             <th width="80px">
               操作
@@ -62,6 +70,7 @@
             <td style="text-align:center">
               <a v-on:click="openSensorList(item.deviceId)">{{item.sensorAmount}}</a>
             </td>
+            <td style="text-align:left">{{item.category}}</td>
             <td style="text-align:left">{{item.memo}}</td>
             <td>
 							<span class="needContextMenu" :id="'conf_' + item.deviceId">
@@ -176,7 +185,7 @@
 			<div class="modal-body">
 				<table style="border-top:0px solid #ccc">
 					<tr>
-						<td width="50px" valign="top">
+						<td width="60px" valign="top">
 							名称：
 						</td>
 						<td>
@@ -189,6 +198,14 @@
 						</td>
 						<td>
 							<textarea v-model="memo" name="" type="text" placeholder="" class="input-text  size-M" style="width:450px;height:50px;" ></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							分类标签：
+						</td>
+						<td>
+							<input v-model="category" name="" type="text" placeholder="" class="input-text  size-M" style="width:250px" />
 						</td>
 					</tr>
 				</table>
@@ -213,7 +230,7 @@
 			<div class="modal-body">
 				<table style="border-top:0px solid #ccc">
 					<tr>
-						<td width="100px" valign="top">
+						<td width="60px" valign="top">
 							设备名称：
 						</td>
 						<td>
@@ -242,6 +259,14 @@
 						</td>
 						<td>
 							<input v-model="secretKey" name="" type="password" placeholder="" class="input-text  size-M" style="width:250px" />
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							分类标签：
+						</td>
+						<td>
+							<input v-model="category" name="" type="text" placeholder="" class="input-text  size-M" style="width:250px" />
 						</td>
 					</tr>
 				</table>
@@ -345,6 +370,25 @@
 				</div>
 		</div>
 	</div><!-- modal-scheduleList end -->
+    <!-- modal-category start -->
+	<div id="modal-category" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+				<div class="modal-content radius">
+					<div class="modal-header" style="height:20px;margin-top:-15px;">
+							<h3 class="modal-title">分类标签</h3>
+							<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+					</div>
+					<div class="modal-body">
+						<template v-for="cat in app.catList">
+							<a v-on:click="selectCategory(cat)" :class="'label radius ' + (cat==app.category?'selbtn-selected':'selbtn-unselected') ">{{cat==''?'全部':cat}}</a>&nbsp;
+						</template>
+					</div>
+					<div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true" >关闭</button>
+					</div>
+				</div>
+		</div>
+	</div><!-- modal-category end -->
 
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
@@ -358,7 +402,7 @@
 
 <script type="text/javascript" src="common/constant.js?v=9"></script>
 <script type="text/javascript" src="common/common.js?v=8"></script>
-<script type="text/javascript" src="deviceList.js?v=109"></script>
+<script type="text/javascript" src="deviceList.js?v=8"></script>
 
 </body>
 </html>

@@ -17,7 +17,9 @@ var app = new Vue({
     selectedDevice:null,
     prefix_realtime:"realtime_",
     prefix_datDecode:"datDecode_",
-    timestamp:0
+    timestamp:0,
+    category:'',
+    catList:[],
   },
   methods:{
     showSecretKey:function(sn, key, deviceId){
@@ -78,7 +80,10 @@ function loadData(silent) {
 
   var param = {"method":"device.list",
               "auth":[getStorage("appId"), getStorage("appToken")],
-              "data":{"page":app.pageOption.curPage+"", "pageSize": app.pageOption.pageAmount+""}
+              "data":{"page":app.pageOption.curPage+"", 
+                      "pageSize": app.pageOption.pageAmount+"",
+                      "category": app.category
+                    }
               };
 
   ajaxPost(G_RPC_URL, param,
@@ -92,8 +97,16 @@ function loadData(silent) {
       var rowsStr = "";
       var result = response.result;
 
+      app.catList = response.catList;
+      app.catList.unshift('');
 
       makeDeviceList(result);
+      if(response.total==0) {
+        layer.msg("没有符合条件的数据！", {icon:3,time:2000});
+        $("#pagination").empty();
+        return;
+      } 
+
       if (!silent) {
         layer.msg("设备查询成功！", {icon:1,time:1000});
       }
@@ -128,6 +141,7 @@ function makeDeviceList(result, seq) {
     item.crcMode = record['crcMode']==1?"CRC16_MODBUS":"";
     item.memo = record['memo']?record['memo']:"";
     item.secretKey = record['secretKey'];
+    item.category = record['category'];
     dList[i] = item;
   }
   app.deviceList = dList;
@@ -141,11 +155,13 @@ var app_add_device = new Vue({
   data: {
     deviceName:'',
     memo:'',
+    category:'',
   },
   methods:{
     openAddDevice:function(){
       app_add_device.deviceName = '';
       app_add_device.memo = '';
+      app_add_device.category = '';
       $("#modal-addDevice").modal("show");
     },
   }
@@ -162,6 +178,7 @@ function doAddDevice() {
                 "data":{
                   "deviceName":app_add_device.deviceName,
                   "memo":app_add_device.memo,
+                  "category":app_add_device.category,
                 }
               };
 
@@ -196,9 +213,32 @@ var app_edit_device = new Vue({
     memo:'',
     deviceSn:'',
     secretKey:'',
+    category:'',
   },
   methods:{
 
+  }
+});
+
+var app_category = new Vue({
+  el: '#modal-category',
+  data: {
+    category:'',
+  },
+  methods:{
+
+    openCategory:function(){
+      app_category.category = app.category;
+      $("#modal-category").modal("show");
+    },
+
+    selectCategory:function(category){
+      app.category = category;
+      $("#modal-category").modal("hide");
+      app.pageOption.curPage = 1;
+      loadData();
+
+    }
   }
 });
 
@@ -212,6 +252,7 @@ function loadDeviceData(deviceId) {
       app_edit_device.memo = item.memo;
       app_edit_device.deviceSn = item.deviceSn;
       app_edit_device.secretKey = byteToString(hexStringToBytes(item.secretKey));
+      app_edit_device.category = item.category;
     }
   }
 }
@@ -230,6 +271,7 @@ function doUpdateDevice() {
                   "memo":app_edit_device.memo,
                   "deviceSn":app_edit_device.deviceSn,
                   "deviceSecretKey":app_edit_device.secretKey,
+                  "category":app_edit_device.category,
                 }
               };
 

@@ -53,6 +53,7 @@ public class LoginLogic extends BaseZLogic {
 			.add("userId", user.getId())
 			.add("account", user.getAccount())
 			.add("secretId", user.getSecretId())
+			.add("sysAdmin", user.getSysAdmin())
 			.add("secretKey", user.getSecretKey())
 			.add("nickName", user.getNickName())
 			.add("emqUser", emqUser.getUsername())

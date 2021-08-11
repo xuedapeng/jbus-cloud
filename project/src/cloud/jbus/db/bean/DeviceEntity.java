@@ -1,7 +1,5 @@
 package cloud.jbus.db.bean;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +24,7 @@ public class DeviceEntity extends BaseZEntity {
 	private Integer ownerId;
 	private String memo;
 	private Integer status;
+	private String category;
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
@@ -104,6 +103,15 @@ public class DeviceEntity extends BaseZEntity {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
 	
 	
 }

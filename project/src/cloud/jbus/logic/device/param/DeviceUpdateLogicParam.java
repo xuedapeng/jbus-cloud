@@ -17,6 +17,7 @@ public class DeviceUpdateLogicParam extends BaseZLogicParam implements IPrivileg
 	private Integer crcMode;
 	private String memo;
 	private String deviceSecretKey;
+	private String category;
 
 	public String getDeviceId() {
 		return deviceId;
@@ -59,5 +60,12 @@ public class DeviceUpdateLogicParam extends BaseZLogicParam implements IPrivileg
 	}
 	public void setDeviceSecretKey(String deviceSecretKey) {
 		this.deviceSecretKey = deviceSecretKey;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }
