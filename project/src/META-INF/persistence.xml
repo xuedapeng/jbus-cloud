@@ -6,9 +6,9 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:mysql://mysql.moqbus.com:3306/jbuscloud?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=Asia/Shanghai&amp;autoReconnect=true" />
-			<property name="hibernate.connection.username" value="jbuscloud" />
-			<property name="hibernate.connection.password" value="jbuscloud5151" />
+			<property name="hibernate.connection.url" value="***" />
+			<property name="hibernate.connection.username" value="***" />
+			<property name="hibernate.connection.password" value="***" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
 
 			<!-- c3p0 连接池配置 -->

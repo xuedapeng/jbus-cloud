@@ -9,3 +9,8 @@
 
 例：
 java -jar devmock.jar console d tc.moqbus.com 2883 F4D5B06E 56F6D05F52
+java -jar devmock.jar console d tc.moqbus.com 2883 -seq REG:F4D5B06E,56F6D05F52
+java -jar devmock.jar console d tc.moqbus.com 2883 -noreg
+
+
+

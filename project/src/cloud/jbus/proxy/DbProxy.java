@@ -42,9 +42,10 @@ public class DbProxy {
 	static Logger log = Logger.getLogger(DbProxy.class);
 	
 	static String _dbName = MongoUtil._db;
-	static String _collCmd = "cmd";
+//	static String _collCmd = "cmd";
 	static String _collDat = "dat";
-	static String _collSts = "sts";
+//	static String _collSts = "sts";
+	static String _collMsglog = "msglog";
 	
 	final static int MAX_COUNT  = 1000;
 	
@@ -143,6 +144,33 @@ public class DbProxy {
             		String sv = dv==null?"-":new DecimalFormat(V.get("format")).format(dv);
             		map.put(fieldName, sv);
             	});
+            	
+            	retList.add(map);
+            }
+        });
+		
+		return retList;
+	}
+	
+	public static List<Map<String, Object>> findMsgLogForPeriod(String deviceSn, Date fromTime, Date toTime, Integer limit) {
+
+		MongoCollection<Document> coll = MongoUtil.getCollection(_dbName, _collMsglog);
+
+		Bson filterTime = (and(gt("time", fromTime), lt("time", toTime)));
+		
+		Bson filter = (and(eq("deviceSn", deviceSn), filterTime));
+		
+	    //指定查询过滤器查询
+	    FindIterable<Document> iterable = coll.find(filter).sort(new Document("_id",-1)).limit(limit);
+
+		final List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+		iterable.forEach(new Block<Document>() {
+            public void apply(final Document document) {
+            	Map<String, Object> map = new HashMap<String, Object>();
+            	map.put("deviceSn", document.get("deviceSn"));
+            	map.put("time", DateHelper.toYmdhmsMs((Date) document.get("time")));
+            	map.put("type", document.get("type"));
+            	map.put("msg", document.get("msg"));
             	
             	retList.add(map);
             }

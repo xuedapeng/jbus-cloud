@@ -7,13 +7,13 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 
 import cloud.jbus.common.constant.StatusConst;
-import cloud.jbus.common.helper.NumericHelper;
 import cloud.jbus.common.helper.ValidateHelper;
 import cloud.jbus.db.bean.CmdEncodeEntity;
+import cloud.jbus.db.bean.DatDecodeEntity;
 import cloud.jbus.db.bean.ScheduleEntity;
 import cloud.jbus.db.bean.SensorEntity;
 import cloud.jbus.db.dao.CmdEncodeDao;
-import cloud.jbus.db.dao.DeviceDao;
+import cloud.jbus.db.dao.DatDecodeDao;
 import cloud.jbus.db.dao.ScheduleDao;
 import cloud.jbus.db.dao.SensorDao;
 import cloud.jbus.logic.BaseZLogic;
@@ -39,6 +39,7 @@ public class DeviceCloneLogic extends BaseZLogic {
 		SensorDao sensorDao = new SensorDao(em);
 		CmdEncodeDao cmdDao = new CmdEncodeDao(em);
 		ScheduleDao schDao = new ScheduleDao(em);
+		DatDecodeDao datDao = new DatDecodeDao(em);
 		
 		// check 
 		if(!myParam.getFromDeviceSn().equals(CommonLogic.getDeviceSnById(fromDeviceId,em))) {
@@ -61,6 +62,14 @@ public class DeviceCloneLogic extends BaseZLogic {
 
 			res.add("status", -12)
 				.add("msg", "schedule not empty.");
+			
+			return false;
+		}
+		
+		if(datDao.findByDeviceId(deviceId) != null) {
+
+			res.add("status", -14)
+				.add("msg", "datDecode not empty.");
 			
 			return false;
 		}
@@ -104,6 +113,19 @@ public class DeviceCloneLogic extends BaseZLogic {
 			
 			schDao.save(sch);
 		}
+		
+		//  解码器复制
+		DatDecodeEntity datEntity = datDao.findByDeviceId(fromDeviceId);
+		DatDecodeEntity destDatEntity = new DatDecodeEntity();
+		destDatEntity.setDeviceId(deviceId);
+		destDatEntity.setDeviceSn(deviceSn);
+		destDatEntity.setScriptText(datEntity.getScriptText());
+		destDatEntity.setResultSchema(datEntity.getResultSchema());
+		destDatEntity.setSampleCases(datEntity.getSampleCases());
+		destDatEntity.setIncludeCrc(datEntity.getIncludeCrc());
+		destDatEntity.setStatus(datEntity.getStatus());
+		
+		datDao.save(destDatEntity);
 		
 		
 		res.add("status", 1)

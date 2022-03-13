@@ -8,13 +8,15 @@ var app = new Vue({
     sensorNo:getQueryString("sensorNo"),
     fromTime:getQueryString("fromTime"),
     toTime:getQueryString("toTime"),
-    deviceSn:'',
+    deviceSn:getQueryString("deviceSn"),
     deviceName:'',
     sensorName:'',
     fieldStyle:{},
     showTitle:getQueryString("showTitle")=='no'?'none':'block',
     field:getQueryString("field")?getQueryString("field"):'all',
     graphHeight:getQueryString("height")?getQueryString("height"):'300',
+    qAppId : getQueryString("appId"),
+    qAppToken : getQueryString("appToken")
 
   },
   methods:{
@@ -28,8 +30,10 @@ var app = new Vue({
 loadData();
 function loadData() {
 
-  if (!checkAuth()) {
-    return;
+  if (!app.qAppId || !app.qAppToken) {
+    if(!checkAuth()) {
+      return;
+    }
   }
 
   // alert(app.deviceId);
@@ -48,8 +52,9 @@ function loadData() {
   app.dataList=[];
 
   var param = {"method":"hydrograph.data.query",
-              "auth":[getStorage("appId"), getStorage("appToken")],
+              "auth":[app.qAppId?app.qAppId:getStorage("appId"), app.qAppToken?app.qAppToken:getStorage("appToken")],
               "data":{"deviceId":app.deviceId,
+                      "deviceSn":app.deviceSn,
                       "sensorNo":app.sensorNo,
                       "fromTime":app.fromTime,
                       "toTime":app.toTime,
